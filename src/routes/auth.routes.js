@@ -29,12 +29,12 @@ router.post('/auth/login', async (req, res) => {
 
         // Generar un nuevo token JWT solo si el usuario no tiene un token de acceso existente
         if (!token) {
-            token = jwt.sign({ userId: user.idUser }, process.env.JWT_SECRET);
+            token = jwt.sign({ id: user.id }, process.env.JWT_SECRET);
             
             // Actualizar el token de acceso en la base de datos solo si se genera uno nuevo
             await prisma.user.update({
                 where: {
-                    idUser: user.idUser,
+                    id: user.id,
                 },
                 data: {
                     accessToken: token,
@@ -75,7 +75,7 @@ router.post('/auth/logout', async (req, res) => {
         // Eliminar el token de acceso de la base de datos (marcándolo como nulo)
         await prisma.user.update({
             where: {
-                idUser: user.idUser,
+                id: user.id,
             },
             data: {
                 accessToken: null,
