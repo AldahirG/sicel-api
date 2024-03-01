@@ -1,6 +1,8 @@
 import express from 'express';
 import cors from 'cors';
 
+import userRoutes from './routes/user.routes.js';
+
 const app = express();
 
 app.use(
@@ -15,6 +17,8 @@ app.use(
 app.options("*", cors());
 
 app.use(express.json());
+
+app.use('/api', userRoutes);
 
 app.listen(3000);
 console.log("Server on port", 3000);
