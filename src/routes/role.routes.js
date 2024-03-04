@@ -37,7 +37,6 @@ router.post('/role', async (req, res) => {
             }
         });
 
-        // Retorna el nuevo promotor creado
         res.status(201).json(newRole);
 
     } catch (error) {
