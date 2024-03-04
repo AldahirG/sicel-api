@@ -52,3 +52,10 @@ model Campaign {
   status        Int      @default(1)
   created_at    DateTime @default(now())
 }
+
+model Carreer {
+  id   Int    @id @default(autoincrement())
+  name String @unique @db.VarChar(150)
+  slug String @unique @db.VarChar(30)
+  created_at    DateTime @default(now())
+}
