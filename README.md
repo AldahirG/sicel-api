@@ -16,7 +16,13 @@ La nomenclatura para las rutas tiene que ser en singular, inglés y con terminac
 
 Ejemplo: 'user.routes.js'.
 
-Para correr el servidor ejecuta el comando **'npm run dev'**
+1. Para correr el servidor ejecuta el comando **'npm run dev'**
+2. Para migrar un modelo ejecutar el comando **'npx prisma migrate dev'** y en el nombre de la migración
+siempre iniciar con 'migration_' y la acción que realizas. **Usa minúsculas para nombrar la migración**
+
+Ejemplos:
+1. migration_add_user_model
+2. migration_alter_user_model
 
 ## Contribuciones
 
