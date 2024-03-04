@@ -54,8 +54,14 @@ model Campaign {
 }
 
 model Carreer {
+  id         Int      @id @default(autoincrement())
+  name       String   @unique @db.VarChar(150)
+  slug       String   @unique @db.VarChar(30)
+  created_at DateTime @default(now())
+}
+
+model Grade {
   id   Int    @id @default(autoincrement())
-  name String @unique @db.VarChar(150)
-  slug String @unique @db.VarChar(30)
-  created_at    DateTime @default(now())
+  name String @unique @db.VarChar(20)
+  created_at DateTime @default(now())
 }
