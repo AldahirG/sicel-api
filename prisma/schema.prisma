@@ -25,7 +25,7 @@ model Promoter {
   status     Boolean  @default(true)
   created_at DateTime @default(now())
   user       User     @relation(fields: [userID], references: [id])
-  userID    Int      @unique
+  userID     Int      @unique
 }
 
 model Role {
@@ -37,10 +37,18 @@ model Role {
 }
 
 model UsersOnRoles {
-  user       User     @relation(fields: [userId], references: [id])
-  userId    Int
-  role       Role     @relation(fields: [roleId], references: [id])
-  roleId    Int
+  user   User @relation(fields: [userId], references: [id])
+  userId Int
+  role   Role @relation(fields: [roleId], references: [id])
+  roleId Int
 
   @@id([userId, roleId])
+}
+
+model Campaign {
+  id            Int      @id @default(autoincrement())
+  name          String   @db.VarChar(150)
+  type_campaign String   @db.VarChar(10)
+  status        Int      @default(1)
+  created_at    DateTime @default(now())
 }
