@@ -121,13 +121,13 @@ router.delete('/role/:id', async (req, res) => {
         });
 
         if (existingRole) {
-            const deleteRole = await prisma.role.delete({
+            await prisma.role.delete({
                 where: {
                     id: parseInt(id)
                 }
             });
 
-            res.status(200).json(deleteRole);
+            res.status(200).json({ message: 'Rol eliminado exitosamente.' });
         } else {
             return res.status(404).json({ error: 'Rol no encontrado.' });
         }
