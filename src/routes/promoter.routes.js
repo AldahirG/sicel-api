@@ -217,7 +217,7 @@ router.delete('/promoter/:id', async (req, res) => {
       }),
     ]);
 
-    res.json({ message: 'Promotor eliminado exitosamente' });
+    res.status(200).json({ message: 'Promotor eliminado exitosamente' });
   } catch (error) {
     console.error('Error al eliminar promotor:', error);
     res.status(500).send('Error interno del servidor');

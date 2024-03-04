@@ -195,7 +195,7 @@ router.delete('/user/:id', async (req, res) => {
             where: { id: parseInt(id) },
         });
 
-        res.json({ message: 'Usuario eliminado exitosamente' });
+        res.status(200).json({ message: 'Usuario eliminado exitosamente' });
     } catch (error) {
         res.status(500).json({ message: 'Error al eliminar el usuario', error });
     }
