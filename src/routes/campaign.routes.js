@@ -7,7 +7,7 @@ const router = express.Router();
 router.get('/campaigns', async (req, res) => {
     try {
         const campaign = await prisma.campaign.findMany();
-        res.json(campaign);
+        res.status(200).json(campaign);
     } catch (error) {
         console.error('Error al encontrar las campañas:', error);
         res.status(500).send('Error interno del servidor');
