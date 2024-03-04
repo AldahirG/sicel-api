@@ -4,9 +4,9 @@ Esta es la API para el proyecto de la Universidad Internacional llamadó SICEL, 
 
 ## Instalación
 
-1. Clonar el repositorio 'git clone url del proyecto'.
-2. Instalar las dependencias 'npm i o npm install'.
-3. Configurar el archivo .env y ejectura el comando 'npx prisma generate' para que reconozca las variables de entorno.
+1. Clonar el repositorio **'git clone url del proyecto'**.
+2. Instalar las dependencias **'npm i o npm install'**.
+3. Configurar el archivo .env y ejectur el comando **'npx prisma generate'** para que reconozca las variables de entorno.
 
 ## Uso
 
