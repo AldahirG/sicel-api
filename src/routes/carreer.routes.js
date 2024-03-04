@@ -99,7 +99,7 @@ router.put('/carreer/:id', async(req, res) => {
             return res.status(400).json({ error: 'Ya existe una carrera con este nombre y/o abreviatura.' });
         }
 
-        const updatedCarrera = await prisma.carreer.update({
+        const updatedCarreer = await prisma.carreer.update({
             where: {
                 id: parseInt(id)
             },
@@ -109,7 +109,7 @@ router.put('/carreer/:id', async(req, res) => {
             },
         });
 
-        res.status(200).json(updatedCarrera);
+        res.status(200).json(updatedCarreer);
 
     } catch (error) {
         console.error('Error al actualizar una carrera: ', error);
