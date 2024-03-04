@@ -1,6 +1,6 @@
 # SICEL - RESTAPI
 
-Esta es la API para el proyecto de la Uniersidad Internacional llamadó SICEL, que se realizó con PRISMA y Express.js.
+Esta es la API para el proyecto de la Universidad Internacional llamadó SICEL, que se realizó con PRISMA y Express.js.
 
 ## Instalación
 
