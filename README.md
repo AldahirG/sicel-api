@@ -21,8 +21,9 @@ Ejemplo: 'user.routes.js'.
 siempre iniciar con 'migration_' y la acción que realizas. **Usa minúsculas para nombrar la migración**
 
 Ejemplos:
-1. migration_add_user_model
-2. migration_alter_user_model
+1. migration_add_user_model (Cuando creas un nuevo modelo)
+2. migration_alter_user_model (Cuando editas algún campo del modelo)
+3. migration_delete_user_model (Cuando eliminas un modelo)
 
 ## Contribuciones
 
@@ -33,4 +34,11 @@ Crear una rama correspondiente y en dado caso de ya contar con una utilizarla y 
 - Aldahir
 - Milton Jaimes
 - Jonathan Andrés Martínez Rosas
+
+## Información adicional
+En este apartado te dejo la documentación oficial de Prisma **prisma.io**
+
+1. Migrar con Prisma **https://www.prisma.io/docs/getting-started/setup-prisma/start-from-scratch/relational-databases/using-prisma-migrate-typescript-postgresql**
+2. Relación muchos a muchos con tabla pivote **https://www.prisma.io/docs/orm/prisma-schema/data-model/relations/many-to-many-relations**
+3. Relación muchos a muchos sin tabla pivote **https://www.prisma.io/docs/orm/more/help-and-troubleshooting/help-articles/working-with-many-to-many-relations#implicit-relations**
 
