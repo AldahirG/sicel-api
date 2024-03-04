@@ -4,6 +4,7 @@ import cors from 'cors';
 // Importar rutas
 import authRoutes from './routes/auth.routes.js';
 import campaignRoutes from './routes/campaign.routes.js';
+import carreerRoutes from './routes/carreer.routes.js';
 import promoterRoutes from './routes/promoter.routes.js';
 import roleRoutes from './routes/role.routes.js';
 import userRoutes from './routes/user.routes.js';
@@ -26,6 +27,7 @@ app.use(express.json());
 // Mandar a traer las rutas
 app.use('/api', authRoutes);
 app.use('/api', campaignRoutes);
+app.use('/api', carreerRoutes);
 app.use('/api', promoterRoutes);
 app.use('/api', roleRoutes);
 app.use('/api', userRoutes);
