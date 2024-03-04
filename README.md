@@ -21,9 +21,9 @@ Ejemplo: 'user.routes.js'.
 siempre iniciar con 'migration_' y la acción que realizas. **Usa minúsculas para nombrar la migración**
 
 Ejemplos:
-1. migration_add_user_model (Cuando creas un nuevo modelo)
-2. migration_alter_user_model (Cuando editas algún campo del modelo)
-3. migration_delete_user_model (Cuando eliminas un modelo)
+1. migration_table_user (Cuando creas un nuevo modelo)
+2. migration_alter_table_user (Cuando editas algún campo del modelo)
+3. migration_delete_table_user (Cuando eliminas un modelo)
 
 ## Contribuciones
 
