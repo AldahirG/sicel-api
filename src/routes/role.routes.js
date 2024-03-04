@@ -7,7 +7,7 @@ const router = express.Router();
 router.get('/roles', async (req, res) => {
     try {
         const roles = await prisma.role.findMany();
-        res.json(roles);
+        res.status(200).json(roles);
     } catch (error) {
         console.error('Error al encontrar los roles:', error);
         res.status(500).send('Error interno del servidor');
@@ -37,7 +37,6 @@ router.post('/role', async (req, res) => {
             }
         });
 
-        // Retorna el nuevo promotor creado
         res.status(201).json(newRole);
 
     } catch (error) {

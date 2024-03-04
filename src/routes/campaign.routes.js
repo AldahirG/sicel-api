@@ -7,7 +7,7 @@ const router = express.Router();
 router.get('/campaigns', async (req, res) => {
     try {
         const campaign = await prisma.campaign.findMany();
-        res.json(campaign);
+        res.status(200).json(campaign);
     } catch (error) {
         console.error('Error al encontrar las campañas:', error);
         res.status(500).send('Error interno del servidor');
@@ -37,7 +37,6 @@ router.post('/campaign', async (req, res) => {
             }
         });
 
-        // Retorna el nuevo promotor creado
         res.status(201).json(newCampaign);
 
     } catch (error) {
@@ -143,12 +142,12 @@ router.delete('/campaign/:id', async(req, res) => {
 
             res.status(200).json({ message: 'Campaña eliminada exitosamente.' });
         } else {
-            return res.status(404).json({ error: 'Campaña no encontrado.' });
+            return res.status(404).json({ error: 'Campaña no encontrada.' });
         }
     } catch (error) {
         console.error('Error al eliminar una campaña: ', error);
         res.status(500).send('Error interno del servidor');
     }
-})
+});
 
 export default router;
