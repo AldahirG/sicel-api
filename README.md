@@ -16,6 +16,8 @@ La nomenclatura para las rutas tiene que ser en singular, inglés y con terminac
 
 Ejemplo: 'user.routes.js'.
 
+Para correr el servidor ejecuta el comando **'npm run dev'**
+
 ## Contribuciones
 
 Crear una rama correspondiente y en dado caso de ya contar con una utilizarla y no usar la rama 'main'
