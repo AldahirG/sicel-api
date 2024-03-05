@@ -106,7 +106,7 @@ router.put('/grade/:id', async (req, res) => {
         res.status(200).json(updatedGrade);
 
     } catch (error) {
-        console.error('Error al actualizar una grado escolar: ', error);
+        console.error('Error al actualizar un grado escolar: ', error);
         res.status(500).send('Error interno del servidor');
     }
 });
@@ -135,7 +135,7 @@ router.delete('/grade/:id', async (req, res) => {
             return res.status(404).json({ error: 'Grado escolar no encontrado.' });
         }
     } catch (error) {
-        console.error('Error al eliminar una carrera: ', error);
+        console.error('Error al eliminar un grado escolar: ', error);
         res.status(500).send('Error interno del servidor');
     }
 });
