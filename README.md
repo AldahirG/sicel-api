@@ -1,12 +1,12 @@
 # SICEL - RESTAPI
 
-Esta es la API para el proyecto de la Uniersidad Internacional llamadó SICEL, que se realizó con PRISMA y Express.js.
+Esta es la API para el proyecto de la Universidad Internacional llamadó SICEL, que se realizó con PRISMA y Express.js.
 
 ## Instalación
 
-1. Clonar el repositorio 'git clone nombre del proyecto'.
-2. Instalar las dependencias 'npm i o npm install'.
-3. Configurar el archivo .env y ejectura el comando 'npx prisma generate' para que reconozca las variables de entorno.
+1. Clonar el repositorio **'git clone url del proyecto'**.
+2. Instalar las dependencias **'npm i o npm install'**.
+3. Configurar el archivo .env y ejectur el comando **'npx prisma generate'** para que reconozca las variables de entorno.
 
 ## Uso
 
@@ -21,9 +21,9 @@ Ejemplo: 'user.routes.js'.
 siempre iniciar con 'migration_' y la acción que realizas. **Usa minúsculas para nombrar la migración**
 
 Ejemplos:
-1. migration_add_user_model (Cuando creas un nuevo modelo)
-2. migration_alter_user_model (Cuando editas algún campo del modelo)
-3. migration_delete_user_model (Cuando eliminas un modelo)
+1. migration_table_user (Cuando creas un nuevo modelo)
+2. migration_alter_table_user (Cuando editas algún campo del modelo)
+3. migration_delete_table_user (Cuando eliminas un modelo)
 
 ## Contribuciones
 
