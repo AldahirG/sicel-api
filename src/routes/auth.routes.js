@@ -13,6 +13,13 @@ router.post('/auth/login', async (req, res) => {
             where: {
                 email,
             },
+            include: {
+                roles: {
+                    include: {
+                        role: true
+                    }
+                }
+            },
         });
 
         if (!user) {
@@ -38,14 +45,16 @@ router.post('/auth/login', async (req, res) => {
                 },
                 data: {
                     accessToken: token,
-                },
+                }
             });
         }
 
         // Eliminar el campo 'password' del objeto 'user' antes de enviar la respuesta
         delete user.password;
 
-        res.json({ mensaje: 'Inicio de sesión exitoso', user, token });
+        const role = user.roles[0].role.name; // Obtener el nombre del rol
+
+        res.json({ mensaje: 'Inicio de sesión exitoso', user, token, role });
     } catch (error) {
         console.error('Error al iniciar sesión:', error);
         res.status(500).json({ mensaje: 'Error al iniciar sesión' });
@@ -86,6 +95,43 @@ router.post('/auth/logout', async (req, res) => {
     } catch (error) {
         console.error('Error al cerrar sesión:', error);
         res.status(500).json({ mensaje: 'Error al cerrar sesión' });
+    }
+});
+
+
+router.get('/auth/redirect/role', async (req, res) => {
+    const accessToken = req.headers.authorization?.split(' ')[1]; // Obtener el token de acceso de las cabeceras de autorización
+
+    if (!accessToken) {
+        return res.status(401).json({ mensaje: 'No se proporcionó un token de acceso' });
+    }
+
+    try {
+        // Buscar el usuario en la base de datos por el token de acceso
+        const user = await prisma.user.findFirst({
+            where: {
+                accessToken: accessToken,
+            },
+            include: {
+                roles: {
+                    include: {
+                        role: true
+                    }
+                }
+            }
+        });
+
+        if (!user) {
+            return res.status(404).json({ mensaje: 'Usuario no encontrado' });
+        }
+
+        // Devuelve el rol del usuario en la respuesta
+        const role = user.roles[0].role.name; // Obtener el nombre del rol
+        res.status(200).json({ role });
+
+    } catch (error) {
+        console.error('Acceso no autorizado:', error);
+        res.status(500).json({ mensaje: 'Acceso no autorizado' });
     }
 });
 
