@@ -29,6 +29,23 @@ Ejemplos:
 
 Crear una rama correspondiente y en dado caso de ya contar con una utilizarla y no usar la rama 'main'
 
+
+## Seeders en Prisma y Express
+
+Los seeders son scripts diseñados para poblar la base de datos con datos iniciales. En el contexto de un proyecto web utilizando Prisma y Express, los seeders son particularmente útiles para cargar información de prueba, configuración predeterminada o cualquier otro tipo de datos necesario para el funcionamiento inicial de la aplicación.
+
+Los seeders se encuentran en la raiz del proyecto en la carpeta seeders.
+
+Para facilitar la ejecución del seeder se agregan los seeders al package.json en "script":
+
+**"scripts": {
+  "seed": "node seeders/seed.js"
+}**
+
+Para poder migrar los datos del seed a la Base de Datos debemos ejecutar el comando **npm run nombre_del_script**
+
+Ejemplo: **npm run seed**
+
 ## Créditos
 
 - Aldahir
