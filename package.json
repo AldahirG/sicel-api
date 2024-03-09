@@ -5,7 +5,9 @@
   "main": "index.js",
   "type": "module",
   "scripts": {
-    "dev": "nodemon src/index.js"
+    "dev": "nodemon src/index.js",
+    "roleSeeder": "node seeders/RoleSeeder.js",
+    "adminSeeder": "node seeders/AdminSeeder.js"
   },
   "keywords": [],
   "author": "",
