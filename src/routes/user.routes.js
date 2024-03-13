@@ -7,7 +7,16 @@ const router = Router();
 // Consultar a todos los usuarios
 router.get('/users', async (req, res) => {
     try {
-        const users = await prisma.user.findMany();
+        const users = await prisma.user.findMany({
+            include: {
+                roles: {
+                    include: {
+                        role: true
+                    }
+                }
+            }
+        });
+        
         res.status(200).json(users);
     } catch (error) {
         console.error('Error al encontrar los usuarios:', error);
@@ -102,12 +111,12 @@ router.put('/user/:id', async (req, res) => {
 
         // Verificar si el email ya está en uso
         if (email) {
-            
             const existingUserEmail = await prisma.user.findUnique({
                 where: { email },
             });
 
-            if (existingUserEmail) {
+            // Si el correo electrónico ya existe y pertenece a otro usuario, devuelve un error
+            if (existingUserEmail && existingUserEmail.id !== parseInt(id)) {
                 return res.status(400).json({ message: 'El email ya está en uso' });
             }
         }
