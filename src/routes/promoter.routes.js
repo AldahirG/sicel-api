@@ -196,24 +196,32 @@ router.delete('/promoter/:id', async (req, res) => {
   try {
     const { id } = req.params;
 
-    // Eliminar todas las relaciones de la tabla intermedia
+    // Buscar el usuario asociado al promotor
+    const promotor = await prisma.promoter.findUnique({
+      where: { id: parseInt(id) },
+      include: { user: true },
+    });
+
+    if (!promotor) {
+      return res.status(404).json({ error: 'Promotor no encontrado.' });
+    }
+
+    const userId = promotor.user.id; // ID del usuario asociado al promotor
+
+    // Eliminar todas las relaciones de la tabla intermedia UsersOnRoles
     await prisma.usersOnRoles.deleteMany({
       where: {
-        userId: parseInt(id)
+        userId: userId, // Utilizamos el ID del usuario asociado al promotor
       },
     });
 
-    // Eliminar el promotor y el usuario relacionado
+    // Eliminar el promotor y el usuario relacionado utilizando sus IDs respectivos
     await prisma.$transaction([
       prisma.promoter.delete({
-        where: {
-          id: parseInt(id)
-        },
+        where: { id: parseInt(id) }, // ID del promotor
       }),
       prisma.user.delete({
-        where: {
-          id: parseInt(id)
-        },
+        where: { id: userId }, // ID del usuario asociado al promotor
       }),
     ]);
 
