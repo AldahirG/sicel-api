@@ -134,13 +134,21 @@ router.put('/promoter/:id', async (req, res) => {
     const { id } = req.params;
     const { name, tel, email, password, status } = req.body;
 
+    // Obtener el promotor actualizado junto con los datos del usuario asociado
+    const updatedPromotor = await prisma.promoter.findUnique({
+      where: { id: parseInt(id) },
+      include: {
+        user: true,
+      },
+    });
+
     // Verificar si el correo electrónico se está actualizando y si ya existe en otro usuario
     if (email) {
       const existingUser = await prisma.user.findFirst({
         where: {
           AND: [
             { email: email },
-            { id: { not: parseInt(id) } }, // Excluir el usuario actual
+            { id: { not: updatedPromotor.user.id } }, // Excluir el usuario actual asociado al promotor
           ],
         },
       });
@@ -167,7 +175,7 @@ router.put('/promoter/:id', async (req, res) => {
       }),
       prisma.user.update({
         where: {
-          id: parseInt(id)
+          id: updatedPromotor.user.id // Utilizar el ID del usuario asociado al promotor
         },
         data: {
           email,
@@ -175,13 +183,6 @@ router.put('/promoter/:id', async (req, res) => {
         },
       }),
     ]);
-
-    const updatedPromotor = await prisma.promoter.findUnique({
-      where: { id: parseInt(id) },
-      include: {
-        user: true,
-      },
-    });
 
     res.status(200).json(updatedPromotor);
 
