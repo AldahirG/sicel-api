@@ -8,7 +8,8 @@
     "dev": "nodemon src/index.js",
     "roleSeeder": "node seeders/RoleSeeder.js",
     "adminSeeder": "node seeders/AdminSeeder.js",
-    "followUpSeeder": "node seeders/FollowUpSeeder.js"
+    "followUpSeeder": "node seeders/FollowUpSeeder.js",
+    "gradeSeeder": "node seeders/GradeSeeder.js"
   },
   "keywords": [],
   "author": "",
