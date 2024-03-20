@@ -67,6 +67,7 @@ model Carreer {
   leads Lead[]
 }
 
+// Grado escolar
 model Grade {
   id         Int      @id @default(autoincrement())
   name       String   @unique @db.VarChar(20)
