@@ -9,7 +9,8 @@
     "roleSeeder": "node seeders/RoleSeeder.js",
     "adminSeeder": "node seeders/AdminSeeder.js",
     "followUpSeeder": "node seeders/FollowUpSeeder.js",
-    "gradeSeeder": "node seeders/GradeSeeder.js"
+    "gradeSeeder": "node seeders/GradeSeeder.js",
+    "carreerSeeder": "node seeders/CarreerSeeder.js"
   },
   "keywords": [],
   "author": "",
