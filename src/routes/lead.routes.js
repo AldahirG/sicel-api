@@ -6,7 +6,25 @@ const router = express.Router();
 // Consultar todos los PSeguimientos
 router.get('/leads', async (req, res) => {
     try {
-        const leads = await prisma.lead.findMany();
+        const leads = await prisma.lead.findMany({
+            include: {
+                campaign: {
+                    include: true
+                },
+                followUp: {
+                    include: true
+                },
+                grade: {
+                    include: true
+                },
+                carreer: {
+                    include: true
+                },
+                promoter: {
+                    include: true
+                },
+            }
+        });
         res.status(200).json(leads);
     } catch (error) {
         console.error('Error al encontrar los leads:', error);
