@@ -23,13 +23,13 @@ router.post('/auth/login', async (req, res) => {
         });
 
         if (!user) {
-            return res.status(404).json({ mensaje: 'Usuario no encontrado' });
+            return res.status(404).json({ emailNotFound: 'Correo electrónico no encontrado' });
         }
 
         const password_validation = await bcrypt.compare(password, user.password);
 
         if (!password_validation) {
-            return res.status(401).json({ mensaje: 'Contraseña incorrecta' });
+            return res.status(401).json({ passwordIncorrect: 'Contraseña incorrecta' });
         }
 
         let token = user.accessToken;
