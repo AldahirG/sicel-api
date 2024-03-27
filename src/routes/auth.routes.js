@@ -52,15 +52,14 @@ router.post('/auth/login', async (req, res) => {
         // Eliminar el campo 'password' del objeto 'user' antes de enviar la respuesta
         delete user.password;
 
-        const role = user.roles[0].role.name; // Obtener el nombre del rol
+        const roles = user.roles.map(userRole => userRole.role.name); // Obtener un array con los nombres de los roles
 
-        res.json({ mensaje: 'Inicio de sesión exitoso', user, token, role });
+        res.json({ mensaje: 'Inicio de sesión exitoso', user, token, roles });
     } catch (error) {
         console.error('Error al iniciar sesión:', error);
         res.status(500).json({ mensaje: 'Error al iniciar sesión' });
     }
 });
-
 
 router.post('/auth/logout', async (req, res) => {
     const accessToken = req.headers.authorization?.split(' ')[1]; // Obtener el token de acceso de las cabeceras de autorización
@@ -98,7 +97,6 @@ router.post('/auth/logout', async (req, res) => {
     }
 });
 
-
 router.get('/auth/redirect/role', async (req, res) => {
     const accessToken = req.headers.authorization?.split(' ')[1]; // Obtener el token de acceso de las cabeceras de autorización
 
@@ -125,15 +123,14 @@ router.get('/auth/redirect/role', async (req, res) => {
             return res.status(404).json({ mensaje: 'Usuario no encontrado' });
         }
 
-        // Devuelve el rol del usuario en la respuesta
-        const role = user.roles[0].role.name; // Obtener el nombre del rol
-        res.status(200).json({ role });
+        // Devuelve los roles del usuario en la respuesta
+        const roles = user.roles.map(userRole => userRole.role.name);
+        res.status(200).json({ roles });
 
     } catch (error) {
         console.error('Acceso no autorizado:', error);
         res.status(500).json({ mensaje: 'Acceso no autorizado' });
     }
 });
-
 
 export default router;
