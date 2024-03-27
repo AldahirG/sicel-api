@@ -33,27 +33,32 @@ router.post('/upload', upload.single('file'), async (req, res) => {
                                 // Mapea los campos del lead según tu esquema de base de datos
                                 // lead.name, lead.email, etc.
                                 // Por ejemplo:
-                                name: lead.name || '',
-                                email: lead.email || '',
-                                tel: lead.tel || '',
-                                telOptional: lead.telOptional || '',
-                                email : lead.email || '',
-                                emailOptional: lead.emailOptional || '',
-                                genre: lead.genre || '',
-                                dateFirstContact: lead.dateFirstContact || '',
-                                dateBirth: lead.dateBirth || '',
-                                formerSchool: lead.formerSchool || '',
-                                country: lead.country || '',
-                                state: lead.state || '',
-                                city: lead.city || '',
-                                asetNameForm: lead.asetNameForm || '',
-                                isOrganic: lead.isOrganic || '',
-                                referenceType: lead.referenceType || '',
-                                referenceName: lead.referenceName || '',
-                                enrollmentDate: lead.enrollmentDate || '',
-                                scholarship: lead.scholarship || '',
-                                enrollmentStatus: lead.enrollmentStatus || '',
-                                admissionSemester: lead.admissionSemester || '',
+                                name: lead.name || null,
+                                email: lead.email || null,
+                                tel: lead.tel || null,
+                                telOptional: lead.telOptional || null,
+                                email : lead.email || null,
+                                emailOptional: lead.emailOptional || null,
+                                genre: lead.genre || null,
+                                dateFirstContact: lead.dateFirstContact || null,
+                                dateBirth: lead.dateBirth || null,
+                                formerSchool: lead.formerSchool || null,
+                                country: lead.country || null,
+                                state: lead.state || null,
+                                city: lead.city || null,
+                                asetNameForm: lead.asetNameForm || null,
+                                isOrganic: lead.isOrganic || null,
+                                referenceType: lead.referenceType || null,
+                                referenceName: lead.referenceName || null,
+                                enrollmentDate: lead.enrollmentDate || null,
+                                scholarship: lead.scholarship || null,
+                                enrollmentStatus: lead.enrollmentStatus || null,
+                                admissionSemester: lead.admissionSemester || null,
+                                campaignId: lead.campaignId || 1,
+                                followId: lead.followId || 1,
+                                gradeId: lead.gradeId || 1,
+                                carreerId: lead.carreerId || 1,
+                                promoterId: lead.promoterId || 1,
                                 
                                 // Ajusta los demás campos según tu esquema
                             }
@@ -62,10 +67,6 @@ router.post('/upload', upload.single('file'), async (req, res) => {
                         console.error('Error al insertar el lead en la base de datos:', error);
                     }
                 }
-                 // Insertar el lead en la base de datos utilizando Prisma
-                const newLead = await prisma.lead.create({
-                    data: leadData
-                });
 
                 console.log('Lead creado:', newLead);
                 // Lógica para insertar los leads en la base de datos aquí
@@ -75,6 +76,22 @@ router.post('/upload', upload.single('file'), async (req, res) => {
         console.error('Error al procesar el archivo:', error);
         res.status(500).send('Error interno del servidor');
     }
+});
+
+// Manejo de errores de Multer
+router.use((err, req, res, next) => {
+    if (err instanceof multer.MulterError) {
+        console.error('Error de carga del archivo:', err);
+        res.status(500).json({ success: false, message: 'Error en la carga del archivo.' });
+    } else {
+        next(err);
+    }
+});
+
+// Manejo de errores generales
+router.use((err, req, res, next) => {
+    console.error('Error inesperado:', err);
+    res.status(500).json({ success: false, message: 'Error interno del servidor.' });
 });
 
 // Consultar todos los PSeguimientos
