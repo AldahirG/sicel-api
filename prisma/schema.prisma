@@ -14,20 +14,7 @@ model User {
   accessToken String?  @db.VarChar(255)
   created_at  DateTime @default(now())
 
-  promoter Promoter?
   roles    UsersOnRoles[]
-}
-
-model Promoter {
-  id         Int      @id @default(autoincrement())
-  name       String   @db.VarChar(150)
-  tel        String   @db.VarChar(10)
-  status     Boolean  @default(true)
-  created_at DateTime @default(now())
-
-  user   User @relation(fields: [userID], references: [id])
-  userID Int  @unique
-
   leads Lead[]
 }
 
@@ -125,6 +112,6 @@ model Lead {
   carreerId Int
 
   // Id de promotor
-  promoter   Promoter @relation(fields: [promoterId], references: [id])
-  promoterId Int
+  user   User @relation(fields: [userId], references: [id])
+  userId Int
 }
