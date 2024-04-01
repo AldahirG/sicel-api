@@ -8,7 +8,6 @@ import carreerRoutes from './routes/carreer.routes.js';
 import followupRoutes from './routes/followup.routes.js';
 import gradeRoutes from './routes/grade.routes.js';
 import leadRoutes from './routes/lead.routes.js';
-import promoterRoutes from './routes/promoter.routes.js';
 import roleRoutes from './routes/role.routes.js';
 import userRoutes from './routes/user.routes.js';
 
@@ -34,7 +33,6 @@ app.use('/api', carreerRoutes);
 app.use('/api', followupRoutes);
 app.use('/api', gradeRoutes);
 app.use('/api', leadRoutes);
-app.use('/api', promoterRoutes);
 app.use('/api', roleRoutes);
 app.use('/api', userRoutes);
 
