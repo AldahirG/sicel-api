@@ -16,7 +16,7 @@ router.get('/users', async (req, res) => {
                 }
             }
         });
-        
+
         res.status(200).json(users);
     } catch (error) {
         console.error('Error al encontrar los usuarios:', error);
@@ -27,7 +27,7 @@ router.get('/users', async (req, res) => {
 // Crear un nuevo usuario
 router.post('/user', async (req, res) => {
     try {
-        const { email, password, roleId } = req.body;
+        const { name, email, password , tel, status, roles } = req.body;
 
         // Verificar si el email ya está en uso
         const existingUserEmail = await prisma.user.findUnique({
@@ -40,23 +40,22 @@ router.post('/user', async (req, res) => {
 
         const hashedPassword = await bcrypt.hash(password, 10);
 
-        // Crear el nuevo usuario
+        // Crear el nuevo usuario con los roles proporcionados
         const newUser = await prisma.user.create({
             data: {
+                name,
                 email,
                 password: hashedPassword,
+                tel,
+                status,
                 roles: {
-                    create: {
+                    create: roles.map(roleId => ({
                         role: {
-                            connect: {
-                                id: roleId
-                            }
+                            connect: { id: roleId }
                         }
-                    }
+                    }))
                 }
             },
-
-            // Muestra en el json informacion sobre la tabla pivote
             include: {
                 roles: {
                     include: {
@@ -103,66 +102,60 @@ router.get('/user/:id', async (req, res) => {
     }
 });
 
-// Actualizar un usuario por su id
 router.put('/user/:id', async (req, res) => {
     try {
         const { id } = req.params;
-        const { email, password, roleId } = req.body;
+        const { name, email, password, tel, status, roles } = req.body;
 
-        // Verificar si el email ya está en uso
+        // Verificar si el usuario existe
+        const existingUser = await prisma.user.findUnique({
+            where: { id: parseInt(id) },
+        });
+
+        if (!existingUser) {
+            return res.status(404).json({ message: 'Usuario no encontrado' });
+        }
+
+        // Construir el objeto de datos a actualizar
+        let dataToUpdate = {};
+
+        if (name !== undefined) {
+            dataToUpdate.name = name;
+        }
+
         if (email) {
-            const existingUserEmail = await prisma.user.findUnique({
-                where: { email },
-            });
-
-            // Si el correo electrónico ya existe y pertenece a otro usuario, devuelve un error
-            if (existingUserEmail && existingUserEmail.id !== parseInt(id)) {
-                return res.status(400).json({ message: 'El email ya está en uso' });
-            }
+            dataToUpdate.email = email;
         }
 
-        // Re-encriptar la contraseña si se proporciona
-        const hashedPassword = password ? await bcrypt.hash(password, 10) : undefined;
+        if (password) {
+            dataToUpdate.password = await bcrypt.hash(password, 10);
+        }
 
-        // Actualizar el rol si se proporciona
-        if (roleId) {
-            const existingRole = await prisma.role.findUnique({
-                where: { id: roleId },
-            });
+        if (tel !== undefined) {
+            dataToUpdate.tel = tel;
+        }
 
-            if (!existingRole) {
-                return res.status(404).json({ message: 'El rol proporcionado no existe.' });
-            }
+        if (status !== undefined) {
+            dataToUpdate.status = status;
+        }
 
-            // Eliminar todos los roles anteriores del usuario y asignar el nuevo rol
-            await prisma.usersOnRoles.deleteMany({
-                where: { userId: parseInt(id) }
-            });
-
-            await prisma.usersOnRoles.create({
-                data: {
+        if (roles) {
+            // Borrar todos los roles existentes
+            dataToUpdate.roles = {
+                deleteMany: {},
+                // Crear los nuevos roles seleccionados
+                create: roles.map(roleId => ({
                     role: {
-                        connect: {
-                            id: roleId
-                        }
-                    },
-                    user: {
-                        connect: {
-                            id: parseInt(id)
-                        }
+                        connect: { id: roleId }
                     }
-                }
-            });
+                })),
+            };
         }
 
+        // Actualizar el usuario
         const updatedUser = await prisma.user.update({
-            where: {
-                id: parseInt(id)
-            },
-            data: {
-                email,
-                password: hashedPassword,
-            },
+            where: { id: parseInt(id) },
+            data: dataToUpdate,
             include: {
                 roles: {
                     include: {
@@ -173,6 +166,7 @@ router.put('/user/:id', async (req, res) => {
         });
 
         res.status(200).json(updatedUser);
+
     } catch (error) {
         console.error('Error al actualizar usuario:', error);
         res.status(500).send('Error interno del servidor');
