@@ -1,0 +1,4 @@
+-- AlterTable
+ALTER TABLE `user` ADD COLUMN `name` VARCHAR(150) NULL,
+    ADD COLUMN `status` BOOLEAN NULL DEFAULT true,
+    ADD COLUMN `tel` VARCHAR(10) NULL;

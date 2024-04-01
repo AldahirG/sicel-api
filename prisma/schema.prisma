@@ -9,12 +9,15 @@ datasource db {
 
 model User {
   id          Int      @id @default(autoincrement())
+  name        String?  @db.VarChar(150)
   email       String   @unique @db.VarChar(80)
   password    String   @db.VarChar(255)
+  tel         String?  @db.VarChar(10)
+  status      Boolean  @default(true)
   accessToken String?  @db.VarChar(255)
   created_at  DateTime @default(now())
 
-  roles    UsersOnRoles[]
+  roles UsersOnRoles[]
   leads Lead[]
 }
 
