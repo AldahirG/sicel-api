@@ -14,10 +14,15 @@ router.get('/users', async (req, res) => {
                         role: true
                     }
                 }
-            }
+            },
         });
 
-        res.status(200).json(users);
+        const excludePassword = users.map(user => {
+            delete user.password;
+            return user;
+        });
+
+        res.status(200).json(excludePassword);
     } catch (error) {
         console.error('Error al encontrar los usuarios:', error);
         res.status(500).send('Error interno del servidor');
@@ -94,6 +99,8 @@ router.get('/user/:id', async (req, res) => {
         if (!user) {
             return res.status(404).json({ message: 'Usuario no encontrado' });
         }
+
+        delete user.password;
 
         res.status(200).json(user);
     } catch (error) {
