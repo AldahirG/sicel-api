@@ -3,19 +3,18 @@ import { prisma } from '../db.js';
 
 const router = express.Router();
 
-// Consultar todas las carreras
+// Consultar todas las carreras con paginación
 router.get('/carreers', async (req, res) => {
     try {
-        const totalItems = await prisma.carreer.count(); // Contar el total de registros
         const carreers = await prisma.carreer.findMany({
             skip: +req.query.skip,
             take: +req.query.take,
+            orderBy: {
+                id: 'desc'
+            }
         });
 
-        res.status(200).json({
-            totalItems: totalItems,
-            carreers: carreers
-        });
+        res.status(200).json(carreers);
     } catch (error) {
         console.error('Error al encontrar las carreras:', error);
         res.status(500).send('Error interno del servidor');
@@ -125,31 +124,25 @@ router.put('/carreer/:id', async(req, res) => {
     }
 });
 
-// Eliminar una campaña
-router.delete('/carreer/:id', async(req, res) => {
+// Contador de registros
+router.get('/carreers/total', async (req, res) => {
     try {
-        const { id } = req.params;
+        const total = await prisma.carreer.count();
 
-        // Verifica si existe la campaña mediante su id    
-        const existingCarreer = await prisma.carreer.findUnique({
-            where: {
-                id: parseInt(id)
-            }
-        });
-
-        if (existingCarreer) {
-            await prisma.carreer.delete({
-                where: {
-                    id: parseInt(id)
-                }
-            });
-
-            res.status(200).json({ message: 'Carrera eliminada exitosamente.' });
-        } else {
-            return res.status(404).json({ error: 'Carrera no encontrada.' });
-        }
+        res.status(200).json(total);
     } catch (error) {
-        console.error('Error al eliminar una carrera: ', error);
+        console.error('Error obtener el total de carreras:', error);
+        res.status(500).send('Error interno del servidor');
+    }
+});
+
+// Obtener el listado de carreras
+router.get('/carreers/list', async (req, res) => {
+    try {
+        const carreers = await prisma.carreer.findMany();
+        res.status(200).json(carreers);
+    } catch (error) {
+        console.error('Error al encontrar las carreras:', error);
         res.status(500).send('Error interno del servidor');
     }
 });
