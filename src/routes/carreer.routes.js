@@ -6,8 +6,16 @@ const router = express.Router();
 // Consultar todas las carreras
 router.get('/carreers', async (req, res) => {
     try {
-        const carreer = await prisma.carreer.findMany();
-        res.status(200).json(carreer);
+        const totalItems = await prisma.carreer.count(); // Contar el total de registros
+        const carreers = await prisma.carreer.findMany({
+            skip: +req.query.skip,
+            take: +req.query.take,
+        });
+
+        res.status(200).json({
+            totalItems: totalItems,
+            carreers: carreers
+        });
     } catch (error) {
         console.error('Error al encontrar las carreras:', error);
         res.status(500).send('Error interno del servidor');
