@@ -8,7 +8,6 @@
     "dev": "nodemon src/index.js",
     "roleSeeder": "node seeders/RoleSeeder.js",
     "adminSeeder": "node seeders/AdminSeeder.js",
-    "promoterSeeder": "node seeders/PromoterSeeder.js",
     "followUpSeeder": "node seeders/FollowUpSeeder.js",
     "gradeSeeder": "node seeders/GradeSeeder.js",
     "careerSeeder": "node seeders/CareerSeeder.js"

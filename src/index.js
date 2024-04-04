@@ -8,7 +8,7 @@ import carreerRoutes from './routes/carreer.routes.js';
 import followupRoutes from './routes/followup.routes.js';
 import gradeRoutes from './routes/grade.routes.js';
 import leadRoutes from './routes/lead.routes.js';
-import promoterRoutes from './routes/promoter.routes.js';
+import promoterRoutes from './routes/promoter.route.js';
 import roleRoutes from './routes/role.routes.js';
 import userRoutes from './routes/user.routes.js';
 import chartRoutes from './routes/chart.routes.js';
