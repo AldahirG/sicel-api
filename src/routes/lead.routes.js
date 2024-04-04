@@ -1,10 +1,9 @@
 import express from 'express';
 import { prisma } from '../db.js';
 import multer from 'multer';
-import fs from 'fs';
 import csvParser from 'csv-parser';
+import path from 'path';
 
-const leads = [];
 const router = express.Router();
 const storage = multer.memoryStorage(); // Almacenar en memoria en lugar de en el disco
 const upload = multer({ storage: storage }); // Usar el storage personalizado
@@ -15,6 +14,13 @@ router.post('/upload', upload.single('file'), async (req, res) => {
 
         if (!file) {
             return res.status(400).json({ success: false, message: 'No se ha proporcionado ningún archivo.' });
+        }
+
+        // Validar la extensión del archivo
+        const allowedExtensions = ['.csv'];
+        const fileExtension = path.extname(file.originalname).toLowerCase();
+        if (!allowedExtensions.includes(fileExtension)) {
+            return res.status(400).json({ success: false, message: 'Tipo de archivo no permitido. Solo se permiten archivos .csv.' });
         }
 
         const fileData = file.buffer.toString();
@@ -33,6 +39,7 @@ router.post('/upload', upload.single('file'), async (req, res) => {
                 emailOptional: row[4] ? row[4] : null,
                 dateFirstContact: row[5] || formattedDate,
                 asetNameForm: row[6] || null,
+                campaignId: parseInt(row[7]) || null,
                 // Mapea los demás campos según sea necesario
             };
 
@@ -133,6 +140,5 @@ router.post('/lead', async (req, res) => {
         res.status(500).send('Error interno del servidor');
     }
 });
-
 
 export default router;
