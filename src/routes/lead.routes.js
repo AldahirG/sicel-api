@@ -1,12 +1,12 @@
 import express from 'express';
 import { prisma } from '../db.js';
 import multer from 'multer';
-import fs from 'fs';
 import csvParser from 'csv-parser';
+import path from 'path';
 
-const leads = [];
 const router = express.Router();
-const upload = multer({ dest: 'uploads/' });
+const storage = multer.memoryStorage(); // Almacenar en memoria en lugar de en el disco
+const upload = multer({ storage: storage }); // Usar el storage personalizado
 
 router.post('/upload', upload.single('file'), async (req, res) => {
     try {
@@ -16,62 +16,44 @@ router.post('/upload', upload.single('file'), async (req, res) => {
             return res.status(400).json({ success: false, message: 'No se ha proporcionado ningún archivo.' });
         }
 
-        const leads = [];
+        // Validar la extensión del archivo
+        const allowedExtensions = ['.csv'];
+        const fileExtension = path.extname(file.originalname).toLowerCase();
+        if (!allowedExtensions.includes(fileExtension)) {
+            return res.status(400).json({ success: false, message: 'Tipo de archivo no permitido. Solo se permiten archivos .csv.' });
+        }
 
-        fs.createReadStream(file.path)
-            .pipe(csvParser())
-            .on('data', (row) => {
-                leads.push(row);
-            })
-            .on('end', async () => {
-                console.log('Archivo CSV procesado:', leads);
+        const fileData = file.buffer.toString();
+        const rows = fileData.trim().split('\n');
 
-                for (const lead of leads) {
-                    try {
-                        await prisma.lead.create({
-                            data: {
-                                // Mapea los campos del lead según tu esquema de base de datos
-                                // lead.name, lead.email, etc.
-                                // Por ejemplo:
-                                name: lead.name || null,
-                                email: lead.email || null,
-                                tel: lead.tel || null,
-                                telOptional: lead.telOptional || null,
-                                email : lead.email || null,
-                                emailOptional: lead.emailOptional || null,
-                                genre: lead.genre || null,
-                                dateFirstContact: lead.dateFirstContact || null,
-                                dateBirth: lead.dateBirth || null,
-                                formerSchool: lead.formerSchool || null,
-                                country: lead.country || null,
-                                state: lead.state || null,
-                                city: lead.city || null,
-                                asetNameForm: lead.asetNameForm || null,
-                                isOrganic: lead.isOrganic || null,
-                                referenceType: lead.referenceType || null,
-                                referenceName: lead.referenceName || null,
-                                enrollmentDate: lead.enrollmentDate || null,
-                                scholarship: lead.scholarship || null,
-                                enrollmentStatus: lead.enrollmentStatus || null,
-                                admissionSemester: lead.admissionSemester || null,
-                                campaignId: lead.campaignId || 1,
-                                followId: lead.followId || 1,
-                                gradeId: lead.gradeId || 1,
-                                carreerId: lead.carreerId || 1,
-                                promoterId: lead.promoterId || 1,
-                                
-                                // Ajusta los demás campos según tu esquema
-                            }
-                        });
-                    } catch (error) {
-                        console.error('Error al insertar el lead en la base de datos:', error);
-                    }
-                }
+        const currentDate = new Date();
+        const formattedDate = currentDate.toISOString();
 
-                console.log('Lead creado:', newLead);
-                // Lógica para insertar los leads en la base de datos aquí
-                res.status(200).send('Archivo recibido y procesado exitosamente');
-            });
+        for (let i = 1; i < rows.length; i++) { // Comenzamos desde el índice 1 para omitir la primera fila
+            const row = rows[i].split(',');
+            const lead = {
+                name: row[0] || 'Sin Nombre',
+                tel: row[1] || null,
+                email: row[2] || null,
+                telOptional: row[3] ? row[3] : null,
+                emailOptional: row[4] ? row[4] : null,
+                dateFirstContact: row[5] || formattedDate,
+                asetNameForm: row[6] || null,
+                campaignId: parseInt(row[7]) || null,
+                userId: 1,
+                // Mapea los demás campos según sea necesario
+            };
+
+            try {
+                await prisma.lead.create({
+                    data: lead
+                });
+            } catch (error) {
+                console.error('Error al insertar el lead en la base de datos:', error);
+            }
+        }
+
+        res.status(200).send('Archivo recibido y procesado exitosamente');
     } catch (error) {
         console.error('Error al procesar el archivo:', error);
         res.status(500).send('Error interno del servidor');
