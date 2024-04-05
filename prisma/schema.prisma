@@ -76,27 +76,30 @@ model FollowUp {
 }
 
 model Lead {
-  id                Int     @id @default(autoincrement())
-  name              String  @db.VarChar(150)
-  tel               String  @db.VarChar(10)
-  telOptional       String? @db.VarChar(10)
-  email             String  @unique @db.VarChar(80)
-  emailOptional     String? @unique @db.VarChar(80)
-  genre             String  @db.VarChar(50)
-  dateFirstContact  String? @db.VarChar(10) // Fecha de primer contacto
-  dateBirth         String  @db.VarChar(10) // Fecha de nacimiento
-  formerSchool      String  @db.VarChar(100) // Escuela de procedencia
-  country           String  @db.VarChar(60)
-  state             String  @db.VarChar(60)
-  city              String  @db.VarChar(60)
-  asetNameForm      String  @db.VarChar(150)
-  isOrganic         String  @db.VarChar(10)
-  referenceType     String  @db.VarChar(50) // Tipo de referido
-  referenceName     String  @db.VarChar(150) // Nombre de referido
-  enrollmentDate    String  @db.VarChar(10) // Fecha de inscripcion
-  scholarship       String  @db.VarChar(60) // Beca
-  enrollmentStatus  String  @db.VarChar(10) // Estatus de inscripcion
-  admissionSemester String  @db.VarChar(20) // Semestre de ingreso
+  id                Int      @id @default(autoincrement())
+  name              String   @db.VarChar(150)
+  tel               String   @unique @db.VarChar(10)
+  telOptional       String?  @db.VarChar(10)
+  email             String   @unique @db.VarChar(80)
+  emailOptional     String?  @db.VarChar(80)
+  genre             String   @db.VarChar(50)
+  dateFirstContact  String?  @db.VarChar(10) // Fecha de primer contacto
+  dateBirth         String   @db.VarChar(10) // Fecha de nacimiento
+  formerSchool      String   @db.VarChar(100) // Escuela de procedencia
+  type_school       String   @db.VarChar(100) // Tipo de escuela
+  country           String   @db.VarChar(60)
+  state             String   @db.VarChar(60)
+  city              String   @db.VarChar(60)
+  asetNameForm      String   @db.VarChar(150)
+  isOrganic         String   @db.VarChar(10)
+  referenceType     String   @db.VarChar(50) // Tipo de referido
+  referenceName     String   @db.VarChar(150) // Nombre de referido
+  enrollmentDate    String   @db.VarChar(10) // Fecha de inscripcion
+  scholarship       String   @db.VarChar(60) // Beca
+  enrollmentStatus  String   @db.VarChar(10) // Estatus de inscripcion
+  admissionSemester String   @db.VarChar(20) // Semestre de ingreso
+  school_year       String   @db.VarChar(6) //Ciclo escolar
+  created_at        DateTime @default(now())
 
   // Id de campaña
   campaign   Campaign @relation(fields: [campaignId], references: [id])
