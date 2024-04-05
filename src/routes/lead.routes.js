@@ -40,7 +40,7 @@ router.post('/upload', upload.single('file'), async (req, res) => {
                 dateFirstContact: row[5] || formattedDate,
                 asetNameForm: row[6] || null,
                 campaignId: parseInt(row[7]) || null,
-                userId: 1,
+                userId: null,
                 // Mapea los demás campos según sea necesario
             };
 
