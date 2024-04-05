@@ -106,7 +106,8 @@ router.post('/lead', async (req, res) => {
         // Crear un nuevo lead si no existe un lead con los datos proporcionados
         const newLead = await prisma.lead.create({
             data: {
-                ...leadData
+                ...leadData,
+                created_at: new Date().toISOString() // Genera una fecha actual en formato ISO-8601
             }
         });
 
