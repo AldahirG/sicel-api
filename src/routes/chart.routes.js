@@ -6,7 +6,7 @@ const router = express.Router();
 // Consultar total por status
 router.get('/total-status', async (req, res) => {
     try {
-        // Lógica para obtener los datos de la gráfica
+        // Consulta para contar los leads agrupados por estado de inscripción
         const totalPorStatus = await prisma.lead.groupBy({
             by: ['enrollmentStatus'],
             _count: {
