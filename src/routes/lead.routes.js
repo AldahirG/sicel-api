@@ -3,10 +3,11 @@ import { prisma } from '../db.js';
 import multer from 'multer';
 import csvParser from 'csv-parser';
 import path from 'path';
+import { create } from 'domain';
 
 const router = express.Router();
-const storage = multer.memoryStorage(); // Almacenar en memoria en lugar de en el disco
-const upload = multer({ storage: storage }); // Usar el storage personalizado
+const storage = multer.memoryStorage();
+const upload = multer({ storage });
 
 router.post('/upload', upload.single('file'), async (req, res) => {
     try {
@@ -16,9 +17,9 @@ router.post('/upload', upload.single('file'), async (req, res) => {
             return res.status(400).json({ success: false, message: 'No se ha proporcionado ningún archivo.' });
         }
 
-        // Validar la extensión del archivo
         const allowedExtensions = ['.csv'];
         const fileExtension = path.extname(file.originalname).toLowerCase();
+
         if (!allowedExtensions.includes(fileExtension)) {
             return res.status(400).json({ success: false, message: 'Tipo de archivo no permitido. Solo se permiten archivos .csv.' });
         }
@@ -26,28 +27,24 @@ router.post('/upload', upload.single('file'), async (req, res) => {
         const fileData = file.buffer.toString();
         const rows = fileData.trim().split('\n');
 
-        const currentDate = new Date();
-        const formattedDate = currentDate.toISOString();
+        const currentDate = new Date().toISOString();
 
-        for (let i = 1; i < rows.length; i++) { // Comenzamos desde el índice 1 para omitir la primera fila
+        for (let i = 1; i < rows.length; i++) { // Se comienza desde el índice 0
             const row = rows[i].split(',');
             const lead = {
                 name: row[0] || 'Sin Nombre',
                 tel: row[1] || null,
-                email: row[2] || null,
-                telOptional: row[3] ? row[3] : null,
-                emailOptional: row[4] ? row[4] : null,
-                dateFirstContact: row[5] || formattedDate,
-                asetNameForm: row[6] || null,
-                campaignId: parseInt(row[7]) || null,
-                userId: null,
-                // Mapea los demás campos según sea necesario
+                telOptional: row[2] || null,
+                email: row[3] || null,
+                emailOptional: row[4] || null,
+                asetNameForm: row[5] || null,
+                campaignId: parseInt(row[6]) || null,
+                userId: 1,
+                created_at: i === 1 ? currentDate : (row[7] || currentDate), // Se asigna la fecha actual solo al primer dato
             };
 
             try {
-                await prisma.lead.create({
-                    data: lead
-                });
+                await prisma.lead.create({ data: lead });
             } catch (error) {
                 console.error('Error al insertar el lead en la base de datos:', error);
             }
@@ -58,22 +55,6 @@ router.post('/upload', upload.single('file'), async (req, res) => {
         console.error('Error al procesar el archivo:', error);
         res.status(500).send('Error interno del servidor');
     }
-});
-
-// Manejo de errores de Multer
-router.use((err, req, res, next) => {
-    if (err instanceof multer.MulterError) {
-        console.error('Error de carga del archivo:', err);
-        res.status(500).json({ success: false, message: 'Error en la carga del archivo.' });
-    } else {
-        next(err);
-    }
-});
-
-// Manejo de errores generales
-router.use((err, req, res, next) => {
-    console.error('Error inesperado:', err);
-    res.status(500).json({ success: false, message: 'Error interno del servidor.' });
 });
 
 // Consultar todos los PSeguimientos
