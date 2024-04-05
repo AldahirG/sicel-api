@@ -82,25 +82,25 @@ router.post('/lead', async (req, res) => {
         const leadData = req.body;
 
         // Verificar si ya existe un lead con el mismo email
-        const existingEmailLead = await prisma.lead.findFirst({
+        const existingEmail = await prisma.lead.findFirst({
             where: {
                 email: leadData.email
             }
         });
 
-        if (existingEmailLead) {
+        if (existingEmail) {
             return res.status(400).json({ errorEmail: 'Ya existe un lead con este email.' });
         }
 
-        // Verificar si ya existe un lead con el mismo email opcional
-        const existingOptionalEmailLead = await prisma.lead.findFirst({
+        // Verificar si ya existe un lead con el mismo número de teléfono
+        const existingTel = await prisma.lead.findFirst({
             where: {
-                emailOptional: leadData.emailOptional
+                tel: leadData.tel
             }
         });
 
-        if (existingOptionalEmailLead) {
-            return res.status(400).json({ errorEmailOptional: 'Ya existe un lead con este email opcional.' });
+        if (existingTel) {
+            return res.status(400).json({ errorTel: 'Ya existe un lead con este número de teléfono.' });
         }
 
         // Crear un nuevo lead si no existe un lead con los datos proporcionados
@@ -163,6 +163,23 @@ router.put('/lead/:id', async (req, res) => {
 
         if (!existingLead) {
             return res.status(404).json({ mensaje: 'Lead no encontrado.' });
+        }
+
+        // Verificar si el correo o teléfono ya están siendo utilizados por otro lead
+        const existingLeadWithEmail = await prisma.lead.findFirst({
+            where: {
+                OR: [
+                    { email: leadData.email },
+                    { tel: leadData.tel }
+                ],
+                NOT: {
+                    id: parseInt(id)
+                }
+            }
+        });
+
+        if (existingLeadWithEmail) {
+            return res.status(400).json({ errorMessage: 'El correo o teléfono ya están siendo utilizados.' });
         }
 
         // Actualizar el lead con los datos proporcionados
