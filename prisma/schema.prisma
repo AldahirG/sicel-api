@@ -118,6 +118,6 @@ model Lead {
   carreerId Int?
 
   // Id de promotor
-  user   User @relation(fields: [userId], references: [id])
-  userId Int
+  user   User? @relation(fields: [userId], references: [id])
+  userId Int?
 }
