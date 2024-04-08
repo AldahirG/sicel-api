@@ -253,4 +253,29 @@ router.post("/lead/upload", upload.single("file"), async (req, res) => {
   }
 });
 
+// lead por promoter id
+router.get("/lead/promoter/:id", async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    const leads = await prisma.lead.findMany({
+      where: {
+        userId: parseInt(id),
+      },
+      include: {
+        campaign: true,
+        followUp: true,
+        grade: true,
+        carreer: true,
+        user: true,
+      },
+    });
+
+    res.status(200).json(leads);
+  } catch (error) {
+    console.error("Error al obtener leads por promoter id:", error);
+    res.status(500).send("Error interno del servidor");
+  }
+});
+
 export default router;
