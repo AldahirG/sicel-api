@@ -1,205 +1,256 @@
-import express from 'express';
-import { prisma } from '../db.js';
-import multer from 'multer';
-import csvParser from 'csv-parser';
-import path from 'path';
+import express from "express";
+import { prisma } from "../db.js";
+import multer from "multer";
 
 const router = express.Router();
-const storage = multer.memoryStorage(); // Almacenar en memoria en lugar de en el disco
-const upload = multer({ storage: storage }); // Usar el storage personalizado
-
-router.post('/upload', upload.single('file'), async (req, res) => {
-    try {
-        const file = req.file;
-
-        if (!file) {
-            return res.status(400).json({ success: false, message: 'No se ha proporcionado ningún archivo.' });
-        }
-
-        // Validar la extensión del archivo
-        const allowedExtensions = ['.csv'];
-        const fileExtension = path.extname(file.originalname).toLowerCase();
-        if (!allowedExtensions.includes(fileExtension)) {
-            return res.status(400).json({ success: false, message: 'Tipo de archivo no permitido. Solo se permiten archivos .csv.' });
-        }
-
-        const fileData = file.buffer.toString();
-        const rows = fileData.trim().split('\n');
-
-        const currentDate = new Date();
-        const formattedDate = currentDate.toISOString();
-
-        for (let i = 1; i < rows.length; i++) { // Comenzamos desde el índice 1 para omitir la primera fila
-            const row = rows[i].split(',');
-            const lead = {
-                name: row[0] || 'Sin Nombre',
-                tel: row[1] || null,
-                email: row[2] || null,
-                telOptional: row[3] ? row[3] : null,
-                emailOptional: row[4] ? row[4] : null,
-                dateFirstContact: row[5] || formattedDate,
-                asetNameForm: row[6] || null,
-                campaignId: parseInt(row[7]) || null,
-                userId: 1,
-                // Mapea los demás campos según sea necesario
-            };
-
-            try {
-                await prisma.lead.create({
-                    data: lead
-                });
-            } catch (error) {
-                console.error('Error al insertar el lead en la base de datos:', error);
-            }
-        }
-
-        res.status(200).send('Archivo recibido y procesado exitosamente');
-    } catch (error) {
-        console.error('Error al procesar el archivo:', error);
-        res.status(500).send('Error interno del servidor');
-    }
-});
-
-// Manejo de errores de Multer
-router.use((err, req, res, next) => {
-    if (err instanceof multer.MulterError) {
-        console.error('Error de carga del archivo:', err);
-        res.status(500).json({ success: false, message: 'Error en la carga del archivo.' });
-    } else {
-        next(err);
-    }
-});
-
-// Manejo de errores generales
-router.use((err, req, res, next) => {
-    console.error('Error inesperado:', err);
-    res.status(500).json({ success: false, message: 'Error interno del servidor.' });
-});
+const storage = multer.memoryStorage();
+const upload = multer({ storage });
 
 // Consultar todos los PSeguimientos
-router.get('/leads', async (req, res) => {
-    try {
-        const leads = await prisma.lead.findMany({
-            include: {
-                campaign: true,
-                followUp: true,
-                grade: true,
-                carreer: true,
-                user: true,
-            }
-        });
-        res.status(200).json(leads);
-    } catch (error) {
-        console.error('Error al encontrar los leads:', error);
-        res.status(500).send('Error interno del servidor');
-    }
+router.get("/leads", async (req, res) => {
+  try {
+    const leads = await prisma.lead.findMany({
+      include: {
+        campaign: true,
+        followUp: true,
+        grade: true,
+        carreer: true,
+        user: true,
+      },
+    });
+    res.status(200).json(leads);
+  } catch (error) {
+    console.error("Error al encontrar los leads:", error);
+    res.status(500).send("Error interno del servidor");
+  }
 });
 
 // Crear un lead
-router.post('/lead', async (req, res) => {
-    try {
-        const leadData = req.body;
+router.post("/lead", async (req, res) => {
+  try {
+    const leadData = req.body;
 
-        // Verificar si ya existe un lead con el mismo email
-        const existingEmailLead = await prisma.lead.findFirst({
-            where: {
-                email: leadData.email
-            }
-        });
+    // Verificar si ya existe un lead con el mismo email
+    const existingEmail = await prisma.lead.findFirst({
+      where: {
+        email: leadData.email,
+      },
+    });
 
-        if (existingEmailLead) {
-            return res.status(400).json({ errorEmail: 'Ya existe un lead con este email.' });
-        }
-
-        // Verificar si ya existe un lead con el mismo email opcional
-        const existingOptionalEmailLead = await prisma.lead.findFirst({
-            where: {
-                emailOptional: leadData.emailOptional
-            }
-        });
-
-        if (existingOptionalEmailLead) {
-            return res.status(400).json({ errorEmailOptional: 'Ya existe un lead con este email opcional.' });
-        }
-
-        // Crear un nuevo lead si no existe un lead con los datos proporcionados
-        const newLead = await prisma.lead.create({
-            data: {
-                ...leadData
-            }
-        });
-
-        res.status(201).json(newLead);
-
-    } catch (error) {
-        console.error('Error al crear un Lead: ', error);
-        res.status(500).send('Error interno del servidor');
+    if (existingEmail) {
+      return res
+        .status(400)
+        .json({ errorEmail: "Ya existe un lead con este email." });
     }
+
+    // Verificar si ya existe un lead con el mismo número de teléfono
+    const existingTel = await prisma.lead.findFirst({
+      where: {
+        tel: leadData.tel,
+      },
+    });
+
+    if (existingTel) {
+      return res
+        .status(400)
+        .json({ errorTel: "Ya existe un lead con este número de teléfono." });
+    }
+
+    // Formatear la fecha actual en formato 'YYYY-MM-DD'
+    const currentDate = new Date();
+    const year = currentDate.getFullYear();
+    const month = String(currentDate.getMonth() + 1).padStart(2, "0");
+    const day = String(currentDate.getDate()).padStart(2, "0");
+    const formattedDate = `${year}-${month}-${day}`;
+
+    // Crear un nuevo lead si no existe un lead con los datos proporcionados
+    const newLead = await prisma.lead.create({
+      data: {
+        ...leadData,
+        created_at: formattedDate,
+      },
+    });
+
+    res.status(201).json(newLead);
+  } catch (error) {
+    console.error("Error al crear un Lead: ", error);
+    res.status(500).send("Error interno del servidor");
+  }
 });
 
 // Consultar un lead por su ID
-router.get('/lead/:id', async (req, res) => {
+router.get("/lead/:id", async (req, res) => {
+  const { id } = req.params;
 
-    const { id } = req.params;
+  try {
+    const lead = await prisma.lead.findUnique({
+      where: {
+        id: parseInt(id),
+      },
+      include: {
+        campaign: true,
+        followUp: true,
+        grade: true,
+        carreer: true,
+        user: true,
+      },
+    });
 
-    try {
-        const lead = await prisma.lead.findUnique({
-            where: {
-                id: parseInt(id)
-            },
-            include: {
-                campaign: true,
-                followUp: true,
-                grade: true,
-                carreer: true,
-                user: true,
-            }
-        });
-
-        if (lead) {
-            res.status(200).json(lead);
-        } else {
-            res.status(404).json({ error: 'lead no encontrado.' });
-        }
-    } catch (error) {
-        console.error('Error al obtener lead: ', error);
-        res.status(500).send('Error interno del servidor');
+    if (lead) {
+      res.status(200).json(lead);
+    } else {
+      res.status(404).json({ error: "lead no encontrado." });
     }
+  } catch (error) {
+    console.error("Error al obtener lead: ", error);
+    res.status(500).send("Error interno del servidor");
+  }
 });
 
 // Actualizar un lead
-router.put('/lead/:id', async (req, res) => {
-    const { id } = req.params;
-    const leadData = req.body;
+router.put("/lead/:id", async (req, res) => {
+  const leadId = parseInt(req.params.id);
+  const leadUpdates = req.body;
 
-    try {
-        // Verificar si el lead existe
-        const existingLead = await prisma.lead.findUnique({
-            where: {
-                id: parseInt(id)
-            }
-        });
+  try {
+    // Busca el lead por su ID
+    const lead = await prisma.lead.findUnique({
+      where: {
+        id: leadId,
+      },
+    });
 
-        if (!existingLead) {
-            return res.status(404).json({ mensaje: 'Lead no encontrado.' });
-        }
-
-        // Actualizar el lead con los datos proporcionados
-        const updatedLead = await prisma.lead.update({
-            where: {
-                id: parseInt(id)
-            },
-            data: {
-                ...leadData
-            }
-        });
-
-        res.status(200).json(updatedLead);
-
-    } catch (error) {
-        console.error('Error al actualizar un Lead: ', error);
-        res.status(500).send('Error interno del servidor');
+    // Si no se encuentra el lead, devuelve un error
+    if (!lead) {
+      return res.status(404).json({ error: "Lead not found" });
     }
+
+    // Actualiza el lead con los datos proporcionados en el cuerpo de la solicitud
+    const updatedLead = await prisma.lead.update({
+      where: {
+        id: leadId,
+      },
+      data: leadUpdates,
+    });
+
+    // Devuelve el lead actualizado
+    res.json(updatedLead);
+  } catch (error) {
+    // Manejo de errores
+    console.error("Error updating lead:", error);
+    res.status(500).json({ error: "Error updating lead" });
+  }
+});
+
+// Carga de archivos csv
+router.post("/lead/upload", upload.single("file"), async (req, res) => {
+  try {
+    // Verificar si se subió un archivo
+    if (!req.file) {
+      return res
+        .status(400)
+        .json({ error: "No se ha cargado ningún archivo." });
+    }
+
+    const allowedExtensions = ["csv"];
+    const fileExtension = req.file.originalname.split(".").pop().toLowerCase();
+
+    if (!allowedExtensions.includes(fileExtension)) {
+      return res
+        .status(400)
+        .json({ error: "El archivo no tiene una extensión permitida." });
+    }
+
+    // Leer el archivo CSV subido
+    const results = [];
+    const csvData = req.file.buffer.toString();
+    const lines = csvData.split("\n");
+    const headers = lines[0].split(",");
+
+    for (let i = 1; i < lines.length; i++) {
+      const line = lines[i].split(",");
+      const entry = {};
+      for (let j = 0; j < headers.length; j++) {
+        entry[headers[j].trim()] = line[j].trim();
+      }
+      results.push(entry);
+    }
+
+    // Procesar los datos y realizar la inserción en la base de datos
+    for (const result of results) {
+      const existingLead = await prisma.lead.findFirst({
+        where: {
+          OR: [{ tel: result.tel }, { email: result.email }],
+        },
+      });
+
+      if (existingLead) {
+        return res.status(400).json({
+          error: `El teléfono "${result.tel}" y/o correo electrónico "${result.email}" ya están registrados.`,
+        });
+      }
+
+      const leadData = {
+        name: result.name,
+        tel: result.tel,
+        telOptional: result.telOptional || null,
+        email: result.email,
+        emailOptional: result.emailOptional || null,
+        genre: result.genre || null,
+        dateFirstContact: result.dateFirstContact || null,
+        dateBirth: result.dateBirth || null,
+        formerSchool: result.formerSchool || null,
+        typeSchool: result.typeSchool || null,
+        country: result.country || null,
+        state: result.state || null,
+        city: result.city || null,
+        asetNameForm: result.asetNameForm || null,
+        isOrganic: result.isOrganic || null,
+        referenceType: result.referenceType || null,
+        referenceName: result.referenceName || null,
+        enrollmentDate: result.enrollmentDate || null,
+        scholarship: result.scholarship || null,
+        enrollmentStatus: result.enrollmentStatus || null,
+        admissionSemester: result.admissionSemester || null,
+        schoolYear: result.schoolYear || null,
+        created_at: result.created_at,
+        campaign: {},
+        followUp: {},
+        grade: {},
+        carreer: {},
+        user: {},
+      };
+
+      if (result.campaignId) {
+        leadData.campaign.connect = { id: parseInt(result.campaignId) };
+      }
+
+      if (result.followId) {
+        leadData.followUp.connect = { id: parseInt(result.followId) };
+      }
+
+      if (result.gradeId) {
+        leadData.grade.connect = { id: parseInt(result.gradeId) };
+      }
+
+      if (result.carreerId) {
+        leadData.carreer.connect = { id: parseInt(result.carreerId) };
+      }
+
+      if (result.userId) {
+        leadData.user.connect = { id: parseInt(result.userId) };
+      }
+
+      await prisma.lead.create({
+        data: leadData,
+      });
+    }
+
+    res.status(201).json({ message: "Datos insertados correctamente" });
+  } catch (error) {
+    console.error("Error al procesar el archivo CSV:", error);
+    res.status(500).json({ error: "Error interno del servidor" });
+  }
 });
 
 export default router;
