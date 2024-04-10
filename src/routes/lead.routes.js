@@ -68,6 +68,7 @@ router.post("/lead", async (req, res) => {
       data: {
         ...leadData,
         created_at: formattedDate,
+        updated_at: formattedDate,
       },
     });
 
@@ -123,6 +124,12 @@ router.put("/lead/:id", async (req, res) => {
     // Si no se encuentra el lead, devuelve un error
     if (!lead) {
       return res.status(404).json({ error: "Lead not found" });
+    }
+
+    // Verifica si dateFirstContact es nulo
+    if (lead.dateFirstContact === null) {
+      // Establece dateFirstContact en la fecha actual
+      leadUpdates.dateFirstContact = new Date();
     }
 
     // Actualiza el lead con los datos proporcionados en el cuerpo de la solicitud
@@ -214,6 +221,7 @@ router.post("/lead/upload", upload.single("file"), async (req, res) => {
         admissionSemester: result.admissionSemester || null,
         schoolYear: result.schoolYear || null,
         created_at: result.created_at,
+        updated_at: result.created_at,
         campaign: {},
         followUp: {},
         grade: {},
