@@ -17,9 +17,8 @@ model User {
   accessToken String?  @db.VarChar(255)
   created_at  DateTime @default(now())
 
-  roles       UsersOnRoles[]
-  leads       Lead[]
-  assignments Assignment[]
+  roles UsersOnRoles[]
+  leads Lead[]
 }
 
 model Role {
@@ -123,17 +122,11 @@ model Lead {
   // Id de promotor
   user   User? @relation(fields: [userId], references: [id])
   userId Int?
-
-  assignments Assignment[]
 }
 
 model Assignment {
   id         Int      @id @default(autoincrement())
-  lead       Lead     @relation(fields: [leadId], references: [id])
-  leadId     Int
-  user       User     @relation(fields: [userId], references: [id])
-  userId     Int
+  userId     Int      @db.Int
+  leadId     Int      @db.Int
   created_at DateTime @default(now())
-
-  @@unique([leadId, userId])
 }
