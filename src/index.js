@@ -2,6 +2,7 @@ import express from 'express';
 import cors from 'cors';
 
 // Importar rutas
+import assignmentRoutes from './routes/assignment.routes.js';
 import authRoutes from './routes/auth.routes.js';
 import campaignRoutes from './routes/campaign.routes.js';
 import carreerRoutes from './routes/carreer.routes.js';
@@ -37,6 +38,7 @@ app.use('/api', leadRoutes);
 app.use('/api', promoterRoutes);
 app.use('/api', roleRoutes);
 app.use('/api', userRoutes);
+app.use('/api', assignmentRoutes);
 
 app.listen(3000);
 console.log("Servidor corriendo en puerto: ", 3000);
