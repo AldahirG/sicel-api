@@ -5,15 +5,14 @@ async function seed() {
   try {
     const userData = [
       {
+        name: 'Ximena Martínez',
         email: 'admin@example.com',
+        tel: '7333398473',
         password: 'password',
-        roleId: 1,
       },
     ];
 
-    for (const user of userData) {
-      const { email, password, roleId } = user;
-
+    for (const { name, email, tel, password } of userData) {
       // Verificar si el email ya está en uso
       const existingUserEmail = await prisma.user.findUnique({
         where: { email },
@@ -25,16 +24,17 @@ async function seed() {
         // Crear el nuevo usuario
         await prisma.user.create({
           data: {
+            name,
             email,
+            tel,
             password: hashedPassword,
             roles: {
-              create: {
-                role: {
-                  connect: {
-                    id: roleId,
-                  },
-                },
-              },
+              createMany: {
+                data: [
+                  { roleId: 1 },
+                  { roleId: 2 }
+                ]
+              }
             },
           },
         });
@@ -43,7 +43,7 @@ async function seed() {
 
     console.log('Seeding completed successfully');
   } catch (error) {
-    console.error('Error durante el seeding de usuarios:', error);
+    console.error('Error during user seeding:', error);
   } finally {
     // Cerrar la conexión a la base de datos
     await prisma.$disconnect();
