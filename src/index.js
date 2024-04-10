@@ -12,6 +12,7 @@ import leadRoutes from './routes/lead.routes.js';
 import promoterRoutes from './routes/promoter.route.js';
 import roleRoutes from './routes/role.routes.js';
 import userRoutes from './routes/user.routes.js';
+import chartRoutes from './routes/chart.routes.js';
 
 const app = express();
 
@@ -38,6 +39,7 @@ app.use('/api', leadRoutes);
 app.use('/api', promoterRoutes);
 app.use('/api', roleRoutes);
 app.use('/api', userRoutes);
+app.use('/api', chartRoutes);
 app.use('/api', assignmentRoutes);
 
 app.listen(3000);
