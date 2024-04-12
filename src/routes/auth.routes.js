@@ -133,4 +133,32 @@ router.get('/auth/redirect/role', async (req, res) => {
     }
 });
 
+// Obtener id de usuario por token de acceso
+router.get('/auth/user', async (req, res) => {
+    const accessToken = req.headers.authorization?.split(' ')[1]; // Obtener el token de acceso de las cabeceras de autorización
+
+    if (!accessToken) {
+        return res.status(401).json({ mensaje: 'No se proporcionó un token de acceso' });
+    }
+
+    try {
+        // Buscar el usuario en la base de datos por el token de acceso
+        const user = await prisma.user.findFirst({
+            where: {
+                accessToken: accessToken,
+            },
+        });
+
+        if (!user) {
+            return res.status(404).json({ mensaje: 'Usuario no encontrado' });
+        }
+
+        res.status(200).json({ id: user.id });
+
+    } catch (error) {
+        console.error('Error al obtener el ID del usuario:', error);
+        res.status(500).json({ mensaje: 'Error al obtener el ID del usuario' });
+    }
+});
+
 export default router;
