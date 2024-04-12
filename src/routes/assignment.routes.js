@@ -16,6 +16,11 @@ router.post('/lead/assign', async (req, res) => {
       return res.status(404).json({ message: 'Usuario o lead no encontrado' });
     }
 
+    // Verificar si el lead ya tiene un userId asignado
+    if (lead.userId) {
+      return res.status(400).json({ message: 'El lead ya tiene un promotor asignado' });
+    }
+
     // Crear la asignación en UsersOnLeads
     await prisma.assignment.create({
       data: {
@@ -33,6 +38,51 @@ router.post('/lead/assign', async (req, res) => {
     res.status(200).json({ message: 'Promotor asignado al lead correctamente' });
   } catch (error) {
     res.status(500).json({ message: 'Error al asignar usuario al lead', error: error.message });
+  }
+});
+
+// Asignación múltiple
+router.post('/leads/assign', async (req, res) => {
+  try {
+    const { userId, leadIds } = req.body;
+
+    // Verificar si el usuario existe
+    const user = await prisma.user.findUnique({ where: { id: userId } });
+    if (!user) {
+      return res.status(404).json({ message: 'Usuario no encontrado' });
+    }
+
+    // Verificar si los leads existen
+    const leads = await prisma.lead.findMany({ where: { id: { in: leadIds } } });
+    if (leads.length !== leadIds.length) {
+      return res.status(404).json({ message: 'Algunos leads no encontrados' });
+    }
+
+    // Crear las asignaciones en UsersOnLeads
+    const assignments = leadIds.map((leadId) => {
+      return prisma.assignment.create({
+        data: {
+          userId: userId,
+          leadId: leadId
+        },
+      });
+    });
+    
+    await Promise.all(assignments);
+
+    // Actualizar el campo userId en los leads
+    const updateLeads = leadIds.map((leadId) => {
+      return prisma.lead.update({
+        where: { id: leadId },
+        data: { userId: userId },
+      });
+    });
+
+    await Promise.all(updateLeads);
+
+    res.status(200).json({ message: 'Promotor asignado a los leads correctamente' });
+  } catch (error) {
+    res.status(500).json({ message: 'Error al asignar usuario a los leads', error: error.message });
   }
 });
 
@@ -93,6 +143,11 @@ router.put('/lead/reassign/:id', async (req, res) => {
 
     if (!lead) {
       return res.status(404).json({ message: 'Lead no encontrado' });
+    }
+
+    // Verificar si el userId es diferente al usuario actual
+    if (lead.userId === userId) {
+      return res.status(400).json({ message: 'No puedes reasignar al mismo promotor' });
     }
 
     // Actualizar el campo userId en el lead
