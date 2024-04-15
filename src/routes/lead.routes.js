@@ -10,6 +10,11 @@ const upload = multer({ storage });
 router.get("/leads", async (req, res) => {
   try {
     const leads = await prisma.lead.findMany({
+      skip: +req.query.skip,
+      take: +req.query.take,
+      orderBy: {
+          id: 'desc'
+      },
       include: {
         campaign: true,
         followUp: true,
@@ -189,17 +194,6 @@ router.post("/lead/upload", upload.single("file"), async (req, res) => {
 
     // Procesar los datos y realizar la inserción en la base de datos
     for (const result of results) {
-      const existingLead = await prisma.lead.findFirst({
-        where: {
-          OR: [{ tel: result.tel }, { email: result.email }],
-        },
-      });
-
-      if (existingLead) {
-        return res.status(400).json({
-          error: `El teléfono "${result.tel}" y/o correo electrónico "${result.email}" ya están registrados.`,
-        });
-      }
 
       const leadData = {
         name: result.name,
@@ -287,6 +281,29 @@ router.get("/lead/promoter/:id", async (req, res) => {
   } catch (error) {
     console.error("Error al obtener leads por promoter id:", error);
     res.status(500).send("Error interno del servidor");
+  }
+});
+
+// Contador de registros
+router.get('/leads/total', async (req, res) => {
+  try {
+      const total = await prisma.lead.count();
+
+      res.status(200).json(total);
+  } catch (error) {
+      console.error('Error obtener el total de leads:', error);
+      res.status(500).send('Error interno del servidor');
+  }
+});
+
+// Obtener el listado de leads
+router.get('/leads/list', async (req, res) => {
+  try {
+      const leads = await prisma.lead.findMany();
+      res.status(200).json(leads);
+  } catch (error) {
+      console.error('Error al encontrar los leads:', error);
+      res.status(500).send('Error interno del servidor');
   }
 });
 
