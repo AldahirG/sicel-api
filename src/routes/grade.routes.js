@@ -111,33 +111,5 @@ router.put('/grade/:id', async (req, res) => {
     }
 });
 
-// Eliminar una grado escolar
-router.delete('/grade/:id', async (req, res) => {
-    try {
-        const { id } = req.params;
-
-        // Verifica si existe el grado escolar mediante su id    
-        const existingGrade = await prisma.grade.findUnique({
-            where: {
-                id: parseInt(id)
-            }
-        });
-
-        if (existingGrade) {
-            await prisma.grade.delete({
-                where: {
-                    id: parseInt(id)
-                }
-            });
-
-            res.status(200).json({ message: 'Grado escolar eliminado exitosamente.' });
-        } else {
-            return res.status(404).json({ error: 'Grado escolar no encontrado.' });
-        }
-    } catch (error) {
-        console.error('Error al eliminar un grado escolar: ', error);
-        res.status(500).send('Error interno del servidor');
-    }
-});
 
 export default router;
