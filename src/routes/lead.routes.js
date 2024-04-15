@@ -175,10 +175,14 @@ router.post("/lead/upload", upload.single("file"), async (req, res) => {
     const headers = lines[0].split(",");
 
     for (let i = 1; i < lines.length; i++) {
-      const line = lines[i].split(",");
+      const line = lines[i];
+      if (line.trim() === '') {
+        continue; // Ignorar líneas vacías
+      }
+      const entries = line.split(",");
       const entry = {};
       for (let j = 0; j < headers.length; j++) {
-        entry[headers[j].trim()] = line[j].trim();
+        entry[headers[j].trim()] = entries[j].trim();
       }
       results.push(entry);
     }

@@ -78,9 +78,9 @@ model FollowUp {
 model Lead {
   id                Int       @id @default(autoincrement())
   name              String    @db.VarChar(150)
-  tel               String    @unique @db.VarChar(10)
-  telOptional       String?   @db.VarChar(10)
-  email             String    @unique @db.VarChar(80)
+  tel               String    @db.VarChar(25)
+  telOptional       String?   @db.VarChar(25)
+  email             String    @db.VarChar(80)
   emailOptional     String?   @db.VarChar(80)
   genre             String?   @db.VarChar(50)
   dateFirstContact  DateTime? @db.Date // Fecha de primer contacto
@@ -100,8 +100,8 @@ model Lead {
   admissionSemester String?   @db.VarChar(20) // Semestre de ingreso
   schoolYear        String?   @db.VarChar(6) //Ciclo escolar
   status            Boolean   @default(true)
-  created_at        String    @db.VarChar(10) // Fecha de creacion
-  updated_at        String    @db.VarChar(10) // Fecha de actualización
+  created_at        String    @db.VarChar(35) // Fecha de creacion
+  updated_at        String    @db.VarChar(35) // Fecha de actualización
 
   // Id de campaña
   campaign   Campaign @relation(fields: [campaignId], references: [id])
