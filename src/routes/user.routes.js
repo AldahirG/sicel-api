@@ -203,7 +203,7 @@ router.get('/users/list', async (req, res) => {
         const users = await prisma.user.findMany();
         res.status(200).json(users);
     } catch (error) {
-        console.error('Error al encontrar las usuarios:', error);
+        console.error('Error al encontrar los usuarios:', error);
         res.status(500).send('Error interno del servidor');
     }
 });
