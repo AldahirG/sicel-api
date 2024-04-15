@@ -6,7 +6,13 @@ const router = express.Router();
 // Consultar todas las campañas
 router.get('/campaigns', async (req, res) => {
     try {
-        const campaign = await prisma.campaign.findMany();
+        const campaign = await prisma.campaign.findMany({
+            skip: +req.query.skip,
+            take: +req.query.take,
+            orderBy: {
+                id: 'desc'
+            },
+        });
         res.status(200).json(campaign);
     } catch (error) {
         console.error('Error al encontrar las campañas:', error);
@@ -146,6 +152,29 @@ router.delete('/campaign/:id', async(req, res) => {
         }
     } catch (error) {
         console.error('Error al eliminar una campaña: ', error);
+        res.status(500).send('Error interno del servidor');
+    }
+});
+
+// Contador de registros
+router.get('/campaigns/total', async (req, res) => {
+    try {
+        const total = await prisma.campaign.count();
+
+        res.status(200).json(total);
+    } catch (error) {
+        console.error('Error obtener el total de campañas:', error);
+        res.status(500).send('Error interno del servidor');
+    }
+});
+
+// Obtener el listado de campañas
+router.get('/campaigns/list', async (req, res) => {
+    try {
+        const campaigns = await prisma.campaign.findMany();
+        res.status(200).json(campaigns);
+    } catch (error) {
+        console.error('Error al encontrar las campañas:', error);
         res.status(500).send('Error interno del servidor');
     }
 });
