@@ -6,7 +6,13 @@ const router = express.Router();
 // Todos los grados escolares
 router.get('/grades', async (req, res) => {
     try {
-        const grades = await prisma.grade.findMany();
+        const grades = await prisma.grade.findMany({
+            skip: +req.query.skip,
+            take: +req.query.take,
+            orderBy: {
+                id: 'desc'
+            }
+        });
         res.status(200).json(grades);
     } catch (error) {
         console.error('Error al encontrar los grados escolares: ', error);
@@ -111,5 +117,27 @@ router.put('/grade/:id', async (req, res) => {
     }
 });
 
+// Contador de registros
+router.get('/grades/total', async (req, res) => {
+    try {
+        const total = await prisma.grade.count();
+
+        res.status(200).json(total);
+    } catch (error) {
+        console.error('Error obtener el total de grados escolares:', error);
+        res.status(500).send('Error interno del servidor');
+    }
+});
+
+// Obtener el listado de carreras
+router.get('/grades/list', async (req, res) => {
+    try {
+        const grades = await prisma.grade.findMany();
+        res.status(200).json(grades);
+    } catch (error) {
+        console.error('Error al encontrar los grados escolares:', error);
+        res.status(500).send('Error interno del servidor');
+    }
+});
 
 export default router;
