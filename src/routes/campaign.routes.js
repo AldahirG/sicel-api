@@ -127,35 +127,6 @@ router.put('/campaign/:id', async(req, res) => {
     }
 });
 
-// Eliminar una campaña
-router.delete('/campaign/:id', async(req, res) => {
-    try {
-        const { id } = req.params;
-
-        // Verifica si existe la campaña mediante su id    
-        const existingCampaign = await prisma.campaign.findUnique({
-            where: {
-                id: parseInt(id)
-            }
-        });
-
-        if (existingCampaign) {
-            await prisma.campaign.delete({
-                where: {
-                    id: parseInt(id)
-                }
-            });
-
-            res.status(200).json({ message: 'Campaña eliminada exitosamente.' });
-        } else {
-            return res.status(404).json({ error: 'Campaña no encontrada.' });
-        }
-    } catch (error) {
-        console.error('Error al eliminar una campaña: ', error);
-        res.status(500).send('Error interno del servidor');
-    }
-});
-
 // Contador de registros
 router.get('/campaigns/total', async (req, res) => {
     try {

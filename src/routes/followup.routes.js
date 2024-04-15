@@ -117,35 +117,6 @@ router.put('/follow-up/:id', async (req, res) => {
     }
 });
 
-// Eliminar una PSegumiento
-router.delete('/follow-up/:id', async (req, res) => {
-    try {
-        const { id } = req.params;
-
-        // Verifica si existe el PSegumiento mediante su id    
-        const existingFollowUp = await prisma.followUp.findUnique({
-            where: {
-                id: parseInt(id)
-            }
-        });
-
-        if (existingFollowUp) {
-            await prisma.followUp.delete({
-                where: {
-                    id: parseInt(id)
-                }
-            });
-
-            res.status(200).json({ message: 'PSegumiento eliminado exitosamente.' });
-        } else {
-            return res.status(404).json({ error: 'PSegumiento no encontrado.' });
-        }
-    } catch (error) {
-        console.error('Error al eliminar un PSegumiento: ', error);
-        res.status(500).send('Error interno del servidor');
-    }
-});
-
 // Contador de registros
 router.get('/follow-ups/total', async (req, res) => {
     try {
