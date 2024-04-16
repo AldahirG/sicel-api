@@ -8,6 +8,11 @@ const router = Router();
 router.get('/users', async (req, res) => {
     try {
         const users = await prisma.user.findMany({
+            skip: +req.query.skip,
+            take: +req.query.take,
+            orderBy: {
+                id: 'desc'
+            },
             include: {
                 roles: {
                     include: {
@@ -180,34 +185,26 @@ router.put('/user/:id', async (req, res) => {
     }
 });
 
-// Eliminar a un usuario por su id
-router.delete('/user/:id', async (req, res) => {
+// Contador de registros
+router.get('/users/total', async (req, res) => {
     try {
-        const { id } = req.params;
+        const total = await prisma.user.count();
 
-        // Verificar si el usuario existe
-        const existingUser = await prisma.user.findUnique({
-            where: { id: parseInt(id) },
-        });
-
-        // Si el usuario no existe, retornar un mensaje de error
-        if (!existingUser) {
-            return res.status(404).json({ message: 'Usuario no encontrado' });
-        }
-
-        // Eliminar todas las relaciones del usuario en la tabla pivote
-        await prisma.usersOnRoles.deleteMany({
-            where: { userId: parseInt(id) },
-        });
-
-        // Eliminar el usuario
-        await prisma.user.delete({
-            where: { id: parseInt(id) },
-        });
-
-        res.status(200).json({ message: 'Usuario eliminado exitosamente' });
+        res.status(200).json(total);
     } catch (error) {
-        res.status(500).json({ message: 'Error al eliminar el usuario', error });
+        console.error('Error obtener el total de usuarios:', error);
+        res.status(500).send('Error interno del servidor');
+    }
+});
+
+// Obtener el listado de usuarios
+router.get('/users/list', async (req, res) => {
+    try {
+        const users = await prisma.user.findMany();
+        res.status(200).json(users);
+    } catch (error) {
+        console.error('Error al encontrar los usuarios:', error);
+        res.status(500).send('Error interno del servidor');
     }
 });
 
