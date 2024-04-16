@@ -6,7 +6,13 @@ const router = express.Router();
 // Consultar todos los PSeguimientos
 router.get('/follow-ups', async (req, res) => {
     try {
-        const follow_up = await prisma.followUp.findMany();
+        const follow_up = await prisma.followUp.findMany({
+            skip: +req.query.skip,
+            take: +req.query.take,
+            orderBy: {
+                id: 'desc'
+            },
+        });
         res.status(200).json(follow_up);
     } catch (error) {
         console.error('Error al encontrar los PSegumiento:', error);
@@ -111,31 +117,25 @@ router.put('/follow-up/:id', async (req, res) => {
     }
 });
 
-// Eliminar una PSegumiento
-router.delete('/follow-up/:id', async (req, res) => {
+// Contador de registros
+router.get('/follow-ups/total', async (req, res) => {
     try {
-        const { id } = req.params;
+        const total = await prisma.followUp.count();
 
-        // Verifica si existe el PSegumiento mediante su id    
-        const existingFollowUp = await prisma.followUp.findUnique({
-            where: {
-                id: parseInt(id)
-            }
-        });
-
-        if (existingFollowUp) {
-            await prisma.followUp.delete({
-                where: {
-                    id: parseInt(id)
-                }
-            });
-
-            res.status(200).json({ message: 'PSegumiento eliminado exitosamente.' });
-        } else {
-            return res.status(404).json({ error: 'PSegumiento no encontrado.' });
-        }
+        res.status(200).json(total);
     } catch (error) {
-        console.error('Error al eliminar un PSegumiento: ', error);
+        console.error('Error obtener el total de PSeguimientos:', error);
+        res.status(500).send('Error interno del servidor');
+    }
+});
+
+// Obtener el listado de PSeguimientos
+router.get('/follow-ups/list', async (req, res) => {
+    try {
+        const followUps = await prisma.followUp.findMany();
+        res.status(200).json(followUps);
+    } catch (error) {
+        console.error('Error al encontrar los PSeguimientos:', error);
         res.status(500).send('Error interno del servidor');
     }
 });

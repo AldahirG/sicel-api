@@ -10,7 +10,8 @@
     "adminSeeder": "node seeders/AdminSeeder.js",
     "followUpSeeder": "node seeders/FollowUpSeeder.js",
     "gradeSeeder": "node seeders/GradeSeeder.js",
-    "careerSeeder": "node seeders/CareerSeeder.js"
+    "careerSeeder": "node seeders/CareerSeeder.js",
+    "campaignSeeder": "node seeders/CampaignSeeder.js"
   },
   "keywords": [],
   "author": "",

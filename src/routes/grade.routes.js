@@ -6,7 +6,13 @@ const router = express.Router();
 // Todos los grados escolares
 router.get('/grades', async (req, res) => {
     try {
-        const grades = await prisma.grade.findMany();
+        const grades = await prisma.grade.findMany({
+            skip: +req.query.skip,
+            take: +req.query.take,
+            orderBy: {
+                id: 'desc'
+            }
+        });
         res.status(200).json(grades);
     } catch (error) {
         console.error('Error al encontrar los grados escolares: ', error);
@@ -111,31 +117,25 @@ router.put('/grade/:id', async (req, res) => {
     }
 });
 
-// Eliminar una grado escolar
-router.delete('/grade/:id', async (req, res) => {
+// Contador de registros
+router.get('/grades/total', async (req, res) => {
     try {
-        const { id } = req.params;
+        const total = await prisma.grade.count();
 
-        // Verifica si existe el grado escolar mediante su id    
-        const existingGrade = await prisma.grade.findUnique({
-            where: {
-                id: parseInt(id)
-            }
-        });
-
-        if (existingGrade) {
-            await prisma.grade.delete({
-                where: {
-                    id: parseInt(id)
-                }
-            });
-
-            res.status(200).json({ message: 'Grado escolar eliminado exitosamente.' });
-        } else {
-            return res.status(404).json({ error: 'Grado escolar no encontrado.' });
-        }
+        res.status(200).json(total);
     } catch (error) {
-        console.error('Error al eliminar un grado escolar: ', error);
+        console.error('Error obtener el total de grados escolares:', error);
+        res.status(500).send('Error interno del servidor');
+    }
+});
+
+// Obtener el listado de carreras
+router.get('/grades/list', async (req, res) => {
+    try {
+        const grades = await prisma.grade.findMany();
+        res.status(200).json(grades);
+    } catch (error) {
+        console.error('Error al encontrar los grados escolares:', error);
         res.status(500).send('Error interno del servidor');
     }
 });

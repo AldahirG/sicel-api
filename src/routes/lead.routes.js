@@ -10,6 +10,11 @@ const upload = multer({ storage });
 router.get("/leads", async (req, res) => {
   try {
     const leads = await prisma.lead.findMany({
+      skip: +req.query.skip,
+      take: +req.query.take,
+      orderBy: {
+          id: 'desc'
+      },
       include: {
         campaign: true,
         followUp: true,
@@ -68,6 +73,7 @@ router.post("/lead", async (req, res) => {
       data: {
         ...leadData,
         created_at: formattedDate,
+        updated_at: formattedDate,
       },
     });
 
@@ -125,6 +131,12 @@ router.put("/lead/:id", async (req, res) => {
       return res.status(404).json({ error: "Lead not found" });
     }
 
+    // Verifica si dateFirstContact es nulo
+    if (lead.dateFirstContact === null) {
+      // Establece dateFirstContact en la fecha actual
+      leadUpdates.dateFirstContact = new Date();
+    }
+
     // Actualiza el lead con los datos proporcionados en el cuerpo de la solicitud
     const updatedLead = await prisma.lead.update({
       where: {
@@ -168,27 +180,20 @@ router.post("/lead/upload", upload.single("file"), async (req, res) => {
     const headers = lines[0].split(",");
 
     for (let i = 1; i < lines.length; i++) {
-      const line = lines[i].split(",");
+      const line = lines[i];
+      if (line.trim() === '') {
+        continue; // Ignorar líneas vacías
+      }
+      const entries = line.split(",");
       const entry = {};
       for (let j = 0; j < headers.length; j++) {
-        entry[headers[j].trim()] = line[j].trim();
+        entry[headers[j].trim()] = entries[j].trim();
       }
       results.push(entry);
     }
 
     // Procesar los datos y realizar la inserción en la base de datos
     for (const result of results) {
-      const existingLead = await prisma.lead.findFirst({
-        where: {
-          OR: [{ tel: result.tel }, { email: result.email }],
-        },
-      });
-
-      if (existingLead) {
-        return res.status(400).json({
-          error: `El teléfono "${result.tel}" y/o correo electrónico "${result.email}" ya están registrados.`,
-        });
-      }
 
       const leadData = {
         name: result.name,
@@ -214,6 +219,7 @@ router.post("/lead/upload", upload.single("file"), async (req, res) => {
         admissionSemester: result.admissionSemester || null,
         schoolYear: result.schoolYear || null,
         created_at: result.created_at,
+        updated_at: result.created_at,
         campaign: {},
         followUp: {},
         grade: {},
@@ -278,5 +284,27 @@ router.get("/lead/promoter/:id", async (req, res) => {
   }
 });
 
+// Contador de registros
+router.get('/leads/total', async (req, res) => {
+  try {
+      const total = await prisma.lead.count();
+
+      res.status(200).json(total);
+  } catch (error) {
+      console.error('Error obtener el total de leads:', error);
+      res.status(500).send('Error interno del servidor');
+  }
+});
+
+// Obtener el listado de leads
+router.get('/leads/list', async (req, res) => {
+  try {
+      const leads = await prisma.lead.findMany();
+      res.status(200).json(leads);
+  } catch (error) {
+      console.error('Error al encontrar los leads:', error);
+      res.status(500).send('Error interno del servidor');
+  }
+});
 
 export default router;
