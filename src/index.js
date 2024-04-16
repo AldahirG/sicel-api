@@ -40,6 +40,7 @@ app.use('/api', promoterRoutes);
 app.use('/api', roleRoutes);
 app.use('/api', userRoutes);
 app.use('/api', chartRoutes);
+
 app.use('/api', assignmentRoutes);
 
 app.listen(3000);
