@@ -349,8 +349,247 @@ router.get('/inscripciones-por-tipo-escuela', async (req, res) => {
 });
 
 
+//charts promotor
 
+// Consultar total por estado de inscripción filtrado por promotor
+router.get('/total-status/:userId', async (req, res) => {
+    try {
+        const { userId } = req.params;
+
+        // Verificar si el userId es un número válido
+        if (isNaN(userId)) {
+            return res.status(400).json({ error: 'El userId proporcionado no es válido.' });
+        }
+
+        // Convertir el userId a tipo entero
+        const parsedUserId = parseInt(userId);
+
+        // Consultar el total de inscripciones por estado de inscripción
+        const totalPorStatus = await prisma.lead.groupBy({
+            by: ['enrollmentStatus'],
+            where: {
+                userId: parsedUserId
+            },
+            _count: {
+                id: true
+            }
+        });
+
+        // Enviar la respuesta con los datos obtenidos
+        res.status(200).json(totalPorStatus);
+    } catch (error) {
+        console.error('Error al obtener los datos para la gráfica de total por status:', error);
+        res.status(500).send('Error interno del servidor');
+    }
+});
+
+// Consultar porcentaje de beca filtrado por promotor
+router.get('/porcentaje-beca/:userId', async (req, res) => {
+    try {
+        const { userId } = req.params;
+
+        // Verificar si el userId es un número válido
+        if (isNaN(userId)) {
+            return res.status(400).json({ error: 'El userId proporcionado no es válido.' });
+        }
+
+        // Convertir el userId a tipo entero
+        const parsedUserId = parseInt(userId);
+
+        // Consultar el porcentaje de beca por usuario logeado
+        const porcentajeBeca = await prisma.lead.groupBy({
+            by: ['scholarship'],
+            where: {
+                userId: parsedUserId
+            },
+            _count: {
+                id: true
+            }
+        });
+
+        // Enviar la respuesta con los datos obtenidos
+        res.status(200).json(porcentajeBeca);
+    } catch (error) {
+        console.error('Error al obtener los datos para la gráfica de porcentaje de beca:', error);
+        res.status(500).send('Error interno del servidor');
+    }
+});
+
+// Consultar total por país filtrado por promotor
+router.get('/total-pais/:userId', async (req, res) => {
+    try {
+        const { userId } = req.params;
+
+        // Verificar si el userId es un número válido
+        if (isNaN(userId)) {
+            return res.status(400).json({ error: 'El userId proporcionado no es válido.' });
+        }
+
+        // Convertir el userId a tipo entero
+        const parsedUserId = parseInt(userId);
+
+        // Consultar el total por país por usuario logeado
+        const totalPorPais = await prisma.lead.groupBy({
+            by: ['country'],
+            where: {
+                userId: parsedUserId
+            },
+            _count: {
+                id: true
+            }
+        });
+
+        // Enviar la respuesta con los datos obtenidos
+        res.status(200).json(totalPorPais);
+    } catch (error) {
+        console.error('Error al obtener los datos para la gráfica de total por país:', error);
+        res.status(500).send('Error interno del servidor');
+    }
+});
+
+// Consultar total por estado filtrado por promotor
+router.get('/total-estado/:userId', async (req, res) => {
+    try {
+        const { userId } = req.params;
+
+        // Verificar si el userId es un número válido
+        if (isNaN(userId)) {
+            return res.status(400).json({ error: 'El userId proporcionado no es válido.' });
+        }
+
+        // Convertir el userId a tipo entero
+        const parsedUserId = parseInt(userId);
+
+        // Consultar el total por estado por usuario logeado
+        const totalPorEstado = await prisma.lead.groupBy({
+            by: ['state'],
+            where: {
+                userId: parsedUserId
+            },
+            _count: {
+                id: true
+            }
+        });
+
+        // Enviar la respuesta con los datos obtenidos
+        res.status(200).json(totalPorEstado);
+    } catch (error) {
+        console.error('Error al obtener los datos para la gráfica de total por estado:', error);
+        res.status(500).send('Error interno del servidor');
+    }
+});
+
+
+// Consultar total por municipio filtrado por promotor
+router.get('/total-municipio/:userId', async (req, res) => {
+    try {
+        const { userId } = req.params;
+
+        // Verificar si el userId es un número válido
+        if (isNaN(userId)) {
+            return res.status(400).json({ error: 'El userId proporcionado no es válido.' });
+        }
+
+        // Convertir el userId a tipo entero
+        const parsedUserId = parseInt(userId);
+
+        // Consultar el total por municipio por usuario logeado
+        const totalPorMunicipio = await prisma.lead.groupBy({
+            by: ['city'],
+            where: {
+                userId: parsedUserId
+            },
+            _count: {
+                id: true
+            }
+        });
+
+        // Enviar la respuesta con los datos obtenidos
+        res.status(200).json(totalPorMunicipio);
+    } catch (error) {
+        console.error('Error al obtener los datos para la gráfica de total por municipio:', error);
+        res.status(500).send('Error interno del servidor');
+    }
+});
+
+// Consultar total de inscripciones por promotor
+router.get('/total-inscripciones-promotor/:userId', async (req, res) => {
+    try {
+        const { userId } = req.params;
+
+        // Verificar si el userId es un número válido
+        if (isNaN(userId)) {
+            return res.status(400).json({ error: 'El userId proporcionado no es válido.' });
+        }
+
+        // Convertir el userId a tipo entero
+        const parsedUserId = parseInt(userId);
+
+        // Consultar el total de inscripciones por promotor
+        const totalPorPromotor = await prisma.user.findUnique({
+            where: {
+                id: parsedUserId
+            },
+            select: {
+                id: true,
+                name: true,
+                leads: {
+                    where: {
+                        enrollmentDate: {
+                            not: null
+                        }
+                    }
+                }
+            }
+        });
+
+        // Verificar si el usuario existe
+        if (!totalPorPromotor) {
+            return res.status(404).json({ error: 'El usuario no fue encontrado.' });
+        }
+
+        // Calcular el total de inscripciones del promotor
+        const totalInscripciones = totalPorPromotor.leads.length;
+
+        // Preparar el resultado para enviar como respuesta
+        const result = {
+            id: totalPorPromotor.id,
+            name: totalPorPromotor.name,
+            totalInscripciones: totalInscripciones
+        };
+
+        // Enviar la respuesta con los datos obtenidos
+        res.status(200).json(result);
+    } catch (error) {
+        console.error('Error al obtener los datos para la gráfica de total de inscripciones por promotor:', error);
+        res.status(500).send('Error interno del servidor');
+    }
+});
+
+router.get('/leads-por-promotor/:userId', async (req, res) => {
+    const userId = parseInt(req.params.userId); // Obtener el userId de los parámetros de la URL
+  
+    try {
+        // Consultar todos los leads que corresponden al userId dado y donde enrollmentDate no sea null
+        const leadsPorPromotor = await prisma.lead.findMany({
+            where: {
+                userId: userId,
+                enrollmentDate: {
+                    not: null
+                }
+            }
+        });
+  
+        res.status(200).json(leadsPorPromotor);
+    } catch (error) {
+        console.error('Error al obtener los leads por promotor:', error);
+        res.status(500).send('Error interno del servidor');
+    }
+  });
 
 // Otras rutas para las demás gráficas...
+
+
+
 
 export default router;
