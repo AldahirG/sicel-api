@@ -83,7 +83,7 @@ model Lead {
   email             String    @db.VarChar(80)
   emailOptional     String?   @db.VarChar(80)
   genre             String?   @db.VarChar(50)
-  dateFirstContact  DateTime? @db.Date // Fecha de primer contacto
+  dateFirstContact  String?   @db.VarChar(10)
   dateBirth         String?   @db.VarChar(10) // Fecha de nacimiento
   formerSchool      String?   @db.VarChar(100) // Escuela de procedencia
   typeSchool        String?   @db.VarChar(100) // Tipo de escuela

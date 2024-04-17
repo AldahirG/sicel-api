@@ -133,8 +133,8 @@ router.put("/lead/:id", async (req, res) => {
 
     // Verifica si dateFirstContact es nulo
     if (lead.dateFirstContact === null) {
-      // Establece dateFirstContact en la fecha actual
-      leadUpdates.dateFirstContact = new Date();
+      // Establece dateFirstContact en la fecha actual con año, mes y día
+      leadUpdates.dateFirstContact = new Date(Date.now()).toISOString();
     }
 
     // Actualiza el lead con los datos proporcionados en el cuerpo de la solicitud
