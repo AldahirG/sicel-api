@@ -9,14 +9,9 @@ export async function contactMediums() {
       { type: 'MARKETING DIGITAL' },
       { type: 'CLIENGO' },
       { type: 'APOYO TRABAJADOR' },
-      { type: 'BASE BAJAS' },
-      { type: 'BASE EGRESADOS' },
-      { type: 'BASE PERSONAL PROMOTOR' },
-      { type: 'BASE EN FRIO' },
+      { type: 'BASES' },
       { type: 'VISITA UNINTER' },
       { type: 'LLAMADA ENTRANTE' },
-      { type: 'FERIA ESCUELA' },
-      { type: 'SESION ESCUELA' },
       { type: 'VISITA ESCUELA' },
       { type: 'VISITA EMPRESA' },
       { type: 'EVENTO INTERNO' },
@@ -30,13 +25,3 @@ export async function contactMediums() {
     ],
   });
 }
-
-contactMediums()
-  .then(async () => {
-    await prisma.$disconnect()
-  })
-  .catch(async (e) => {
-    console.error(e)
-    await prisma.$disconnect()
-    process.exit(1)
-  })
