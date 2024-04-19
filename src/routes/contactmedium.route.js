@@ -69,7 +69,7 @@ router.get('/contact-medium/:id', async (req, res) => {
     }
 });
 
-// Actualizar un PSegumiento
+// Actualizar un medio de contacto
 router.put('/contact-medium/:id', async (req, res) => {
     try {
         const { id } = req.params;
