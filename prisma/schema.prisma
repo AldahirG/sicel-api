@@ -79,6 +79,7 @@ model FollowUp {
 model ContactMedium {
   id   Int    @id @default(autoincrement())
   type String @db.VarChar(50)
+  created_at DateTime @default(now())
 
   asetName AsetName[]
 }
@@ -87,6 +88,7 @@ model ContactMedium {
 model AsetName {
   id   Int    @id @default(autoincrement())
   name String @db.VarChar(80)
+  created_at DateTime @default(now())
 
   // Id de medio de contacto
   contactMedium ContactMedium? @relation(fields: [mediumId], references: [id])
