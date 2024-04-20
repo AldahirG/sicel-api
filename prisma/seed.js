@@ -7,6 +7,7 @@ import { careers } from "./seeders/careers.js";
 import { campaigns } from "./seeders/campaigns.js";
 import { followUps } from "./seeders/followUps.js";
 import { contactMediums } from "./seeders/contactMediums.js";
+import { asetNames } from "./seeders/asetNames.js";
 
 async function main() {
   await roles();
@@ -16,6 +17,7 @@ async function main() {
   await campaigns();
   await followUps();
   await contactMediums();
+  await asetNames();
 }
 
 main()
