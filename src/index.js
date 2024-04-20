@@ -2,6 +2,7 @@ import express from 'express';
 import cors from 'cors';
 
 // Importar rutas
+import asetnameRoutes from './routes/asetname.routes.js';
 import assignmentRoutes from './routes/assignment.routes.js';
 import authRoutes from './routes/auth.routes.js';
 import campaignRoutes from './routes/campaign.routes.js';
@@ -35,6 +36,7 @@ app.options("*", cors());
 app.use(express.json());
 
 // Mandar a traer las rutas
+app.use('/api', asetnameRoutes);
 app.use('/api', assignmentRoutes);
 app.use('/api', authRoutes);
 app.use('/api', campaignRoutes);
