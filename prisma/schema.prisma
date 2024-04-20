@@ -77,17 +77,18 @@ model FollowUp {
 
 // Medio de contacto
 model ContactMedium {
-  id   Int    @id @default(autoincrement())
-  type String @db.VarChar(50)
+  id         Int      @id @default(autoincrement())
+  type       String   @db.VarChar(50)
   created_at DateTime @default(now())
 
   asetName AsetName[]
+  lead     Lead[]
 }
 
 // Aset Name
 model AsetName {
-  id   Int    @id @default(autoincrement())
-  name String @db.VarChar(80)
+  id         Int      @id @default(autoincrement())
+  name       String   @db.VarChar(80)
   created_at DateTime @default(now())
 
   // Id de medio de contacto
@@ -101,6 +102,7 @@ model Lead {
   id                Int     @id @default(autoincrement())
   name              String  @db.VarChar(150)
   genre             String? @db.VarChar(50) // Sexo
+  enrollmentStatus  String? @db.VarChar(10) // Estatus de inscripción
   tel               String  @db.VarChar(25)
   telOptional       String? @db.VarChar(25)
   email             String  @db.VarChar(80)
@@ -113,7 +115,7 @@ model Lead {
   schoolYear        String? @db.VarChar(6) //Ciclo escolar
   referenceType     String? @db.VarChar(50) // Tipo de referido
   referenceName     String? @db.VarChar(150) // Nombre de referido
-  data_source       String? @db.VarChar(40) // Donde obtuvo el dato
+  dataSource        String? @db.VarChar(40) // Donde obtuvo el dato
   admissionSemester String? @db.VarChar(20) // Semestre de ingreso
   dateFirstContact  String? @db.VarChar(10) // Fecha de primer contacto
   status            Boolean @default(true)
@@ -139,6 +141,10 @@ model Lead {
   // Id de promotor
   user   User? @relation(fields: [userId], references: [id])
   userId Int?
+
+  // Id del aset name
+  contactMedium   ContactMedium? @relation(fields: [contactMediumId], references: [id])
+  contactMediumId Int?
 
   // Id del aset name
   asetName   AsetName? @relation(fields: [asetNameId], references: [id])
