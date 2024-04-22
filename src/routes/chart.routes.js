@@ -623,5 +623,9 @@ router.get('/leads-por-promotor/:userId', async (req, res) => {
 
 
 
+
+
+// Otras rutas para las demás gráficas...
+
 export default router;
 

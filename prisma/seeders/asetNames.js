@@ -1,0 +1,42 @@
+import { prisma } from "../../src/db.js";
+
+export async function asetNames() {
+  await prisma.asetName.createMany({
+    data: [
+      { name: "TIK TOK", mediumId: 1 },
+      { name: "IG", mediumId: 1 },
+      { name: "FB", mediumId: 1 },
+      { name: "GOOGLE", mediumId: 1 },
+      { name: "PAGINAS UNIVERSIDAD", mediumId: 2 },
+      { name: "LEADSALES", mediumId: 2 },
+      { name: "CALCULADORA DE BECA", mediumId: 2 },
+      { name: "FORMULARIO RAPIDO", mediumId: 2 },
+      { name: "CONFERENCIAS", mediumId: 2 },
+      { name: "SESIONES INFORMATIVAS", mediumId: 2 },
+      { name: "TALLERES", mediumId: 2 },
+      { name: "ON DEMAND", mediumId: 2 },
+      { name: "TEST DE ORIENTACION VOCACIONAL", mediumId: 2 },
+      { name: "SOLICITUD DE ADMISION", mediumId: 2 },
+      { name: "UNINTER INFORMA", mediumId: 2 },
+      { name: "WHATSAPP", mediumId: 2 },
+      { name: "BASE BAJAS", mediumId: 7 },
+      { name: "BASE DE EGRESADOS", mediumId: 7 },
+      { name: "BASE PERSONAL PROMOTOR", mediumId: 7 },
+      { name: "BASE EN FRIO", mediumId: 7 },
+      { name: "FERIA ESCUELA", mediumId: 10 },
+      { name: "SESION ESCUELA", mediumId: 10 },
+      { name: "VISITA ESCUELA", mediumId: 10 },
+      { name: "FOLLETERIA", mediumId: 14 },
+      { name: "ESPECTACULARES", mediumId: 14 },
+      { name: "RUTAS", mediumId: 14 },
+      { name: "VALLAS", mediumId: 14 },
+      { name: "PAUTA", mediumId: 15 },
+      { name: "MARKETING DIGITAL", mediumId: 15 },
+      { name: "LANDING", mediumId: 15 },
+      { name: "EVENTO", mediumId: 15 },
+      { name: "PERSONAL UNINTER", mediumId: 16 },
+      { name: "ALUMNO", mediumId: 16 },
+      { name: "FAMILIAR ALUMNO", mediumId: 16 },
+    ],
+  });
+}

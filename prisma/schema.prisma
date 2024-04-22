@@ -75,53 +75,74 @@ model FollowUp {
   leads Lead[]
 }
 
-model Lead {
-  id                Int       @id @default(autoincrement())
-  name              String    @db.VarChar(150)
-  tel               String    @db.VarChar(25)
-  telOptional       String?   @db.VarChar(25)
-  email             String    @db.VarChar(80)
-  emailOptional     String?   @db.VarChar(80)
-  genre             String?   @db.VarChar(50)
-  dateFirstContact  DateTime? @db.Date // Fecha de primer contacto
-  dateBirth         String?   @db.VarChar(10) // Fecha de nacimiento
-  formerSchool      String?   @db.VarChar(100) // Escuela de procedencia
-  typeSchool        String?   @db.VarChar(100) // Tipo de escuela
-  country           String?   @db.VarChar(60)
-  state             String?   @db.VarChar(60)
-  city              String?   @db.VarChar(60)
-  asetNameForm      String?   @db.VarChar(150)
-  isOrganic         String?   @db.VarChar(10)
-  referenceType     String?   @db.VarChar(50) // Tipo de referido
-  referenceName     String?   @db.VarChar(150) // Nombre de referido
-  enrollmentDate    String?   @db.VarChar(10) // Fecha de inscripcion
-  scholarship       String?   @db.VarChar(60) // Beca
-  enrollmentStatus  String?   @db.VarChar(10) // Estatus de inscripcion
-  admissionSemester String?   @db.VarChar(20) // Semestre de ingreso
-  schoolYear        String?   @db.VarChar(6) //Ciclo escolar
-  status            Boolean   @default(true)
-  created_at        String    @db.VarChar(35) // Fecha de creacion
-  updated_at        String    @db.VarChar(35) // Fecha de actualización
+// Medio de contacto
+model ContactMedium {
+  id   Int    @id @default(autoincrement())
+  type String @db.VarChar(50)
+  created_at DateTime @default(now())
 
-  // Id de campaña
-  campaign   Campaign @relation(fields: [campaignId], references: [id])
-  campaignId Int
+  asetName AsetName[]
+}
+
+// Aset Name
+model AsetName {
+  id   Int    @id @default(autoincrement())
+  name String @db.VarChar(80)
+  created_at DateTime @default(now())
+
+  // Id de medio de contacto
+  contactMedium ContactMedium? @relation(fields: [mediumId], references: [id])
+  mediumId      Int?
+
+  lead Lead[]
+}
+
+model Lead {
+  id                Int     @id @default(autoincrement())
+  name              String  @db.VarChar(150)
+  genre             String? @db.VarChar(50) // Sexo
+  tel               String  @db.VarChar(25)
+  telOptional       String? @db.VarChar(25)
+  email             String  @db.VarChar(80)
+  emailOptional     String? @db.VarChar(80)
+  formerSchool      String? @db.VarChar(100) // Escuela de procedencia
+  typeSchool        String? @db.VarChar(100) // Tipo de escuela
+  country           String? @db.VarChar(60) // País
+  state             String? @db.VarChar(60) // Estado
+  city              String? @db.VarChar(60) // Ciudad
+  schoolYear        String? @db.VarChar(6) //Ciclo escolar
+  referenceType     String? @db.VarChar(50) // Tipo de referido
+  referenceName     String? @db.VarChar(150) // Nombre de referido
+  data_source       String? @db.VarChar(40) // Donde obtuvo el dato
+  admissionSemester String? @db.VarChar(20) // Semestre de ingreso
+  dateFirstContact  String? @db.VarChar(10) // Fecha de primer contacto
+  status            Boolean @default(true)
+  created_at        String  @db.VarChar(35) // Fecha de creacion
+  updated_at        String  @db.VarChar(35) // Fecha de actualización
 
   // Id de pseguimiento
   followUp FollowUp? @relation(fields: [followId], references: [id])
   followId Int?
 
-  // Id de grado escolar
-  grade   Grade? @relation(fields: [gradeId], references: [id])
-  gradeId Int?
-
   // Id de carrera
   carreer   Carreer? @relation(fields: [carreerId], references: [id])
   carreerId Int?
 
+  // Id de grado escolar
+  grade   Grade? @relation(fields: [gradeId], references: [id])
+  gradeId Int?
+
+  // Id de campaña
+  campaign   Campaign @relation(fields: [campaignId], references: [id])
+  campaignId Int
+
   // Id de promotor
   user   User? @relation(fields: [userId], references: [id])
   userId Int?
+
+  // Id del aset name
+  asetName   AsetName? @relation(fields: [asetNameId], references: [id])
+  asetNameId Int?
 }
 
 model Assignment {
