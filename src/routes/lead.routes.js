@@ -35,32 +35,6 @@ router.post("/lead", async (req, res) => {
   try {
     const leadData = req.body;
 
-    // Verificar si ya existe un lead con el mismo email
-    const existingEmail = await prisma.lead.findFirst({
-      where: {
-        email: leadData.email,
-      },
-    });
-
-    if (existingEmail) {
-      return res
-        .status(400)
-        .json({ errorEmail: "Ya existe un lead con este email." });
-    }
-
-    // Verificar si ya existe un lead con el mismo número de teléfono
-    const existingTel = await prisma.lead.findFirst({
-      where: {
-        tel: leadData.tel,
-      },
-    });
-
-    if (existingTel) {
-      return res
-        .status(400)
-        .json({ errorTel: "Ya existe un lead con este número de teléfono." });
-    }
-
     // Formatear la fecha actual en formato 'YYYY-MM-DD'
     const currentDate = new Date();
     const year = currentDate.getFullYear();
@@ -99,6 +73,8 @@ router.get("/lead/:id", async (req, res) => {
         grade: true,
         carreer: true,
         user: true,
+        contactMedium: true,
+        asetName: true,
       },
     });
 
