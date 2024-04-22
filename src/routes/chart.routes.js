@@ -1,7 +1,38 @@
 import express from 'express';
 import { prisma } from '../db.js';
+import { Prisma } from '@prisma/client';
 
 const router = express.Router();
+
+//filtrado 
+
+router.get('/leads-filtrados', async (req, res) => {
+    try {
+        // Obtener los parámetros de consulta
+        const filters = req.query;
+
+        // Construir el objeto de filtro dinámicamente
+        const whereClause = {};
+        for (const field in filters) {
+            // Ignorar los campos que no son campos de Lead
+            if (Object.prototype.hasOwnProperty.call(filters, field) && field in Prisma.LeadScalarFieldEnum) {
+                whereClause[field] = filters[field];
+            }
+        }
+
+        // Consultar los leads utilizando la consulta construida dinámicamente
+        const leadsFiltrados = await prisma.lead.findMany({
+            where: whereClause
+        });
+
+        // Devolver los leads filtrados
+        res.status(200).json(leadsFiltrados);
+    } catch (error) {
+        console.error('Error al obtener los leads filtrados:', error);
+        res.status(500).send('Error interno del servidor');
+    }
+});
+
 
 // Consultar total por status
 router.get('/total-status', async (req, res) => {
@@ -593,3 +624,4 @@ router.get('/leads-por-promotor/:userId', async (req, res) => {
 
 
 export default router;
+
