@@ -58,7 +58,7 @@ router.get('/total-status', async (req, res) => {
 //         // Lógica para obtener los datos de la gráfica
 //         const totalPorCiclo = await prisma.lead.groupBy({
 //             by: {
-//                 cicle: 'cicle'
+//                 cicle: 'scholarship'
 //             },
 //             _count: {
 //                 id: true
@@ -161,37 +161,37 @@ router.get('/total-municipio', async (req, res) => {
         res.status(500).send('Error interno del servidor');
     }
 });
-// Consultar total de inscripciones por promotor
-router.get('/total-inscripciones-promotor', async (req, res) => {
+
+// Consultar total de inscripciones por usuario (promotor)
+router.get('/total-inscripciones-por-promotor', async (req, res) => {
     try {
-        const totalPorPromotor = await prisma.user.findMany({
-            select: {
-                id: true,
-                name: true,
+        // Lógica para obtener los datos del total de inscripciones por promotor
+        const totalInscripcionesPorPromotor = await prisma.user.findMany({
+            include: {
                 leads: {
-                    where: {
-                        enrollmentDate: {
-                            not: null
-                        }
+                    select: {
+                        id: true
                     }
                 }
             }
         });
 
-        const result = totalPorPromotor.map(promotor => {
-            return {
-                id: promotor.id,
-                name: promotor.name,
-                totalInscripciones: promotor.leads.length
-            };
-        });
+        // Mapear los resultados para obtener el total de inscripciones por promotor
+        const totalPorPromotor = totalInscripcionesPorPromotor.map(promotor => ({
+            id: promotor.id,
+            name: promotor.name,
+            totalInscripciones: promotor.leads.length
+        }));
 
-        res.status(200).json(result);
+        res.status(200).json(totalPorPromotor);
     } catch (error) {
-        console.error('Error al obtener los datos para la gráfica de total de inscripciones por promotor:', error);
+        console.error('Error al obtener los datos del total de inscripciones por promotor:', error);
         res.status(500).send('Error interno del servidor');
     }
 });
+
+
+
 
 router.get('/reference-type', async (req, res) => {
     try {
