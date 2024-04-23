@@ -53,8 +53,6 @@ model Carreer {
   name       String   @unique @db.VarChar(150)
   slug       String   @unique @db.VarChar(30)
   created_at DateTime @default(now())
-
-  leads Lead[]
 }
 
 // Grado escolar
@@ -107,6 +105,7 @@ model Lead {
   telOptional       String? @db.VarChar(25)
   email             String  @db.VarChar(80)
   emailOptional     String? @db.VarChar(80)
+  career            String? @db.VarChar(100) // Carrera de interés
   formerSchool      String? @db.VarChar(100) // Escuela de procedencia
   typeSchool        String? @db.VarChar(100) // Tipo de escuela
   country           String? @db.VarChar(60) // País
@@ -118,6 +117,7 @@ model Lead {
   dataSource        String? @db.VarChar(40) // Donde obtuvo el dato
   admissionSemester String? @db.VarChar(20) // Semestre de ingreso
   dateFirstContact  String? @db.VarChar(10) // Fecha de primer contacto
+  scholarship       String? @db.VarChar(60) // Beca ofrecida
   status            Boolean @default(true)
   created_at        String  @db.VarChar(35) // Fecha de creacion
   updated_at        String  @db.VarChar(35) // Fecha de actualización
@@ -125,10 +125,6 @@ model Lead {
   // Id de pseguimiento
   followUp FollowUp? @relation(fields: [followId], references: [id])
   followId Int?
-
-  // Id de carrera
-  carreer   Carreer? @relation(fields: [carreerId], references: [id])
-  carreerId Int?
 
   // Id de grado escolar
   grade   Grade? @relation(fields: [gradeId], references: [id])

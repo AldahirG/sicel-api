@@ -9,17 +9,37 @@ const upload = multer({ storage });
 // Consultar todos los PSeguimientos
 router.get("/leads", async (req, res) => {
   try {
+    const { name, genre, enrollmentStatus } = req.query;
+
+    const where = {};
+
+    if (name) {
+      where.name = {
+        contains: name.toLocaleLowerCase()
+      };
+    }
+
+    if (genre) {
+      where.genre = genre;
+    }
+
+    if (enrollmentStatus) {
+      where.enrollmentStatus = enrollmentStatus;
+    }
+
     const leads = await prisma.lead.findMany({
       skip: +req.query.skip,
       take: +req.query.take,
       orderBy: {
           id: 'desc'
       },
+      where,
       include: {
-        campaign: true,
         followUp: true,
         grade: true,
-        carreer: true,
+        contactMedium: true,
+        asetName: true,
+        campaign: true,
         user: true,
       },
     });
@@ -68,13 +88,12 @@ router.get("/lead/:id", async (req, res) => {
         id: parseInt(id),
       },
       include: {
-        campaign: true,
         followUp: true,
         grade: true,
-        carreer: true,
-        user: true,
         contactMedium: true,
         asetName: true,
+        campaign: true,
+        user: true,
       },
     });
 
@@ -173,50 +192,53 @@ router.post("/lead/upload", upload.single("file"), async (req, res) => {
 
       const leadData = {
         name: result.name,
+        genre: result.genre || null,
+        enrollmentStatus: result.enrollmentStatus || null,
+        dateFirstContact: result.dateFirstContact || null,
         tel: result.tel,
         telOptional: result.telOptional || null,
         email: result.email,
         emailOptional: result.emailOptional || null,
-        genre: result.genre || null,
-        dateFirstContact: result.dateFirstContact || null,
-        dateBirth: result.dateBirth || null,
+        career: result.career || null,
+        scholarship: result.scholarship || null,
         formerSchool: result.formerSchool || null,
         typeSchool: result.typeSchool || null,
         country: result.country || null,
         state: result.state || null,
         city: result.city || null,
-        asetNameForm: result.asetNameForm || null,
-        isOrganic: result.isOrganic || null,
+        schoolYear: result.schoolYear || null,
+        admissionSemester: result.admissionSemester || null,
         referenceType: result.referenceType || null,
         referenceName: result.referenceName || null,
-        enrollmentDate: result.enrollmentDate || null,
-        scholarship: result.scholarship || null,
-        enrollmentStatus: result.enrollmentStatus || null,
-        admissionSemester: result.admissionSemester || null,
-        schoolYear: result.schoolYear || null,
+        dataSource: result.dataSource || null,
         created_at: result.created_at,
         updated_at: result.created_at,
-        campaign: {},
         followUp: {},
         grade: {},
-        carreer: {},
+        contactMedium: {},
+        asetName: {},
+        campaign: {},
         user: {},
       };
-
-      if (result.campaignId) {
-        leadData.campaign.connect = { id: parseInt(result.campaignId) };
-      }
-
+      
       if (result.followId) {
         leadData.followUp.connect = { id: parseInt(result.followId) };
       }
-
+      
       if (result.gradeId) {
         leadData.grade.connect = { id: parseInt(result.gradeId) };
       }
 
-      if (result.carreerId) {
-        leadData.carreer.connect = { id: parseInt(result.carreerId) };
+      if(result.contactMediumId) {
+        leadData.contactMedium.connect = { id: parseInt(result.contactMediumId) };
+      }
+
+      if(result.asetName) {
+        leadData.asetName.connect = { id: parseInt(result.asetNameId) };
+      }
+      
+      if (result.campaignId) {
+        leadData.campaign.connect = { id: parseInt(result.campaignId) };
       }
 
       if (result.userId) {
@@ -245,10 +267,11 @@ router.get("/lead/promoter/:id", async (req, res) => {
         userId: parseInt(id),
       },
       include: {
-        campaign: true,
         followUp: true,
         grade: true,
-        carreer: true,
+        contactMedium: true,
+        asetName: true,
+        campaign: true,
         user: true,
       },
     });
