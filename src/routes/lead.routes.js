@@ -11,7 +11,7 @@ router.get("/leads", async (req, res) => {
   try {
     const { 
       name, tel, email, career, country, state, city, formerSchool,
-      enrollmentStatus, followId, contactMediumId, asetNameId, campaignId, referenceType, typeSchool,
+      enrollmentStatus, followId, contactMediumId, asetNameId, schoolYearId, campaignId, referenceType, typeSchool,
     } = req.query;
 
     const where = {};
@@ -89,6 +89,9 @@ router.get("/leads", async (req, res) => {
         break;
       case !!campaignId:
         where.campaignId = parseInt(campaignId);
+        break;
+      case !!schoolYearId:
+        where.schoolYearId = parseInt(schoolYearId);
         break;
       case !!referenceType:
         where.referenceType = referenceType;
