@@ -160,6 +160,17 @@ router.get("/aset-names/total", async (req, res) => {
 });
 
 // Obtener el listado de aset names
+router.get('/aset-names/list', async (req, res) => {
+  try {
+      const asetNames = await prisma.asetName.findMany();
+      res.status(200).json(asetNames);
+  } catch (error) {
+      console.error('Error al encontrar los aset names:', error);
+      res.status(500).send('Error interno del servidor');
+  }
+});
+
+// Obtener el listado de aset names mediante su medio de contacto
 router.get("/contact-mediums/:id/aset-names", async (req, res) => {
   const { id } = req.params;
 
