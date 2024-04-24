@@ -8,6 +8,7 @@ import { campaigns } from "./seeders/campaigns.js";
 import { followUps } from "./seeders/followUps.js";
 import { contactMediums } from "./seeders/contactMediums.js";
 import { asetNames } from "./seeders/asetNames.js";
+import { schoolYears } from "./seeders/schoolYears.js";
 
 async function main() {
   await roles();
@@ -18,6 +19,7 @@ async function main() {
   await followUps();
   await contactMediums();
   await asetNames();
+  await schoolYears();
 }
 
 main()
