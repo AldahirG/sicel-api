@@ -11,75 +11,91 @@ router.get("/leads", async (req, res) => {
   try {
     const { 
       name, tel, email, career, country, state, city, formerSchool,
-      genre, enrollmentStatus 
+      enrollmentStatus, followId, contactMediumId, asetNameId, campaignId, referenceType, typeSchool,
     } = req.query;
 
     const where = {};
 
-    if (name) {
-      where.name = {
-        contains: name.toLocaleLowerCase(),
-      };
-    }
-
-    if (tel) {
-      where.OR = [
-        {
-          tel: {
-            contains: tel.toLocaleLowerCase(),
+    switch (true) {
+      case !!name:
+        where.name = {
+          contains: name.toLocaleLowerCase(),
+        };
+        break;
+      case !!tel:
+        where.OR = [
+          {
+            tel: {
+              contains: tel.toLocaleLowerCase(),
+            },
           },
-        },
-        {
-          telOptional: {
-            contains: tel.toLocaleLowerCase(),
+          {
+            telOptional: {
+              contains: tel.toLocaleLowerCase(),
+            },
           },
-        },
-      ];
-    }
-
-    if (email) {
-      where.OR = [
-        {
-          email: {
-            contains: email.toLocaleLowerCase(),
+        ];
+        break;
+      case !!email:
+        where.OR = [
+          {
+            email: {
+              contains: email.toLocaleLowerCase(),
+            },
           },
-        },
-        {
-          emailOptional: {
-            contains: email.toLocaleLowerCase(),
+          {
+            emailOptional: {
+              contains: email.toLocaleLowerCase(),
+            },
           },
-        },
-      ];
-    }
-
-    if (career) {
-      where.career = {
-        contains: career.toLocaleLowerCase(),
-      };
-    }
-
-    if (country) {
-      where.country = {
-        contains: country.toLocaleLowerCase(),
-      };
-    }
-
-    if (state) {
-      where.state = {
-        contains: state.toLocaleLowerCase(),
-      };
-    }
-
-    if (city) {
-      where.city = {
-        contains: city.toLocaleLowerCase(),
-      };
-    }
-
-    if (formerSchool) {
-      where.formerSchool = {
-        contains: formerSchool.toLocaleLowerCase(),
-      };
+        ];
+        break;
+      case !!career:
+        where.career = {
+          contains: career.toLocaleLowerCase(),
+        };
+        break;
+      case !!country:
+        where.country = {
+          contains: country.toLocaleLowerCase(),
+        };
+        break;
+      case !!state:
+        where.state = {
+          contains: state.toLocaleLowerCase(),
+        };
+        break;
+      case !!city:
+        where.city = {
+          contains: city.toLocaleLowerCase(),
+        };
+        break;
+      case !!formerSchool:
+        where.formerSchool = {
+          contains: formerSchool.toLocaleLowerCase(),
+        };
+        break;
+      case !!enrollmentStatus:
+        where.enrollmentStatus = enrollmentStatus;
+        break;
+      case !!followId:
+        where.followId = parseInt(followId);
+        break;
+      case !!contactMediumId:
+        where.contactMediumId = parseInt(contactMediumId);
+        break;
+      case !!asetNameId:
+        where.asetNameId = parseInt(asetNameId);
+        break;
+      case !!campaignId:
+        where.campaignId = parseInt(campaignId);
+        break;
+      case !!referenceType:
+        where.referenceType = referenceType;
+        break;
+      case !!typeSchool:
+        where.typeSchool = typeSchool;
+        break;
     }
 
     const leads = await prisma.lead.findMany({
