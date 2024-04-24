@@ -13,6 +13,7 @@ import gradeRoutes from './routes/grade.routes.js';
 import leadRoutes from './routes/lead.routes.js';
 import promoterRoutes from './routes/promoter.route.js';
 import roleRoutes from './routes/role.routes.js';
+import scoolyearRoutes from './routes/schoolyear.routes.js';
 import userRoutes from './routes/user.routes.js';
 
 // Gráficas
@@ -47,6 +48,7 @@ app.use('/api', gradeRoutes);
 app.use('/api', leadRoutes);
 app.use('/api', promoterRoutes);
 app.use('/api', roleRoutes);
+app.use('/api', scoolyearRoutes);
 app.use('/api', userRoutes);
 
 app.use('/api', chartRoutes);

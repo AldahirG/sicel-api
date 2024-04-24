@@ -111,6 +111,7 @@ router.get("/leads", async (req, res) => {
         contactMedium: true,
         asetName: true,
         campaign: true,
+        schoolYear: true,
         user: true,
       },
     });
@@ -164,6 +165,7 @@ router.get("/lead/:id", async (req, res) => {
         contactMedium: true,
         asetName: true,
         campaign: true,
+        schoolYear: true,
         user: true,
       },
     });
@@ -276,7 +278,6 @@ router.post("/lead/upload", upload.single("file"), async (req, res) => {
         country: result.country || null,
         state: result.state || null,
         city: result.city || null,
-        schoolYear: result.schoolYear || null,
         admissionSemester: result.admissionSemester || null,
         referenceType: result.referenceType || null,
         referenceName: result.referenceName || null,
@@ -288,6 +289,7 @@ router.post("/lead/upload", upload.single("file"), async (req, res) => {
         contactMedium: {},
         asetName: {},
         campaign: {},
+        schoolYear: {},
         user: {},
       };
 
@@ -300,9 +302,7 @@ router.post("/lead/upload", upload.single("file"), async (req, res) => {
       }
 
       if (result.contactMediumId) {
-        leadData.contactMedium.connect = {
-          id: parseInt(result.contactMediumId),
-        };
+        leadData.contactMedium.connect = { id: parseInt(result.contactMediumId) };
       }
 
       if (result.asetName) {
@@ -311,6 +311,10 @@ router.post("/lead/upload", upload.single("file"), async (req, res) => {
 
       if (result.campaignId) {
         leadData.campaign.connect = { id: parseInt(result.campaignId) };
+      }
+
+      if (result.schoolYearId) {
+        leadData.schoolYear.connect = { id: parseInt(result.schoolYearId) };
       }
 
       if (result.userId) {
@@ -344,6 +348,7 @@ router.get("/lead/promoter/:id", async (req, res) => {
         contactMedium: true,
         asetName: true,
         campaign: true,
+        schoolYear: true,
         user: true,
       },
     });
