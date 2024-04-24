@@ -96,6 +96,16 @@ model AsetName {
   lead Lead[]
 }
 
+// Ciclo escolar
+model SchoolYear {
+  id     Int     @id @default(autoincrement())
+  cicle  String  @db.VarChar(6)
+  status Boolean @default(true)
+  created_at DateTime @default(now())
+
+  lead Lead[]
+}
+
 model Lead {
   id                Int     @id @default(autoincrement())
   name              String  @db.VarChar(150)
@@ -111,7 +121,6 @@ model Lead {
   country           String? @db.VarChar(60) // País
   state             String? @db.VarChar(60) // Estado
   city              String? @db.VarChar(60) // Ciudad
-  schoolYear        String? @db.VarChar(6) //Ciclo escolar
   referenceType     String? @db.VarChar(50) // Tipo de referido
   referenceName     String? @db.VarChar(150) // Nombre de referido
   dataSource        String? @db.VarChar(40) // Donde obtuvo el dato
@@ -121,6 +130,10 @@ model Lead {
   status            Boolean @default(true)
   created_at        String  @db.VarChar(35) // Fecha de creacion
   updated_at        String  @db.VarChar(35) // Fecha de actualización
+
+  // Ciclo escolar
+  schoolYear SchoolYear? @relation(fields: [schoolYearId], references: [id])
+  schoolYearId Int?
 
   // Id de pseguimiento
   followUp FollowUp? @relation(fields: [followId], references: [id])
