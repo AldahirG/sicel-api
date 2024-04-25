@@ -52,25 +52,24 @@ router.get('/total-status', async (req, res) => {
     }
 });
 
-// // Consultar total por ciclo
-// router.get('/total-ciclo', async (req, res) => {
-//     try {
-//         // Lógica para obtener los datos de la gráfica
-//         const totalPorCiclo = await prisma.lead.groupBy({
-//             by: {
-//                 cicle: 'scholarship'
-//             },
-//             _count: {
-//                 id: true
-//             }
-//         });
+// Consultar el recuento de leads por schoolYear
+router.get('/recuento-leads-por-schoolYear', async (req, res) => {
+    try {
+        // Lógica para obtener el recuento de leads por schoolYear
+        const recuentoLeadsPorSchoolYear = await prisma.lead.groupBy({
+            by: ['schoolYear'],
+            _count: {
+                id: true
+            }
+        });
 
-//         res.status(200).json(totalPorCiclo);
-//     } catch (error) {
-//         console.error('Error al obtener los datos para la gráfica de total por ciclo:', error);
-//         res.status(500).send('Error interno del servidor');
-//     }
-// });
+        res.status(200).json(recuentoLeadsPorSchoolYear);
+    } catch (error) {
+        console.error('Error al obtener el recuento de leads por schoolYear:', error);
+        res.status(500).send('Error interno del servidor');
+    }
+});
+
 
 // Consultar externos e internos
 // router.get('/externos-internos', async (req, res) => {
@@ -362,22 +361,78 @@ router.get('/inscripciones-por-mes', async (req, res) => {
 });
 
 
-router.get('/inscripciones-por-tipo-escuela', async (req, res) => {
+// Consultar el recuento de leads por typeSchool
+router.get('/recuento-leads-por-typeSchool', async (req, res) => {
     try {
-        // Consultar el recuento de inscripciones por tipo de escuela
-        const inscripcionesPorTipoEscuela = await prisma.lead.groupBy({
-            by: ['type_school'],
+        // Lógica para obtener el recuento de leads por typeSchool
+        const recuentoLeadsPorTypeSchool = await prisma.lead.groupBy({
+            by: ['typeSchool'],
             _count: {
                 id: true
             }
         });
 
-        res.status(200).json(inscripcionesPorTipoEscuela);
+        res.status(200).json(recuentoLeadsPorTypeSchool);
     } catch (error) {
-        console.error('Error al obtener los datos de inscripciones por tipo de escuela:', error);
+        console.error('Error al obtener el recuento de leads por typeSchool:', error);
         res.status(500).send('Error interno del servidor');
     }
 });
+
+
+
+router.get('/recuento-leads-por-contactMedium', async (req, res) => {
+    try {
+        const leadsPorMedioContacto = await prisma.lead.groupBy({
+            by: ['contactMediumId'], // Agrupar por el id del medio de contacto
+            _count: {
+                id: true // Contar el número de leads por cada medio de contacto
+            }
+        });
+
+        // Mapear los resultados para incluir el tipo de medio de contacto
+        const leadsPorMedioContactoConTipo = await Promise.all(leadsPorMedioContacto.map(async (lead) => {
+            if (lead.contactMediumId) {
+                const contactMedium = await prisma.contactMedium.findUnique({
+                    where: {
+                        id: lead.contactMediumId // Buscar el medio de contacto por su id
+                    }
+                });
+                return {
+                    count: lead._count.id, // Renombrar la propiedad _count.id a count
+                    contactMediumType: contactMedium?.type || null // Obtener el tipo de medio de contacto
+                };
+            } else {
+                return {
+                    count: lead._count.id, // Renombrar la propiedad _count.id a count
+                    contactMediumType: null // Si contactMediumId es null, asignar null al tipo de medio de contacto
+                };
+            }
+        }));
+
+        res.status(200).json(leadsPorMedioContactoConTipo);
+    } catch (error) {
+        console.error('Error al obtener los datos de recuento de leads por contactMediumId:', error);
+        res.status(500).send('Error interno del servidor');
+    }
+});
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 //charts promotor
