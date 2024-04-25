@@ -99,7 +99,7 @@ model AsetName {
 // Ciclo escolar
 model SchoolYear {
   id     Int     @id @default(autoincrement())
-  cicle  String  @db.VarChar(6)
+  cicle  String  @db.VarChar(9)
   status Boolean @default(true)
   created_at DateTime @default(now())
 
