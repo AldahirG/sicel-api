@@ -9,29 +9,103 @@ const upload = multer({ storage });
 // Consultar todos los PSeguimientos
 router.get("/leads", async (req, res) => {
   try {
-    const { name, genre, enrollmentStatus } = req.query;
+    const { 
+      name, tel, email, career, country, state, city, formerSchool,
+      enrollmentStatus, followId, contactMediumId, asetNameId, schoolYearId, campaignId, referenceType, typeSchool,
+    } = req.query;
 
     const where = {};
 
-    if (name) {
-      where.name = {
-        contains: name.toLocaleLowerCase()
-      };
-    }
-
-    if (genre) {
-      where.genre = genre;
-    }
-
-    if (enrollmentStatus) {
-      where.enrollmentStatus = enrollmentStatus;
+    switch (true) {
+      case !!name:
+        where.name = {
+          contains: name.toLocaleLowerCase(),
+        };
+        break;
+      case !!tel:
+        where.OR = [
+          {
+            tel: {
+              contains: tel.toLocaleLowerCase(),
+            },
+          },
+          {
+            telOptional: {
+              contains: tel.toLocaleLowerCase(),
+            },
+          },
+        ];
+        break;
+      case !!email:
+        where.OR = [
+          {
+            email: {
+              contains: email.toLocaleLowerCase(),
+            },
+          },
+          {
+            emailOptional: {
+              contains: email.toLocaleLowerCase(),
+            },
+          },
+        ];
+        break;
+      case !!career:
+        where.career = {
+          contains: career.toLocaleLowerCase(),
+        };
+        break;
+      case !!country:
+        where.country = {
+          contains: country.toLocaleLowerCase(),
+        };
+        break;
+      case !!state:
+        where.state = {
+          contains: state.toLocaleLowerCase(),
+        };
+        break;
+      case !!city:
+        where.city = {
+          contains: city.toLocaleLowerCase(),
+        };
+        break;
+      case !!formerSchool:
+        where.formerSchool = {
+          contains: formerSchool.toLocaleLowerCase(),
+        };
+        break;
+      case !!enrollmentStatus:
+        where.enrollmentStatus = enrollmentStatus;
+        break;
+      case !!followId:
+        where.followId = parseInt(followId);
+        break;
+      case !!contactMediumId:
+        where.contactMediumId = parseInt(contactMediumId);
+        break;
+      case !!asetNameId:
+        where.asetNameId = parseInt(asetNameId);
+        break;
+      case !!campaignId:
+        where.campaignId = parseInt(campaignId);
+        break;
+      case !!schoolYearId:
+        where.schoolYearId = parseInt(schoolYearId);
+        break;
+      case !!referenceType:
+        where.referenceType = referenceType;
+        break;
+      case !!typeSchool:
+        where.typeSchool = typeSchool;
+        break;
     }
 
     const leads = await prisma.lead.findMany({
       skip: +req.query.skip,
       take: +req.query.take,
       orderBy: {
-          id: 'desc'
+        id: "desc",
       },
       where,
       include: {
@@ -40,6 +114,7 @@ router.get("/leads", async (req, res) => {
         contactMedium: true,
         asetName: true,
         campaign: true,
+        schoolYear: true,
         user: true,
       },
     });
@@ -93,6 +168,7 @@ router.get("/lead/:id", async (req, res) => {
         contactMedium: true,
         asetName: true,
         campaign: true,
+        schoolYear: true,
         user: true,
       },
     });
@@ -176,7 +252,7 @@ router.post("/lead/upload", upload.single("file"), async (req, res) => {
 
     for (let i = 1; i < lines.length; i++) {
       const line = lines[i];
-      if (line.trim() === '') {
+      if (line.trim() === "") {
         continue; // Ignorar líneas vacías
       }
       const entries = line.split(",");
@@ -189,7 +265,6 @@ router.post("/lead/upload", upload.single("file"), async (req, res) => {
 
     // Procesar los datos y realizar la inserción en la base de datos
     for (const result of results) {
-
       const leadData = {
         name: result.name,
         genre: result.genre || null,
@@ -206,7 +281,6 @@ router.post("/lead/upload", upload.single("file"), async (req, res) => {
         country: result.country || null,
         state: result.state || null,
         city: result.city || null,
-        schoolYear: result.schoolYear || null,
         admissionSemester: result.admissionSemester || null,
         referenceType: result.referenceType || null,
         referenceName: result.referenceName || null,
@@ -218,27 +292,32 @@ router.post("/lead/upload", upload.single("file"), async (req, res) => {
         contactMedium: {},
         asetName: {},
         campaign: {},
+        schoolYear: {},
         user: {},
       };
-      
+
       if (result.followId) {
         leadData.followUp.connect = { id: parseInt(result.followId) };
       }
-      
+
       if (result.gradeId) {
         leadData.grade.connect = { id: parseInt(result.gradeId) };
       }
 
-      if(result.contactMediumId) {
+      if (result.contactMediumId) {
         leadData.contactMedium.connect = { id: parseInt(result.contactMediumId) };
       }
 
-      if(result.asetName) {
+      if (result.asetName) {
         leadData.asetName.connect = { id: parseInt(result.asetNameId) };
       }
-      
+
       if (result.campaignId) {
         leadData.campaign.connect = { id: parseInt(result.campaignId) };
+      }
+
+      if (result.schoolYearId) {
+        leadData.schoolYear.connect = { id: parseInt(result.schoolYearId) };
       }
 
       if (result.userId) {
@@ -272,6 +351,7 @@ router.get("/lead/promoter/:id", async (req, res) => {
         contactMedium: true,
         asetName: true,
         campaign: true,
+        schoolYear: true,
         user: true,
       },
     });
@@ -284,25 +364,25 @@ router.get("/lead/promoter/:id", async (req, res) => {
 });
 
 // Contador de registros
-router.get('/leads/total', async (req, res) => {
+router.get("/leads/total", async (req, res) => {
   try {
-      const total = await prisma.lead.count();
+    const total = await prisma.lead.count();
 
-      res.status(200).json(total);
+    res.status(200).json(total);
   } catch (error) {
-      console.error('Error obtener el total de leads:', error);
-      res.status(500).send('Error interno del servidor');
+    console.error("Error obtener el total de leads:", error);
+    res.status(500).send("Error interno del servidor");
   }
 });
 
 // Obtener el listado de leads
-router.get('/leads/list', async (req, res) => {
+router.get("/leads/list", async (req, res) => {
   try {
-      const leads = await prisma.lead.findMany();
-      res.status(200).json(leads);
+    const leads = await prisma.lead.findMany();
+    res.status(200).json(leads);
   } catch (error) {
-      console.error('Error al encontrar los leads:', error);
-      res.status(500).send('Error interno del servidor');
+    console.error("Error al encontrar los leads:", error);
+    res.status(500).send("Error interno del servidor");
   }
 });
 
