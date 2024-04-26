@@ -90,12 +90,17 @@ router.put('/contact-medium/:id', async (req, res) => {
         // Verifica si el nombre ya está registrado en la base de datos
         const existingAtrributes = await prisma.contactMedium.findFirst({
             where: {
-                type: type,
-            },
+                NOT: {
+                    AND: [
+                        { id: parseInt(id) },
+                        { type: type },
+                    ]
+                }
+            }
         });
 
-        if (existingAtrributes) {
-            return res.status(400).json({ error: 'Ya existe un medio de contacto con este nombre.' });
+        if (!existingAtrributes) {
+            return res.status(400).json({ error: 'No se han realizado cambios en medios de contacto' });
         }
 
         const updatedContactMedium = await prisma.contactMedium.update({

@@ -97,15 +97,20 @@ router.put('/campaign/:id', async(req, res) => {
         }
 
         // Verifica si el nombre o tipo de campaña ya está registrado en la base de datos
-        const existingAtrributes = await prisma.campaign.findFirst({
+        const existingAttributes = await prisma.campaign.findFirst({
             where: {
-                name: name,
-                type_campaign: type_campaign,
+                NOT: {
+                    AND: [
+                        { id: parseInt(id) },
+                        { name: name },
+                        { type_campaign: type_campaign }
+                    ]
+                }
             }
         });
 
-        if (existingAtrributes) {
-            return res.status(400).json({ error: 'Ya existe una campaña con este nombre y/o tipo.' });
+        if (!existingAttributes) {
+            return res.status(400).json({ error: 'No se han realizado cambios en la campaña' });
         }
 
         const updatedCampaign = await prisma.campaign.update({

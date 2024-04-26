@@ -109,15 +109,18 @@ router.put("/school-year/:id", async (req, res) => {
 
     const existingAtrributes = await prisma.schoolYear.findFirst({
       where: {
-        cicle: cicle,
-        status: status,
+        NOT: {
+          AND: [
+            { id: parseInt(id) },
+            { cicle: cicle },
+            { status: status },
+          ],
+        },
       },
     });
 
-    if (existingAtrributes) {
-      return res.status(400).json({
-        error: "Ya existe un ciclo escolar con este nombre y/o tipo.",
-      });
+    if (!existingAtrributes) {
+      return res.status(400).json({ error: 'No se han realizado cambios en ciclo escolar' });
     }
 
     const updatedSchoolYear = await prisma.schoolYear.update({
@@ -154,8 +157,8 @@ router.get("/school-years/list", async (req, res) => {
   try {
     const schoolYears = await prisma.schoolYear.findMany({
       where: {
-        status: true
-      }
+        status: true,
+      },
     });
     res.status(200).json(schoolYears);
   } catch (error) {
