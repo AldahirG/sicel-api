@@ -16,6 +16,9 @@ import roleRoutes from './routes/role.routes.js';
 import scoolyearRoutes from './routes/schoolyear.routes.js';
 import userRoutes from './routes/user.routes.js';
 
+// Rutas de promotor
+import leadPromoterRoutes from './routes/promoter/lead.routes.js';
+
 // Gráficas
 import chartRoutes from './routes/chart.routes.js';
 
@@ -50,6 +53,9 @@ app.use('/api', promoterRoutes);
 app.use('/api', roleRoutes);
 app.use('/api', scoolyearRoutes);
 app.use('/api', userRoutes);
+
+// Traer rutas de promotor
+app.use('/api', leadPromoterRoutes);
 
 app.use('/api', chartRoutes);
 
