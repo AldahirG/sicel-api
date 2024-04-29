@@ -52,20 +52,39 @@ router.get('/total-status', async (req, res) => {
     }
 });
 
-// Consultar el recuento de leads por schoolYear
+// Endpoint para contar leads por ciclo escolar
 router.get('/recuento-leads-por-schoolYear', async (req, res) => {
     try {
-        // Lógica para obtener el recuento de leads por schoolYear
-        const recuentoLeadsPorSchoolYear = await prisma.lead.groupBy({
-            by: ['schoolYear'],
+        const leadsPorCiclo = await prisma.lead.groupBy({
+            by: ['schoolYearId'], // Agrupar por el id del ciclo escolar
             _count: {
-                id: true
+                id: true // Contar el número de leads por cada ciclo escolar
             }
         });
 
-        res.status(200).json(recuentoLeadsPorSchoolYear);
+        // Mapear los resultados para incluir el nombre del ciclo escolar
+        const leadsPorCicloConNombre = await Promise.all(leadsPorCiclo.map(async (lead) => {
+            if (lead.schoolYearId) {
+                const schoolYear = await prisma.schoolYear.findUnique({
+                    where: {
+                        id: lead.schoolYearId // Buscar el ciclo escolar por su id
+                    }
+                });
+                return {
+                    count: lead._count.id, // Renombrar la propiedad _count.id a count
+                    schoolYear: schoolYear?.cicle || 'Ciclo desconocido' // Obtener el nombre del ciclo escolar o 'Ciclo desconocido' si no se encuentra
+                };
+            } else {
+                return {
+                    count: lead._count.id, // Renombrar la propiedad _count.id a count
+                    schoolYear: 'Ciclo desconocido' // Asignar 'Ciclo desconocido' si schoolYearId es null
+                };
+            }
+        }));
+
+        res.status(200).json(leadsPorCicloConNombre);
     } catch (error) {
-        console.error('Error al obtener el recuento de leads por schoolYear:', error);
+        console.error('Error al obtener los datos de recuento de leads por schoolYearId:', error);
         res.status(500).send('Error interno del servidor');
     }
 });
@@ -418,19 +437,23 @@ router.get('/recuento-leads-por-contactMedium', async (req, res) => {
 });
 
 
+// Endpoint para obtener el recuento de leads por fuente de datos
+router.get('/recuento-leads-por-dataSource', async (req, res) => {
+    try {
+        // Obtener el recuento de leads por cada categoría de fuente de datos
+        const recuentoLeadsPorDataSource = await prisma.lead.groupBy({
+            by: ['dataSource'],
+            _count: {
+                id: true
+            }
+        });
 
-
-
-
-
-
-
-
-
-
-
-
-
+        res.status(200).json(recuentoLeadsPorDataSource);
+    } catch (error) {
+        console.error('Error al obtener el recuento de leads por fuente de datos:', error);
+        res.status(500).send('Error interno del servidor');
+    }
+});
 
 
 

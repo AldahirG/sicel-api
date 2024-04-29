@@ -158,6 +158,29 @@ model Lead {
   // Id del aset name
   asetName   AsetName? @relation(fields: [asetNameId], references: [id])
   asetNameId Int?
+
+  // Relación con la tabla intermedia "LeadContact"
+  contacts          LeadContact[]
+}
+
+model Contact {
+  id           Int      @id @default(autoincrement())
+  comment      String?  @db.Text
+  date_contact DateTime @default(now())
+
+  // Relación inversa con LeadContact
+  leads LeadContact[]
+}
+
+
+model LeadContact {
+  lead    Lead @relation(fields: [leadId], references: [id])
+  leadId  Int
+  contact Contact @relation(fields: [contactId], references: [id])
+  contactId Int
+
+  @@id([leadId, contactId])
+
 }
 
 model Assignment {

@@ -15,9 +15,8 @@ import promoterRoutes from './routes/promoter.route.js';
 import roleRoutes from './routes/role.routes.js';
 import scoolyearRoutes from './routes/schoolyear.routes.js';
 import userRoutes from './routes/user.routes.js';
-
-// Gráficas
 import chartRoutes from './routes/chart.routes.js';
+import commentRoutes from './routes/comment.routes.js';
 
 
 const app = express();
@@ -50,8 +49,8 @@ app.use('/api', promoterRoutes);
 app.use('/api', roleRoutes);
 app.use('/api', scoolyearRoutes);
 app.use('/api', userRoutes);
-
 app.use('/api', chartRoutes);
+app.use('/api', commentRoutes);
 
 
 app.listen(PORT);
