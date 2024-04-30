@@ -64,6 +64,12 @@ router.post('/leads/assign', async (req, res) => {
       return res.status(400).json({ message: 'Algunos leads ya tienen Fecha de primer contacto y Seguimiento, no se pueden reasignar' });
     }
 
+    // Validar que los leads no estén asignados al mismo promotor actual
+    const leadsAssignedToSamePromoter = leads.filter((lead) => lead.userId === userId);
+    if (leadsAssignedToSamePromoter.length > 0) {
+      return res.status(400).json({ message: 'Algunos leads ya están asignados al mismo promotor actual, no se pueden reasignar' });
+    }
+
     // Crear las asignaciones en UsersOnLeads
     const assignments = leadIds.map((leadId) => {
       return prisma.assignment.create({
@@ -88,7 +94,7 @@ router.post('/leads/assign', async (req, res) => {
 
     res.status(200).json({ message: 'Promotor asignado a los leads correctamente' });
   } catch (error) {
-    res.status(500).json({ message: 'Error al asignar usuario a los leads', error: error.message });
+    res.status(500).json({ message: 'Error al asignar promotor a los leads', error: error.message });
   }
 });
 
