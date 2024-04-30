@@ -39,6 +39,12 @@ app.options("*", cors());
 
 app.use(express.json());
 
+app.get("/", (req, res) => {
+    res.status(200).send({
+        msg: "Sicel API"
+    })
+})
+
 // Mandar a traer las rutas
 app.use('/api', asetnameRoutes);
 app.use('/api', assignmentRoutes);
@@ -58,7 +64,6 @@ app.use('/api', userRoutes);
 app.use('/api', leadPromoterRoutes);
 
 app.use('/api', chartRoutes);
-
 
 app.listen(PORT);
 console.log("Servidor corriendo en puerto: ", PORT);
