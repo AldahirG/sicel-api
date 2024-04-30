@@ -6,7 +6,6 @@ const router = express.Router();
 const storage = multer.memoryStorage();
 const upload = multer({ storage });
 
-// Consultar leads del promotor
 // Consultar leads del promotor con filtros y paginación
 router.get("/promoter/:id/leads", async (req, res) => {
   const { id } = req.params;

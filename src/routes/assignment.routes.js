@@ -58,6 +58,12 @@ router.post('/leads/assign', async (req, res) => {
       return res.status(404).json({ message: 'Algunos leads no encontrados' });
     }
 
+    // Validar que los leads seleccionados no tengan fecha de primer contacto y seguimiento
+    const invalidLeads = leads.filter((lead) => lead.dateFirstContact !== null && lead.followId !== null);
+    if (invalidLeads.length > 0) {
+      return res.status(400).json({ message: 'Algunos leads ya tienen Fecha de primer contacto y Seguimiento, no se pueden reasignar' });
+    }
+
     // Crear las asignaciones en UsersOnLeads
     const assignments = leadIds.map((leadId) => {
       return prisma.assignment.create({

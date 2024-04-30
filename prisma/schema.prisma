@@ -53,6 +53,8 @@ model Carreer {
   name       String   @unique @db.VarChar(150)
   slug       String   @unique @db.VarChar(30)
   created_at DateTime @default(now())
+
+  enrollment Enrollment[]
 }
 
 // Grado escolar
@@ -98,9 +100,9 @@ model AsetName {
 
 // Ciclo escolar
 model SchoolYear {
-  id     Int     @id @default(autoincrement())
-  cicle  String  @db.VarChar(9)
-  status Boolean @default(true)
+  id         Int      @id @default(autoincrement())
+  cicle      String   @db.VarChar(9)
+  status     Boolean  @default(true)
   created_at DateTime @default(now())
 
   lead Lead[]
@@ -132,7 +134,7 @@ model Lead {
   updated_at        String  @db.VarChar(35) // Fecha de actualización
 
   // Ciclo escolar
-  schoolYear SchoolYear? @relation(fields: [schoolYearId], references: [id])
+  schoolYear   SchoolYear? @relation(fields: [schoolYearId], references: [id])
   schoolYearId Int?
 
   // Id de pseguimiento
@@ -158,11 +160,31 @@ model Lead {
   // Id del aset name
   asetName   AsetName? @relation(fields: [asetNameId], references: [id])
   asetNameId Int?
+
+  enrollment Enrollment?
 }
 
+// Asignaciones
 model Assignment {
   id         Int      @id @default(autoincrement())
   userId     Int      @db.Int
   leadId     Int      @db.Int
   created_at DateTime @default(now())
+}
+
+// Inscripción
+model Enrollment {
+  id                  Int    @id @default(autoincrement())
+  enrollmentDate      String @db.VarChar(10) //Fecha de inscripción
+  scholarship         String @db.VarChar(50) // Beca ofrecida
+  enrollmentPromotion String @db.VarChar(60) // Promoción de inscripción
+  salesChannel        String @db.VarChar(30) // Canal de venta
+
+  // Id del lead
+  leadId Int  @unique
+  lead   Lead @relation(fields: [leadId], references: [id])
+
+  // Id de la carrera
+  careerId Int  @unique
+  career   Carreer @relation(fields: [careerId], references: [id])
 }
