@@ -18,6 +18,7 @@ import userRoutes from './routes/user.routes.js';
 
 // Rutas de promotor
 import leadPromoterRoutes from './routes/promoter/lead.routes.js';
+import enrollmentPromoterRoutes from './routes/promoter/enrollment.js';
 
 // Gráficas
 import chartRoutes from './routes/chart.routes.js';
@@ -62,6 +63,7 @@ app.use('/api', userRoutes);
 
 // Traer rutas de promotor
 app.use('/api', leadPromoterRoutes);
+app.use('/api', enrollmentPromoterRoutes);
 
 app.use('/api', chartRoutes);
 
