@@ -1,7 +1,38 @@
 import express from 'express';
 import { prisma } from '../db.js';
+import { Prisma } from '@prisma/client';
 
 const router = express.Router();
+
+//filtrado 
+
+router.get('/leads-filtrados', async (req, res) => {
+    try {
+        // Obtener los parámetros de consulta
+        const filters = req.query;
+
+        // Construir el objeto de filtro dinámicamente
+        const whereClause = {};
+        for (const field in filters) {
+            // Ignorar los campos que no son campos de Lead
+            if (Object.prototype.hasOwnProperty.call(filters, field) && field in Prisma.LeadScalarFieldEnum) {
+                whereClause[field] = filters[field];
+            }
+        }
+
+        // Consultar los leads utilizando la consulta construida dinámicamente
+        const leadsFiltrados = await prisma.lead.findMany({
+            where: whereClause
+        });
+
+        // Devolver los leads filtrados
+        res.status(200).json(leadsFiltrados);
+    } catch (error) {
+        console.error('Error al obtener los leads filtrados:', error);
+        res.status(500).send('Error interno del servidor');
+    }
+});
+
 
 // Consultar total por status
 router.get('/total-status', async (req, res) => {
@@ -21,25 +52,43 @@ router.get('/total-status', async (req, res) => {
     }
 });
 
-// // Consultar total por ciclo
-// router.get('/total-ciclo', async (req, res) => {
-//     try {
-//         // Lógica para obtener los datos de la gráfica
-//         const totalPorCiclo = await prisma.lead.groupBy({
-//             by: {
-//                 cicle: 'cicle'
-//             },
-//             _count: {
-//                 id: true
-//             }
-//         });
+// Endpoint para contar leads por ciclo escolar
+router.get('/recuento-leads-por-schoolYear', async (req, res) => {
+    try {
+        const leadsPorCiclo = await prisma.lead.groupBy({
+            by: ['schoolYearId'], // Agrupar por el id del ciclo escolar
+            _count: {
+                id: true // Contar el número de leads por cada ciclo escolar
+            }
+        });
 
-//         res.status(200).json(totalPorCiclo);
-//     } catch (error) {
-//         console.error('Error al obtener los datos para la gráfica de total por ciclo:', error);
-//         res.status(500).send('Error interno del servidor');
-//     }
-// });
+        // Mapear los resultados para incluir el nombre del ciclo escolar
+        const leadsPorCicloConNombre = await Promise.all(leadsPorCiclo.map(async (lead) => {
+            if (lead.schoolYearId) {
+                const schoolYear = await prisma.schoolYear.findUnique({
+                    where: {
+                        id: lead.schoolYearId // Buscar el ciclo escolar por su id
+                    }
+                });
+                return {
+                    count: lead._count.id, // Renombrar la propiedad _count.id a count
+                    schoolYear: schoolYear?.cicle || 'Ciclo desconocido' // Obtener el nombre del ciclo escolar o 'Ciclo desconocido' si no se encuentra
+                };
+            } else {
+                return {
+                    count: lead._count.id, // Renombrar la propiedad _count.id a count
+                    schoolYear: 'Ciclo desconocido' // Asignar 'Ciclo desconocido' si schoolYearId es null
+                };
+            }
+        }));
+
+        res.status(200).json(leadsPorCicloConNombre);
+    } catch (error) {
+        console.error('Error al obtener los datos de recuento de leads por schoolYearId:', error);
+        res.status(500).send('Error interno del servidor');
+    }
+});
+
 
 // Consultar externos e internos
 // router.get('/externos-internos', async (req, res) => {
@@ -130,37 +179,37 @@ router.get('/total-municipio', async (req, res) => {
         res.status(500).send('Error interno del servidor');
     }
 });
-// Consultar total de inscripciones por promotor
-router.get('/total-inscripciones-promotor', async (req, res) => {
+
+// Consultar total de inscripciones por usuario (promotor)
+router.get('/total-inscripciones-por-promotor', async (req, res) => {
     try {
-        const totalPorPromotor = await prisma.user.findMany({
-            select: {
-                id: true,
-                name: true,
+        // Lógica para obtener los datos del total de inscripciones por promotor
+        const totalInscripcionesPorPromotor = await prisma.user.findMany({
+            include: {
                 leads: {
-                    where: {
-                        enrollmentDate: {
-                            not: null
-                        }
+                    select: {
+                        id: true
                     }
                 }
             }
         });
 
-        const result = totalPorPromotor.map(promotor => {
-            return {
-                id: promotor.id,
-                name: promotor.name,
-                totalInscripciones: promotor.leads.length
-            };
-        });
+        // Mapear los resultados para obtener el total de inscripciones por promotor
+        const totalPorPromotor = totalInscripcionesPorPromotor.map(promotor => ({
+            id: promotor.id,
+            name: promotor.name,
+            totalInscripciones: promotor.leads.length
+        }));
 
-        res.status(200).json(result);
+        res.status(200).json(totalPorPromotor);
     } catch (error) {
-        console.error('Error al obtener los datos para la gráfica de total de inscripciones por promotor:', error);
+        console.error('Error al obtener los datos del total de inscripciones por promotor:', error);
         res.status(500).send('Error interno del servidor');
     }
 });
+
+
+
 
 router.get('/reference-type', async (req, res) => {
     try {
@@ -331,22 +380,82 @@ router.get('/inscripciones-por-mes', async (req, res) => {
 });
 
 
-router.get('/inscripciones-por-tipo-escuela', async (req, res) => {
+// Consultar el recuento de leads por typeSchool
+router.get('/recuento-leads-por-typeSchool', async (req, res) => {
     try {
-        // Consultar el recuento de inscripciones por tipo de escuela
-        const inscripcionesPorTipoEscuela = await prisma.lead.groupBy({
-            by: ['type_school'],
+        // Lógica para obtener el recuento de leads por typeSchool
+        const recuentoLeadsPorTypeSchool = await prisma.lead.groupBy({
+            by: ['typeSchool'],
             _count: {
                 id: true
             }
         });
 
-        res.status(200).json(inscripcionesPorTipoEscuela);
+        res.status(200).json(recuentoLeadsPorTypeSchool);
     } catch (error) {
-        console.error('Error al obtener los datos de inscripciones por tipo de escuela:', error);
+        console.error('Error al obtener el recuento de leads por typeSchool:', error);
         res.status(500).send('Error interno del servidor');
     }
 });
+
+
+
+router.get('/recuento-leads-por-contactMedium', async (req, res) => {
+    try {
+        const leadsPorMedioContacto = await prisma.lead.groupBy({
+            by: ['contactMediumId'], // Agrupar por el id del medio de contacto
+            _count: {
+                id: true // Contar el número de leads por cada medio de contacto
+            }
+        });
+
+        // Mapear los resultados para incluir el tipo de medio de contacto
+        const leadsPorMedioContactoConTipo = await Promise.all(leadsPorMedioContacto.map(async (lead) => {
+            if (lead.contactMediumId) {
+                const contactMedium = await prisma.contactMedium.findUnique({
+                    where: {
+                        id: lead.contactMediumId // Buscar el medio de contacto por su id
+                    }
+                });
+                return {
+                    count: lead._count.id, // Renombrar la propiedad _count.id a count
+                    contactMediumType: contactMedium?.type || null // Obtener el tipo de medio de contacto
+                };
+            } else {
+                return {
+                    count: lead._count.id, // Renombrar la propiedad _count.id a count
+                    contactMediumType: null // Si contactMediumId es null, asignar null al tipo de medio de contacto
+                };
+            }
+        }));
+
+        res.status(200).json(leadsPorMedioContactoConTipo);
+    } catch (error) {
+        console.error('Error al obtener los datos de recuento de leads por contactMediumId:', error);
+        res.status(500).send('Error interno del servidor');
+    }
+});
+
+
+// Endpoint para obtener el recuento de leads por fuente de datos
+router.get('/recuento-leads-por-dataSource', async (req, res) => {
+    try {
+        // Obtener el recuento de leads por cada categoría de fuente de datos
+        const recuentoLeadsPorDataSource = await prisma.lead.groupBy({
+            by: ['dataSource'],
+            _count: {
+                id: true
+            }
+        });
+
+        res.status(200).json(recuentoLeadsPorDataSource);
+    } catch (error) {
+        console.error('Error al obtener el recuento de leads por fuente de datos:', error);
+        res.status(500).send('Error interno del servidor');
+    }
+});
+
+
 
 
 //charts promotor
@@ -597,3 +706,4 @@ router.get('/leads-por-promotor/:userId', async (req, res) => {
 // Otras rutas para las demás gráficas...
 
 export default router;
+

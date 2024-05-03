@@ -16,12 +16,15 @@ import roleRoutes from './routes/role.routes.js';
 import scoolyearRoutes from './routes/schoolyear.routes.js';
 import userRoutes from './routes/user.routes.js';
 
+
 // Rutas de promotor
 import leadPromoterRoutes from './routes/promoter/lead.routes.js';
 import enrollmentPromoterRoutes from './routes/promoter/enrollment.js';
 
 // Gráficas
+
 import chartRoutes from './routes/chart.routes.js';
+import commentRoutes from './routes/comment.routes.js';
 
 
 const app = express();
@@ -61,9 +64,14 @@ app.use('/api', roleRoutes);
 app.use('/api', scoolyearRoutes);
 app.use('/api', userRoutes);
 
+app.use('/api', chartRoutes);
+app.use('/api', commentRoutes);
+
+
 // Traer rutas de promotor
 app.use('/api', leadPromoterRoutes);
 app.use('/api', enrollmentPromoterRoutes);
+
 
 app.use('/api', chartRoutes);
 
