@@ -111,7 +111,7 @@ model Lead {
   name              String  @db.VarChar(150)
   genre             String? @db.VarChar(50) // Sexo
   enrollmentStatus  String? @db.VarChar(10) // Estatus de inscripción
-  tel               String  @db.VarChar(25)
+  tel               String  @db.VarChar(25) 
   telOptional       String? @db.VarChar(25)
   email             String  @db.VarChar(80)
   emailOptional     String? @db.VarChar(80)
