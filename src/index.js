@@ -15,6 +15,14 @@ import promoterRoutes from './routes/promoter.route.js';
 import roleRoutes from './routes/role.routes.js';
 import scoolyearRoutes from './routes/schoolyear.routes.js';
 import userRoutes from './routes/user.routes.js';
+
+
+// Rutas de promotor
+import leadPromoterRoutes from './routes/promoter/lead.routes.js';
+import enrollmentPromoterRoutes from './routes/promoter/enrollment.js';
+
+// Gráficas
+
 import chartRoutes from './routes/chart.routes.js';
 import commentRoutes from './routes/comment.routes.js';
 
@@ -24,7 +32,7 @@ const PORT = process.env.PORT || 3000;
 
 app.use(
     cors({
-        origin: ["http://localhost:5173", "http://127.0.0.1:5173"],
+        origin: [process.env.ALLOWED_ORIGIN],
         methods: ["GET", "POST", "PUT", "DELETE"],
         allowedHeaders: ["Content-Type", "Authorization"],
     })
@@ -34,6 +42,12 @@ app.use(
 app.options("*", cors());
 
 app.use(express.json());
+
+app.get("/", (req, res) => {
+    res.status(200).send({
+        msg: "Sicel API"
+    })
+})
 
 // Mandar a traer las rutas
 app.use('/api', asetnameRoutes);
@@ -49,9 +63,17 @@ app.use('/api', promoterRoutes);
 app.use('/api', roleRoutes);
 app.use('/api', scoolyearRoutes);
 app.use('/api', userRoutes);
+
 app.use('/api', chartRoutes);
 app.use('/api', commentRoutes);
 
+
+// Traer rutas de promotor
+app.use('/api', leadPromoterRoutes);
+app.use('/api', enrollmentPromoterRoutes);
+
+
+app.use('/api', chartRoutes);
 
 app.listen(PORT);
 console.log("Servidor corriendo en puerto: ", PORT);

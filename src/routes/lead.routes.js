@@ -199,7 +199,7 @@ router.put("/lead/:id", async (req, res) => {
 
     // Si no se encuentra el lead, devuelve un error
     if (!lead) {
-      return res.status(404).json({ error: "Lead not found" });
+      return res.status(404).json({ error: "Lead no encontrado" });
     }
 
     // Verifica si dateFirstContact es nulo
@@ -333,33 +333,6 @@ router.post("/lead/upload", upload.single("file"), async (req, res) => {
   } catch (error) {
     console.error("Error al procesar el archivo CSV:", error);
     res.status(500).json({ error: "Error interno del servidor" });
-  }
-});
-
-// lead por promoter id
-router.get("/lead/promoter/:id", async (req, res) => {
-  const { id } = req.params;
-
-  try {
-    const leads = await prisma.lead.findMany({
-      where: {
-        userId: parseInt(id),
-      },
-      include: {
-        followUp: true,
-        grade: true,
-        contactMedium: true,
-        asetName: true,
-        campaign: true,
-        schoolYear: true,
-        user: true,
-      },
-    });
-
-    res.status(200).json(leads);
-  } catch (error) {
-    console.error("Error al obtener leads por promoter id:", error);
-    res.status(500).send("Error interno del servidor");
   }
 });
 

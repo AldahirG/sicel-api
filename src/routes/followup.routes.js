@@ -92,12 +92,17 @@ router.put('/follow-up/:id', async (req, res) => {
         // Verifica si el nombre ya está registrado en la base de datos
         const existingAtrributes = await prisma.followUp.findFirst({
             where: {
-                name: name,
+                NOT: {
+                    AND: [
+                        { id: parseInt(id) },
+                        { name: name },
+                    ]
+                }
             }
         });
 
-        if (existingAtrributes) {
-            return res.status(400).json({ error: 'Ya existe un PSegumiento con este nombre.' });
+        if (!existingAtrributes) {
+            return res.status(400).json({ error: 'No se han realizado cambios en leads' });
         }
 
         const updatedFollowUp = await prisma.followUp.update({

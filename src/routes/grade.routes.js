@@ -92,12 +92,17 @@ router.put('/grade/:id', async (req, res) => {
         // Verifica si el nombre ya está registrado en la base de datos
         const existingAtrributes = await prisma.grade.findFirst({
             where: {
-                name: name,
+                NOT: {
+                    AND: [
+                        { id: parseInt(id) },
+                        { name: name },
+                    ]
+                }
             }
         });
 
-        if (existingAtrributes) {
-            return res.status(400).json({ error: 'Ya existe un grado escolar con este nombre.' });
+        if (!existingAtrributes) {
+            return res.status(400).json({ error: 'No se han realizado cambios en grados escolares' });
         }
 
         const updatedGrade = await prisma.grade.update({

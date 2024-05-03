@@ -76,11 +76,11 @@ router.get('/carreer/:id', async (req, res) => {
 });
 
 // Actualizar una carrera
-router.put('/carreer/:id', async(req, res) => {
+router.put('/carreer/:id', async (req, res) => {
     try {
         const { id } = req.params;
 
-        // Campos que se actualizaran
+        // Campos que se actualizarán
         const { name, slug } = req.body;
 
         // Verifica si existe una carrera mediante su id    
@@ -95,15 +95,21 @@ router.put('/carreer/:id', async(req, res) => {
         }
 
         // Verifica si el nombre o tipo de carrera ya está registrado en la base de datos
-        const existingAtrributes = await prisma.carreer.findFirst({
+        const existingAttributes = await prisma.carreer.findFirst({
             where: {
-              name: name,
-              slug: slug,
+                NOT: {
+                    AND: [
+                        { id: parseInt(id) },
+                        { name: name },
+                        { slug: slug }
+                    ]
+                }
             }
-          });
-          
-        if (existingAtrributes) {
-            return res.status(400).json({ error: 'Ya existe una carrera con este nombre y/o abreviatura.' });
+        });
+
+        // Verifica si los campos han cambiado
+        if (!existingAttributes) {
+            return res.status(400).json({ error: 'No se han realizado cambios en la carrera.' });
         }
 
         const updatedCarreer = await prisma.carreer.update({
@@ -111,7 +117,7 @@ router.put('/carreer/:id', async(req, res) => {
                 id: parseInt(id)
             },
             data: {
-                name, 
+                name,
                 slug,
             },
         });
