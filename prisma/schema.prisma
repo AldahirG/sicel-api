@@ -113,7 +113,7 @@ model Lead {
   name              String  @db.VarChar(150)
   genre             String? @db.VarChar(50) // Sexo
   enrollmentStatus  String? @db.VarChar(10) // Estatus de inscripción
-  tel               String  @db.VarChar(25) 
+  tel               String  @db.VarChar(25)
   telOptional       String? @db.VarChar(25)
   email             String  @db.VarChar(80)
   emailOptional     String? @db.VarChar(80)
@@ -161,9 +161,10 @@ model Lead {
   asetName   AsetName? @relation(fields: [asetNameId], references: [id])
   asetNameId Int?
 
+  enrollment Enrollment?
 
   // Relación con la tabla intermedia "LeadContact"
-  contacts          LeadContact[]
+  contacts LeadContact[]
 }
 
 model Contact {
@@ -175,18 +176,13 @@ model Contact {
   leads LeadContact[]
 }
 
-
 model LeadContact {
-  lead    Lead @relation(fields: [leadId], references: [id])
-  leadId  Int
-  contact Contact @relation(fields: [contactId], references: [id])
+  lead      Lead    @relation(fields: [leadId], references: [id])
+  leadId    Int
+  contact   Contact @relation(fields: [contactId], references: [id])
   contactId Int
 
   @@id([leadId, contactId])
-
-
-  enrollment Enrollment?
-
 }
 
 // Asignaciones
@@ -210,6 +206,6 @@ model Enrollment {
   lead   Lead @relation(fields: [leadId], references: [id])
 
   // Id de la carrera
-  careerId Int  @unique
+  careerId Int     @unique
   career   Carreer @relation(fields: [careerId], references: [id])
 }

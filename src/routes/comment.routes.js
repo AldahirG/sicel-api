@@ -12,7 +12,7 @@ router.get('/admin/lead/:leadId/comments', async (req, res) => {
         const leadContacts = await prisma.leadContact.findMany({
             where: {
                 leadId: parseInt(leadId)
-            }
+            },
         });
 
         // Obtener los IDs de los comentarios asociados a los registros de LeadContact
@@ -22,7 +22,10 @@ router.get('/admin/lead/:leadId/comments', async (req, res) => {
         const comments = await prisma.contact.findMany({
             where: {
                 id: { in: commentIds }
-            }
+            },
+            orderBy: {
+                id: "desc",
+            },
         });
 
         res.status(200).json(comments);
