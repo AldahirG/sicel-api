@@ -9,8 +9,6 @@ import { TransformResponse } from 'src/common/mappers/transform-response';
 
 @Injectable()
 export class AuthService extends PrismaClient implements OnModuleInit {
-  private readonly validTokens: Set<string> = new Set();
-
   async onModuleInit() {
     await this.$connect();
   }

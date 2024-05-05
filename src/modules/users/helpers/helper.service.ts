@@ -1,8 +1,8 @@
 import { Injectable, OnModuleInit } from "@nestjs/common";
 import { PrismaClient } from "@prisma/client";
 import { ISelect } from "../interfaces/select.interface";
-import { PaginationFilterDto } from "src/common/dto/pagination-filter.dto";
 import { IWhere } from "../interfaces/where.interface";
+import { FilterUserDTO } from "../dto/filter-user.dto";
 
 @Injectable()
 export class HelperService extends PrismaClient implements OnModuleInit {
@@ -16,7 +16,6 @@ export class HelperService extends PrismaClient implements OnModuleInit {
             name: true,
             email: true,
             tel: true,
-            status: true,
             roles: {
                 select: {
                     role: {
@@ -30,12 +29,13 @@ export class HelperService extends PrismaClient implements OnModuleInit {
         return select
     }
 
-    getParams(params: PaginationFilterDto) {
+    getParams(params: FilterUserDTO) {
         const {
             search,
             page,
             'per-page': perPage,
-            paginated
+            paginated,
+            role
         } = params
 
         const OR = search ? [{ name: { contains: search } }] : undefined;
@@ -47,6 +47,10 @@ export class HelperService extends PrismaClient implements OnModuleInit {
             },
             orderBy: [{ id: 'desc' }],
         };
+
+        if (role) {
+            condition.where.roles = { some: { roleId: +role } }
+        }
 
         if (paginated) {
             condition.skip = (page - 1) * perPage;
