@@ -3,11 +3,19 @@ import { prisma } from "../../db.js";
 
 const router = express.Router();
 
-router.get("/promoter/enrollments", async (req, res) => {
+router.get("/promoter/:id/enrollments", async (req, res) => {
   try {
-    // Consulta la base de datos para obtener los leads con todos los campos llenos
+    
+    const { id } = req.params;
+
     const completeLeads = await prisma.lead.findMany({
+      skip: +req.query.skip,
+      take: +req.query.take,
+      orderBy: {
+          id: 'desc'
+      },
       where: {
+        userId: parseInt(id),
         NOT: {
           OR: [
             { genre: null },
@@ -25,7 +33,7 @@ router.get("/promoter/enrollments", async (req, res) => {
             { dateFirstContact: null },
             { scholarship: null },
             { schoolYearId: null },
-            { followId: null },
+            { followId: 2 },
             { gradeId: null },
             { userId: null },
             { contactMediumId: null },
@@ -34,8 +42,16 @@ router.get("/promoter/enrollments", async (req, res) => {
         AND: {
             telOptional: null,
             emailOptional: null,
-            asetNameId: null
         }
+      },
+      select: {
+        id: true,
+        name: true,
+        schoolYear: true,
+        grade: true,
+        user: true,
+        tel: true,
+        email: true,
       },
     });
 
