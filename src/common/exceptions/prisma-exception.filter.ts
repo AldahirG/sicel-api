@@ -1,4 +1,4 @@
-import { Catch, ExceptionFilter, ArgumentsHost } from '@nestjs/common';
+import { Catch, ExceptionFilter, ArgumentsHost, HttpException, HttpStatus } from '@nestjs/common';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
 
 @Catch(PrismaClientKnownRequestError)
@@ -11,6 +11,13 @@ export class PrismaClientErrorFilter implements ExceptionFilter {
             return response.status(400).json({
                 statusCode: 400,
                 message: 'The value you enter is already registered.',
+            });
+        }
+
+        if (exception.code === 'P2003') {
+            return response.status(HttpStatus.UNPROCESSABLE_ENTITY).json({
+                statusCode: HttpStatus.UNPROCESSABLE_ENTITY,
+                message: 'The value you are trying to assign does not exist in the referenced table.',
             });
         }
 
