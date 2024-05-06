@@ -21,6 +21,8 @@ export class PrismaClientErrorFilter implements ExceptionFilter {
             });
         }
 
+        console.log(exception);
+
         return response.status(500).json({
             statusCode: 500,
             message: 'Internal server error',
