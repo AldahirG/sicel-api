@@ -1,7 +1,7 @@
 import { Injectable, OnModuleInit } from "@nestjs/common";
 import { PrismaClient } from "@prisma/client";
 import { ISelect } from "../interfaces/select.interface";
-import { IWhere } from "../interfaces/where.interface";
+import { IUserWhere } from "../interfaces/where.interface";
 import { FilterUserDTO } from "../dto/filter-user.dto";
 
 @Injectable()
@@ -40,7 +40,7 @@ export class HelperService extends PrismaClient implements OnModuleInit {
 
         const OR = search ? [{ name: { contains: search } }] : undefined;
 
-        const condition: IWhere = {
+        const condition: IUserWhere = {
             where: {
                 status: true,
                 OR,
