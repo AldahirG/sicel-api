@@ -4,8 +4,9 @@ import { UsersModule } from './modules/users/users.module';
 import { APP_FILTER } from '@nestjs/core';
 import { PrismaClientErrorFilter } from './common/exceptions/prisma-exception.filter';
 import { RolesModule } from './modules/roles/roles.module';
+import { GradesModule } from './modules/grades/grades.module';
 @Module({
-  imports: [AuthModule, UsersModule, RolesModule],
+  imports: [AuthModule, UsersModule, RolesModule, GradesModule],
   controllers: [],
   providers: [
     {
