@@ -9,8 +9,9 @@ import { AsetnameModule } from './modules/asetname/asetname.module';
 import { ContactMediumsModule } from './modules/contact-mediums/contact-mediums.module';
 import { FollowUpModule } from './modules/follow-up/follow-up.module';
 import { CampaignsModule } from './modules/campaigns/campaigns.module';
+import { CareersModule } from './modules/careers/careers.module';
 @Module({
-  imports: [AuthModule, UsersModule, RolesModule, GradesModule, AsetnameModule, ContactMediumsModule, FollowUpModule, CampaignsModule],
+  imports: [AuthModule, UsersModule, RolesModule, GradesModule, AsetnameModule, ContactMediumsModule, FollowUpModule, CampaignsModule, CareersModule,],
   controllers: [],
   providers: [
     {
