@@ -7,8 +7,9 @@ import { RolesModule } from './modules/roles/roles.module';
 import { GradesModule } from './modules/grades/grades.module';
 import { AsetnameModule } from './modules/asetname/asetname.module';
 import { ContactMediumsModule } from './modules/contact-mediums/contact-mediums.module';
+import { FollowUpModule } from './modules/follow-up/follow-up.module';
 @Module({
-  imports: [AuthModule, UsersModule, RolesModule, GradesModule, AsetnameModule, ContactMediumsModule],
+  imports: [AuthModule, UsersModule, RolesModule, GradesModule, AsetnameModule, ContactMediumsModule, FollowUpModule],
   controllers: [],
   providers: [
     {
