@@ -9,7 +9,7 @@ const data = [
 ]
 
 export async function RoleSeeder() {
-    const roles = await prisma.role.createMany({
+    const roles = await prisma.roles.createMany({
         data,
         skipDuplicates: true,
     })

@@ -1,5 +1,4 @@
 export interface IJwt {
-    id: number;
-    name: string;
+    id: string;
     email: string;
 }

@@ -38,7 +38,6 @@ export class AuthService extends PrismaClient implements OnModuleInit {
     if (!user.accessToken) {
       user.accessToken = await this.signJWT({
         email: user.email,
-        name: user.name,
         id: user.id,
       })
 

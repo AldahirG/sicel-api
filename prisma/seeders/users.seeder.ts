@@ -8,9 +8,9 @@ export async function UserSeeder() {
 
     const data = [
         {
-            name: "Ximena Martínez",
+            name: "Ximena",
             email: "admin@example.com",
-            tel: "7333398473",
+            paternalSurname: 'Martínez',
             password: hashedPassword
         }
     ]
