@@ -31,7 +31,8 @@ export class AuthService extends PrismaClient implements OnModuleInit {
         maternalSurname: true,
         email: true,
         accessToken: true,
-        password: true
+        password: true,
+        roles: true
       }
     });
 
