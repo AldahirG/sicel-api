@@ -7,205 +7,234 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+enum Grades {
+  SECUNDARIA
+  BACHILLERATO
+  PREPARATORIA
+  LIC_ING
+  ESPECIALIDAD
+  DIPLOMADO
+  MAESTRIA
+  DOCTORADO
+  NO_ESPECIFICA
+}
+
 model User {
-  id          Int      @id() @default(autoincrement())
-  name        String?  @db.VarChar(150)
-  email       String   @unique @db.VarChar(80)
-  password    String   @db.VarChar(255)
-  tel         String?  @db.VarChar(10)
-  status      Boolean  @default(true)
-  accessToken String?  @db.VarChar(255)
-  created_at  DateTime @default(now())
+  id              String   @id @default(uuid())
+  name            String
+  paternalSurname String
+  maternalSurname String?
+  email           String
+  password        String
+  accessToken     String?  @db.Text
+  available       Boolean  @default(true)
+  createAt        DateTime @default(now())
+  updateAt        DateTime @updatedAt
 
-  roles UsersOnRoles[]
-  leads Lead[]
+  additionalInfo AdditionalInfo[]
+  roles          UsersRoles[]
+  Leads          Leads[]
 }
 
-model Role {
-  id         Int      @id @default(autoincrement())
-  name       String   @unique @db.VarChar(50)
-  created_at DateTime @default(now())
-
-  users UsersOnRoles[]
+model AdditionalInfo {
+  id        String @id @default(uuid())
+  telephone String
+  user      User   @relation(fields: [userId], references: [id])
+  userId    String
 }
 
-model UsersOnRoles {
-  user   User @relation(fields: [userId], references: [id])
-  userId Int
-  role   Role @relation(fields: [roleId], references: [id])
+model Roles {
+  id         Int          @id @default(autoincrement())
+  name       String
+  available  Boolean      @default(true)
+  createAt   DateTime     @default(now())
+  updateAt   DateTime     @updatedAt
+  UsersRoles UsersRoles[]
+}
+
+model UsersRoles {
+  user   User   @relation(fields: [userId], references: [id])
+  userId String
+  role   Roles  @relation(fields: [roleId], references: [id])
   roleId Int
 
   @@id([userId, roleId])
 }
 
-model Campaign {
-  id            Int      @id @default(autoincrement())
-  name          String   @db.VarChar(150)
-  type_campaign String   @db.VarChar(10)
-  status        Int      @default(1)
-  created_at    DateTime @default(now())
-
-  leads Lead[]
+model Phones {
+  id                String          @id @default(uuid())
+  telephone         String
+  available         Boolean         @default(true)
+  informationLeadId String
+  createAt          DateTime        @default(now())
+  updateAt          DateTime        @updatedAt
+  infoLead          InformationLead @relation(fields: [informationLeadId], references: [id])
 }
 
-model Carreer {
-  id         Int      @id @default(autoincrement())
-  name       String   @unique @db.VarChar(150)
-  slug       String   @unique @db.VarChar(30)
-  created_at DateTime @default(now())
-
-  enrollment Enrollment[]
+model Emails {
+  id                String          @id @default(uuid())
+  email             String
+  informationLeadId String
+  available         Boolean         @default(true)
+  createAt          DateTime        @default(now())
+  updateAt          DateTime        @updatedAt
+  infoLead          InformationLead @relation(fields: [informationLeadId], references: [id])
 }
 
-// Grado escolar
-model Grade {
-  id         Int      @id @default(autoincrement())
-  name       String   @unique @db.VarChar(20)
-  created_at DateTime @default(now())
-
-  leads Lead[]
+enum Genres {
+  FEMALE
+  MALE
 }
 
-// PSegumiento
+enum SchoolTypes {
+  PRIVADA
+  PUBLICA
+}
+
+enum EnrollmentStatus {
+  INS
+  INSO
+  REZA
+}
+
+model InformationLead {
+  id               String           @id @default(uuid())
+  name             String
+  genre            Genres
+  careerInterest   String
+  formerSchool     String
+  typeSchool       SchoolTypes
+  enrollmentStatus EnrollmentStatus
+  followUpId       String
+  available        Boolean          @default(true)
+  createAt         DateTime         @default(now())
+  updateAt         DateTime         @updatedAt
+  followUp         FollowUp         @relation(fields: [followUpId], references: [id])
+  Emails           Emails[]
+  Phones           Phones[]
+  Leads            Leads[]
+}
+
 model FollowUp {
-  id         Int      @id @default(autoincrement())
-  name       String   @unique @db.VarChar(100)
-  created_at DateTime @default(now())
-
-  leads Lead[]
+  id              String            @id @default(uuid())
+  name            String
+  available       Boolean           @default(true)
+  createAt        DateTime          @default(now())
+  updateAt        DateTime          @updatedAt
+  InformationLead InformationLead[]
 }
 
-// Medio de contacto
-model ContactMedium {
-  id         Int      @id @default(autoincrement())
-  type       String   @db.VarChar(50)
-  created_at DateTime @default(now())
-
-  asetName AsetName[]
-  lead     Lead[]
+model CampaignsTypes {
+  id        String      @id @default(uuid())
+  name      String
+  available Boolean     @default(true)
+  createAt  DateTime    @default(now())
+  updateAt  DateTime    @updatedAt
+  Campaigns Campaigns[]
 }
 
-// Aset Name
-model AsetName {
-  id         Int      @id @default(autoincrement())
-  name       String   @db.VarChar(80)
-  created_at DateTime @default(now())
-
-  // Id de medio de contacto
-  contactMedium ContactMedium? @relation(fields: [mediumId], references: [id])
-  mediumId      Int?
-
-  lead Lead[]
+model Campaigns {
+  id             String         @id @default(uuid())
+  name           String
+  campaignTypeId String
+  available      Boolean        @default(true)
+  createAt       DateTime       @default(now())
+  updateAt       DateTime       @updatedAt
+  campaignType   CampaignsTypes @relation(fields: [campaignTypeId], references: [id])
+  Leads          Leads[]
 }
 
-// Ciclo escolar
-model SchoolYear {
-  id         Int      @id @default(autoincrement())
-  cicle      String   @db.VarChar(9)
-  status     Boolean  @default(true)
-  created_at DateTime @default(now())
-
-  lead Lead[]
+model ContactTypes {
+  id        String     @id @default(uuid())
+  name      String
+  available Boolean    @default(true)
+  createAt  DateTime   @default(now())
+  updateAt  DateTime   @updatedAt
+  asetName  asetName[]
 }
 
-model Lead {
-  id                Int     @id @default(autoincrement())
-  name              String  @db.VarChar(150)
-  genre             String? @db.VarChar(50) // Sexo
-  enrollmentStatus  String? @db.VarChar(10) // Estatus de inscripción
-  tel               String  @db.VarChar(25)
-  telOptional       String? @db.VarChar(25)
-  email             String  @db.VarChar(80)
-  emailOptional     String? @db.VarChar(80)
-  career            String? @db.VarChar(100) // Carrera de interés
-  formerSchool      String? @db.VarChar(100) // Escuela de procedencia
-  typeSchool        String? @db.VarChar(100) // Tipo de escuela
-  country           String? @db.VarChar(60) // País
-  state             String? @db.VarChar(60) // Estado
-  city              String? @db.VarChar(60) // Ciudad
-  referenceType     String? @db.VarChar(50) // Tipo de referido
-  referenceName     String? @db.VarChar(150) // Nombre de referido
-  dataSource        String? @db.VarChar(40) // Donde obtuvo el dato
-  admissionSemester String? @db.VarChar(20) // Semestre de ingreso
-  dateFirstContact  String? @db.VarChar(10) // Fecha de primer contacto
-  scholarship       String? @db.VarChar(60) // Beca ofrecida
-  status            Boolean @default(true)
-  created_at        String  @db.VarChar(35) // Fecha de creacion
-  updated_at        String  @db.VarChar(35) // Fecha de actualización
-
-  // Ciclo escolar
-  schoolYear   SchoolYear? @relation(fields: [schoolYearId], references: [id])
-  schoolYearId Int?
-
-  // Id de pseguimiento
-  followUp FollowUp? @relation(fields: [followId], references: [id])
-  followId Int?
-
-  // Id de grado escolar
-  grade   Grade? @relation(fields: [gradeId], references: [id])
-  gradeId Int?
-
-  // Id de campaña
-  campaign   Campaign @relation(fields: [campaignId], references: [id])
-  campaignId Int
-
-  // Id de promotor
-  user   User? @relation(fields: [userId], references: [id])
-  userId Int?
-
-  // Id del aset name
-  contactMedium   ContactMedium? @relation(fields: [contactMediumId], references: [id])
-  contactMediumId Int?
-
-  // Id del aset name
-  asetName   AsetName? @relation(fields: [asetNameId], references: [id])
-  asetNameId Int?
-
-  enrollment Enrollment?
-
-  // Relación con la tabla intermedia "LeadContact"
-  contacts LeadContact[]
+model asetName {
+  id             String       @id @default(uuid())
+  name           String
+  contactTypesId String
+  contactType    ContactTypes @relation(fields: [contactTypesId], references: [id])
+  available      Boolean      @default(true)
+  createAt       DateTime     @default(now())
+  updateAt       DateTime     @updatedAt
+  Leads          Leads[]
 }
 
-model Contact {
-  id           Int      @id @default(autoincrement())
-  comment      String?  @db.Text
-  date_contact DateTime @default(now())
-
-  // Relación inversa con LeadContact
-  leads LeadContact[]
+model Cities {
+  id        String   @id @default(uuid())
+  name      String
+  available Boolean  @default(true)
+  createAt  DateTime @default(now())
+  updateAt  DateTime @updatedAt
+  state     States   @relation(fields: [stateId], references: [id])
+  stateId   String
+  Leads     Leads[]
 }
 
-model LeadContact {
-  lead      Lead    @relation(fields: [leadId], references: [id])
-  leadId    Int
-  contact   Contact @relation(fields: [contactId], references: [id])
-  contactId Int
-
-  @@id([leadId, contactId])
+model States {
+  id        String    @id @default(uuid())
+  name      String
+  available Boolean   @default(true)
+  createAt  DateTime  @default(now())
+  updateAt  DateTime  @updatedAt
+  country   Countries @relation(fields: [countryId], references: [id])
+  countryId String
+  Cities    Cities[]
 }
 
-// Asignaciones
-model Assignment {
-  id         Int      @id @default(autoincrement())
-  userId     Int      @db.Int
-  leadId     Int      @db.Int
-  created_at DateTime @default(now())
+model Countries {
+  id        String   @id @default(uuid())
+  name      String
+  available Boolean  @default(true)
+  createAt  DateTime @default(now())
+  updateAt  DateTime @updatedAt
+  States    States[]
 }
 
-// Inscripción
-model Enrollment {
-  id                  Int    @id @default(autoincrement())
-  enrollmentDate      String @db.VarChar(10) //Fecha de inscripción
-  scholarship         String @db.VarChar(50) // Beca ofrecida
-  enrollmentPromotion String @db.VarChar(60) // Promoción de inscripción
-  salesChannel        String @db.VarChar(30) // Canal de venta
+enum ReferenceTypes {
+  ALUMNO
+  PERSONAL_UNINTER
+  FAMILIAR_ALUMNO
+}
 
-  // Id del lead
-  leadId Int  @unique
-  lead   Lead @relation(fields: [leadId], references: [id])
+model References {
+  id         String         @id @default(uuid())
+  type       ReferenceTypes
+  name       String
+  dataSource String
+  available  Boolean        @default(true)
+  createAt   DateTime       @default(now())
+  updateAt   DateTime       @updatedAt
+  lead       Leads?
+  leadsId    String?
+}
 
-  // Id de la carrera
-  careerId Int     @unique
-  career   Carreer @relation(fields: [careerId], references: [id])
+model Leads {
+  id          String           @id @default(uuid())
+  grade       Grades?
+  dateContact DateTime?
+  asetNameId  String?
+  referenceId String?          @unique
+  campaignId  String?
+  cityId      String?
+  infoLeadId  String?
+  userId      String?
+  information InformationLead? @relation(fields: [infoLeadId], references: [id])
+  campaign    Campaigns?       @relation(fields: [campaignId], references: [id])
+  asetName    asetName?        @relation(fields: [asetNameId], references: [id])
+  references  References?      @relation(fields: [referenceId], references: [id])
+  city        Cities?          @relation(fields: [cityId], references: [id])
+  user        User?            @relation(fields: [userId], references: [id])
+}
+
+model Careers {
+  id        String   @id @default(uuid())
+  program   String
+  available Boolean  @default(true)
+  createAt  DateTime @default(now())
+  updateAt  DateTime @updatedAt
 }
