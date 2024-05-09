@@ -1,10 +1,10 @@
-import { HttpException, HttpStatus, Injectable, OnModuleInit } from '@nestjs/common';
+import { PaginationFilterDto } from 'src/common/dto/pagination-filter.dto';
 import { CreateFollowUpDto } from './dto/create-follow-up.dto';
 import { UpdateFollowUpDto } from './dto/update-follow-up.dto';
-import { PaginationFilterDto } from 'src/common/dto/pagination-filter.dto';
-import { IWhere } from 'src/common/interfaces/where.interface';
+import { HttpException, HttpStatus, Injectable, OnModuleInit } from '@nestjs/common';
 import { PrismaClient } from '@prisma/client';
 import { TransformResponse } from 'src/common/mappers/transform-response';
+import { IFollowUpWhere } from './interfaces/followUp-where.interface';
 
 @Injectable()
 export class FollowUpService extends PrismaClient implements OnModuleInit {
@@ -26,8 +26,7 @@ export class FollowUpService extends PrismaClient implements OnModuleInit {
   async findAll(params: PaginationFilterDto) {
     const filter = this.getParams(params);
 
-    //? En caso de agregar un filtro se agrega en el count
-    const totalRows = await this.followUp.count();
+    const totalRows = await this.followUp.count({ where: filter.where });
 
     const data = await this.followUp.findMany({
       ...filter,
@@ -55,25 +54,24 @@ export class FollowUpService extends PrismaClient implements OnModuleInit {
     });
   }
 
-  async findOne(id: number) {
-    const followUp = await this.followUp.findFirst({
-      where: { id },
+  async findOne(id: string) {
+    const data = await this.followUp.findFirst({
+      where: { id, available: true },
       select: {
         id: true,
         name: true,
       }
-    })
-    if (!followUp) {
+    });
+    if (!data) {
       throw new HttpException(
-        `Follow up not found with id ${id}`,
+        `Follow Up not found with id ${id}`,
         HttpStatus.NOT_FOUND,
       );
     }
-
-    return TransformResponse.map(followUp);
+    return TransformResponse.map(data);
   }
 
-  async update(id: number, updateFollowUpDto: UpdateFollowUpDto) {
+  async update(id: string, updateFollowUpDto: UpdateFollowUpDto) {
     await this.findOne(id);
     const data = await this.followUp.update({
       where: { id },
@@ -86,6 +84,15 @@ export class FollowUpService extends PrismaClient implements OnModuleInit {
     return TransformResponse.map(data, 'Follow up actualizado correctamente!!', 'PATCH');
   }
 
+  async remove(id: string) {
+    await this.findOne(id);
+    const data = await this.followUp.update({
+      where: { id },
+      data: { available: false }
+    });
+    return TransformResponse.map(data, 'Follow up eliminado con éxito!!', 'DELETE')
+  }
+
   private getParams(params: PaginationFilterDto) {
     const {
       page,
@@ -93,7 +100,8 @@ export class FollowUpService extends PrismaClient implements OnModuleInit {
       paginated
     } = params
 
-    const condition: IWhere = {
+    const condition: IFollowUpWhere = {
+      where: { available: true },
       orderBy: [{ id: 'desc' }],
     };
 

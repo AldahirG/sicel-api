@@ -13,9 +13,9 @@ export class RolesService extends PrismaClient implements OnModuleInit {
 
   async findAll(params: PaginationFilterDto) {
     const filter = this.getParams(params);
-    const totalRows = await this.role.count({ where: filter.where });
+    const totalRows = await this.roles.count({ where: filter.where });
 
-    const roles = await this.role.findMany({
+    const roles = await this.roles.findMany({
       ...filter,
       select: {
         id: true,
@@ -42,7 +42,7 @@ export class RolesService extends PrismaClient implements OnModuleInit {
   }
 
   async findOne(id: number) {
-    const role = await this.role.findFirst({
+    const role = await this.roles.findFirst({
       where: { id },
       select: {
         id: true,

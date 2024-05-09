@@ -5,5 +5,5 @@ export class CreateCampaignDto {
     name: string
 
     @IsString()
-    type_campaign: string
+    campaignTypeId: string
 }

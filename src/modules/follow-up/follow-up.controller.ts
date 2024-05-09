@@ -24,12 +24,17 @@ export class FollowUpController {
   @UseGuards(JwtAuthGuard)
   @Get(':id')
   findOne(@Param('id') id: string) {
-    return this.followUpService.findOne(+id);
+    return this.followUpService.findOne(id);
   }
 
   @UseGuards(JwtAuthGuard)
   @Patch(':id')
   update(@Param('id') id: string, @Body() updateFollowUpDto: UpdateFollowUpDto) {
-    return this.followUpService.update(+id, updateFollowUpDto);
+    return this.followUpService.update(id, updateFollowUpDto);
+  }
+
+  @Delete(':id')
+  remove(@Param('id') id: string) {
+    return this.followUpService.remove(id);
   }
 }

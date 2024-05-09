@@ -1,10 +1,10 @@
-import { PaginationFilterDto } from 'src/common/dto/pagination-filter.dto';
-import { TransformResponse } from 'src/common/mappers/transform-response';
 import { HttpException, HttpStatus, Injectable, OnModuleInit } from '@nestjs/common';
-import { IWhere } from 'src/common/interfaces/where.interface';
 import { CreateAsetnameDto } from './dto/create-asetname.dto';
 import { UpdateAsetnameDto } from './dto/update-asetname.dto';
+import { PaginationFilterDto } from 'src/common/dto/pagination-filter.dto';
 import { PrismaClient } from '@prisma/client';
+import { TransformResponse } from 'src/common/mappers/transform-response';
+import { IAsetNameWhere } from './interfaces/aset-name-where.interface';
 
 @Injectable()
 export class AsetnameService extends PrismaClient implements OnModuleInit {
@@ -18,24 +18,22 @@ export class AsetnameService extends PrismaClient implements OnModuleInit {
       select: {
         id: true,
         name: true,
-        mediumId: true,
       }
     })
-    return TransformResponse.map(data, 'Grado Creado con éxito!!', 'POST', HttpStatus.CREATED)
+    return TransformResponse.map(data, 'Aset name Creado con éxito!!', 'POST', HttpStatus.CREATED)
   }
 
   async findAll(params: PaginationFilterDto) {
     const filter = this.getParams(params);
 
     //? En caso de agregar un filtro se agrega en el count
-    const totalRows = await this.asetName.count();
+    const totalRows = await this.asetName.count({ where: filter.where });
 
     const data = await this.asetName.findMany({
       ...filter,
       select: {
         id: true,
         name: true,
-        mediumId: true,
       }
     })
 
@@ -57,13 +55,12 @@ export class AsetnameService extends PrismaClient implements OnModuleInit {
     });
   }
 
-  async findOne(id: number) {
+  async findOne(id: string) {
     const asetname = await this.asetName.findFirst({
       where: { id },
       select: {
         id: true,
         name: true,
-        mediumId: true,
       }
     })
     if (!asetname) {
@@ -76,7 +73,7 @@ export class AsetnameService extends PrismaClient implements OnModuleInit {
     return TransformResponse.map(asetname);
   }
 
-  async update(id: number, updateAsetnameDto: UpdateAsetnameDto) {
+  async update(id: string, updateAsetnameDto: UpdateAsetnameDto) {
     await this.findOne(id);
     const data = await this.asetName.update({
       where: { id },
@@ -84,10 +81,18 @@ export class AsetnameService extends PrismaClient implements OnModuleInit {
       select: {
         id: true,
         name: true,
-        mediumId: true,
       }
     });
     return TransformResponse.map(data, 'Aset Name actualizado correctamente!!', 'PATCH');
+  }
+
+  async remove(id: string) {
+    await this.findOne(id);
+    const data = await this.asetName.update({
+      where: { id },
+      data: { available: false }
+    });
+    return TransformResponse.map(data, 'Aset name eliminado con éxito!!', 'DELETE')
   }
 
   private getParams(params: PaginationFilterDto) {
@@ -97,7 +102,8 @@ export class AsetnameService extends PrismaClient implements OnModuleInit {
       paginated
     } = params
 
-    const condition: IWhere = {
+    const condition: IAsetNameWhere = {
+      where: { available: true },
       orderBy: [{ id: 'desc' }],
     };
 
@@ -105,7 +111,6 @@ export class AsetnameService extends PrismaClient implements OnModuleInit {
       condition.skip = (page - 1) * perPage;
       condition.take = perPage;
     }
-
     return condition
   }
 }

@@ -10,7 +10,10 @@ import * as bcrypt from 'bcrypt';
 export class UsersService extends HelperService {
 
   async create(createUserDto: CreateUserDto) {
-    const { roles, ...data } = createUserDto;
+    const select = this.select()
+    const { roles, additionalInfo: info, password, ...data } = createUserDto;
+
+    const hashedPassword = await bcrypt.hash(password, 10);
 
     const construct = roles.map(roleId => ({
       role: {
@@ -18,16 +21,21 @@ export class UsersService extends HelperService {
       }
     }))
 
+
+
     const user = await this.user.create({
       data: {
         ...data,
+        password: hashedPassword,
         roles: {
           create: construct
+        },
+        additionalInfo: {
+          create: info
         }
       },
-      select: this.select(),
+      select,
     });
-
     return TransformResponse.map(user, 'Usuario creado con éxito!!', 'POST', HttpStatus.CREATED)
   }
 
@@ -60,10 +68,10 @@ export class UsersService extends HelperService {
     });
   }
 
-  async findOne(id: number) {
+  async findOne(id: string) {
     const select = this.select()
     const user = await this.user.findFirst({
-      where: { id, status: true },
+      where: { id, available: true },
       select
     });
     if (!user) {
@@ -75,10 +83,10 @@ export class UsersService extends HelperService {
     return TransformResponse.map(user);
   }
 
-  async update(id: number, updateUserDto: UpdateUserDto) {
+  async update(id: string, updateUserDto: UpdateUserDto) {
     await this.findOne(id);
     const select = this.select()
-    const { roles, password, ...data } = updateUserDto
+    const { roles, password, additionalInfo, ...data } = updateUserDto
 
     let rolesUpdate = {};
 
@@ -107,10 +115,11 @@ export class UsersService extends HelperService {
     return TransformResponse.map(newData, 'Usuario actualizado con éxito!!', 'PUT');
   }
 
-  async remove(id: number) {
+  async remove(id: string) {
+    await this.findOne(id);
     const user = await this.user.update({
       where: { id },
-      data: { status: false }
+      data: { available: false }
     });
     return TransformResponse.map(user, 'Usuario eliminado con éxito!!', 'DELETE')
   }

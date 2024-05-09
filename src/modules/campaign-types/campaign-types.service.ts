@@ -26,7 +26,7 @@ export class CampaignTypesService extends PrismaClient implements OnModuleInit {
   async findAll(params: PaginationFilterDto) {
     const filter = this.getParams(params)
 
-    const totalRows = await this.contactTypes.count();
+    const totalRows = await this.campaignsTypes.count({ where: filter.where});
 
     const data = await this.campaignsTypes.findMany({
       ...filter,

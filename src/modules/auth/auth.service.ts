@@ -23,7 +23,17 @@ export class AuthService extends PrismaClient implements OnModuleInit {
 
   async login(payload: LoginDTO) {
     const { email, password } = payload
-    const user = await this.user.findFirst({ where: { email } });
+    const user = await this.user.findFirst({
+      where: { email }, select: {
+        id: true,
+        name: true,
+        paternalSurname: true,
+        maternalSurname: true,
+        email: true,
+        accessToken: true,
+        password: true
+      }
+    });
 
     if (!user) {
       throw new HttpException('User not found', HttpStatus.BAD_REQUEST);

@@ -4,14 +4,17 @@ import { UsersModule } from './modules/users/users.module';
 import { APP_FILTER } from '@nestjs/core';
 import { PrismaClientErrorFilter } from './common/exceptions/prisma-exception.filter';
 import { RolesModule } from './modules/roles/roles.module';
-import { GradesModule } from './modules/grades/grades.module';
+import { ContactTypesModule } from './modules/contact-types/contact-types.module';
 import { AsetnameModule } from './modules/asetname/asetname.module';
-import { ContactMediumsModule } from './modules/contact-mediums/contact-mediums.module';
-import { FollowUpModule } from './modules/follow-up/follow-up.module';
 import { CampaignsModule } from './modules/campaigns/campaigns.module';
-import { CareersModule } from './modules/careers/careers.module';
+import { CampaignTypesModule } from './modules/campaign-types/campaign-types.module';
+import { FollowUpModule } from './modules/follow-up/follow-up.module';
+import { CountriesModule } from './modules/address/countries/countries.module';
+import { StatesModule } from './modules/address/states/states.module';
+import { CitiesModule } from './modules/address/cities/cities.module';
+import { LeadsModule } from './modules/leads/leads.module';
 @Module({
-  imports: [AuthModule, UsersModule, RolesModule, GradesModule, AsetnameModule, ContactMediumsModule, FollowUpModule, CampaignsModule, CareersModule,],
+  imports: [AuthModule, UsersModule, RolesModule, ContactTypesModule, AsetnameModule, CampaignsModule, CampaignTypesModule, FollowUpModule, CountriesModule, StatesModule, CitiesModule, LeadsModule],
   controllers: [],
   providers: [
     {

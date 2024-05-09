@@ -26,7 +26,7 @@ export class ContactTypesService extends PrismaClient implements OnModuleInit {
   async findAll(params: PaginationFilterDto) {
     const filter = this.getParams(params)
 
-    const totalRows = await this.contactTypes.count();
+    const totalRows = await this.contactTypes.count({ where: filter.where });
 
     const data = await this.contactTypes.findMany({
       ...filter,
@@ -77,6 +77,7 @@ export class ContactTypesService extends PrismaClient implements OnModuleInit {
   }
 
   async remove(id: string) {
+    await this.findOne(id);
     const data = await this.contactTypes.update({
       where: { id },
       data: { available: false }

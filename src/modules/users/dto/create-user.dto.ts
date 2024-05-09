@@ -1,4 +1,6 @@
-import { IsArray, IsBoolean, IsOptional, IsString, ValidateNested } from "class-validator";
+import { IsArray, IsOptional, IsString, ValidateNested } from "class-validator";
+import { CreateAdditionalInfo } from "./create-additional-info.dto";
+import { Type } from "class-transformer";
 
 export class CreateUserDto {
     @IsString()
@@ -8,15 +10,20 @@ export class CreateUserDto {
     email: string;
 
     @IsString()
-    password: string;
+    paternalSurname: string
+
+    @IsOptional()
+    @IsString()
+    maternalSurname: string = ''
 
     @IsString()
-    tel: string;
-
-    @IsBoolean()
-    status: boolean;
+    password: string;
 
     @IsArray()
     @IsOptional()
     roles?: number[]
+
+    @ValidateNested({ each: true })
+    @Type(() => CreateAdditionalInfo)
+    additionalInfo: CreateAdditionalInfo[]
 }

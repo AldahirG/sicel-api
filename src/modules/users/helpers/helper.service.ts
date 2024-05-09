@@ -1,5 +1,5 @@
 import { Injectable, OnModuleInit } from "@nestjs/common";
-import { PrismaClient } from "@prisma/client";
+import { PrismaClient, User } from "@prisma/client";
 import { ISelect } from "../interfaces/select.interface";
 import { IUserWhere } from "../interfaces/where.interface";
 import { FilterUserDTO } from "../dto/filter-user.dto";
@@ -15,7 +15,6 @@ export class HelperService extends PrismaClient implements OnModuleInit {
             id: true,
             name: true,
             email: true,
-            tel: true,
             roles: {
                 select: {
                     role: {
@@ -24,6 +23,11 @@ export class HelperService extends PrismaClient implements OnModuleInit {
                         },
                     },
                 },
+            },
+            additionalInfo: {
+                select: {
+                    telephone: true
+                }
             }
         }
         return select
@@ -42,7 +46,7 @@ export class HelperService extends PrismaClient implements OnModuleInit {
 
         const condition: IUserWhere = {
             where: {
-                status: true,
+                available: true,
                 OR,
             },
             orderBy: [{ id: 'desc' }],

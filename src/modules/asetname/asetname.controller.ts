@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Query, UseGuards } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Query, UseGuards, Delete } from '@nestjs/common';
 import { AsetnameService } from './asetname.service';
 import { CreateAsetnameDto } from './dto/create-asetname.dto';
 import { UpdateAsetnameDto } from './dto/update-asetname.dto';
@@ -24,12 +24,18 @@ export class AsetnameController {
   @UseGuards(JwtAuthGuard)
   @Get(':id')
   findOne(@Param('id') id: string) {
-    return this.asetnameService.findOne(+id);
+    return this.asetnameService.findOne(id);
   }
 
   @UseGuards(JwtAuthGuard)
   @Patch(':id')
   update(@Param('id') id: string, @Body() updateAsetnameDto: UpdateAsetnameDto) {
-    return this.asetnameService.update(+id, updateAsetnameDto);
+    return this.asetnameService.update(id, updateAsetnameDto);
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Delete(':id')
+  remove(@Param('id') id: string) {
+    return this.asetnameService.remove(id);
   }
 }
