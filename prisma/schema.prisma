@@ -98,21 +98,21 @@ enum EnrollmentStatus {
 }
 
 model InformationLead {
-  id               String           @id @default(uuid())
-  name             String
-  genre            Genres
-  careerInterest   String
-  formerSchool     String
-  typeSchool       SchoolTypes
-  enrollmentStatus EnrollmentStatus
-  followUpId       String
-  available        Boolean          @default(true)
-  createAt         DateTime         @default(now())
-  updateAt         DateTime         @updatedAt
-  followUp         FollowUp         @relation(fields: [followUpId], references: [id])
+  id               String            @id @default(uuid())
+  name             String?
+  genre            Genres?
+  careerInterest   String?
+  formerSchool     String?
+  typeSchool       SchoolTypes?
+  enrollmentStatus EnrollmentStatus?
+  followUpId       String?
+  available        Boolean?          @default(true)
+  createAt         DateTime?         @default(now())
+  updateAt         DateTime?         @updatedAt
+  followUp         FollowUp?         @relation(fields: [followUpId], references: [id])
   Emails           Emails[]
   Phones           Phones[]
-  Leads            Leads[]
+  Lead             Leads?
 }
 
 model FollowUp {
@@ -202,31 +202,35 @@ enum ReferenceTypes {
 }
 
 model References {
-  id         String         @id @default(uuid())
-  type       ReferenceTypes
-  name       String
-  dataSource String
-  available  Boolean        @default(true)
-  createAt   DateTime       @default(now())
-  updateAt   DateTime       @updatedAt
+  id         String          @id @default(uuid())
+  type       ReferenceTypes?
+  name       String?
+  dataSource String?
+  available  Boolean         @default(true)
+  createAt   DateTime        @default(now())
+  updateAt   DateTime        @updatedAt
   lead       Leads?
   leadsId    String?
 }
 
 model Leads {
-  id          String           @id @default(uuid())
+  id          String    @id @default(uuid())
   grade       Grades?
   dateContact DateTime?
   asetNameId  String?
-  referenceId String?          @unique
+  referenceId String?   @unique
   campaignId  String?
   cityId      String?
-  infoLeadId  String?
+  infoLeadId  String?   @unique
   userId      String?
+  available   Boolean   @default(true)
+  createAt    DateTime  @default(now())
+  updateAt    DateTime  @updatedAt
+
   information InformationLead? @relation(fields: [infoLeadId], references: [id])
   campaign    Campaigns?       @relation(fields: [campaignId], references: [id])
   asetName    asetName?        @relation(fields: [asetNameId], references: [id])
-  references  References?      @relation(fields: [referenceId], references: [id])
+  reference   References?      @relation(fields: [referenceId], references: [id])
   city        Cities?          @relation(fields: [cityId], references: [id])
   user        User?            @relation(fields: [userId], references: [id])
 }

@@ -69,16 +69,16 @@ CREATE TABLE `Emails` (
 -- CreateTable
 CREATE TABLE `InformationLead` (
     `id` VARCHAR(191) NOT NULL,
-    `name` VARCHAR(191) NOT NULL,
-    `genre` ENUM('FEMALE', 'MALE') NOT NULL,
-    `careerInterest` VARCHAR(191) NOT NULL,
-    `formerSchool` VARCHAR(191) NOT NULL,
-    `typeSchool` ENUM('PRIVADA', 'PUBLICA') NOT NULL,
-    `enrollmentStatus` ENUM('INS', 'INSO', 'REZA') NOT NULL,
-    `followUpId` VARCHAR(191) NOT NULL,
-    `available` BOOLEAN NOT NULL DEFAULT true,
-    `createAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
-    `updateAt` DATETIME(3) NOT NULL,
+    `name` VARCHAR(191) NULL,
+    `genre` ENUM('FEMALE', 'MALE') NULL,
+    `careerInterest` VARCHAR(191) NULL,
+    `formerSchool` VARCHAR(191) NULL,
+    `typeSchool` ENUM('PRIVADA', 'PUBLICA') NULL,
+    `enrollmentStatus` ENUM('INS', 'INSO', 'REZA') NULL,
+    `followUpId` VARCHAR(191) NULL,
+    `available` BOOLEAN NULL DEFAULT true,
+    `createAt` DATETIME(3) NULL DEFAULT CURRENT_TIMESTAMP(3),
+    `updateAt` DATETIME(3) NULL,
 
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
@@ -178,9 +178,9 @@ CREATE TABLE `Countries` (
 -- CreateTable
 CREATE TABLE `References` (
     `id` VARCHAR(191) NOT NULL,
-    `type` ENUM('ALUMNO', 'PERSONAL_UNINTER', 'FAMILIAR_ALUMNO') NOT NULL,
-    `name` VARCHAR(191) NOT NULL,
-    `dataSource` VARCHAR(191) NOT NULL,
+    `type` ENUM('ALUMNO', 'PERSONAL_UNINTER', 'FAMILIAR_ALUMNO') NULL,
+    `name` VARCHAR(191) NULL,
+    `dataSource` VARCHAR(191) NULL,
     `available` BOOLEAN NOT NULL DEFAULT true,
     `createAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
     `updateAt` DATETIME(3) NOT NULL,
@@ -200,8 +200,12 @@ CREATE TABLE `Leads` (
     `cityId` VARCHAR(191) NULL,
     `infoLeadId` VARCHAR(191) NULL,
     `userId` VARCHAR(191) NULL,
+    `available` BOOLEAN NOT NULL DEFAULT true,
+    `createAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+    `updateAt` DATETIME(3) NOT NULL,
 
     UNIQUE INDEX `Leads_referenceId_key`(`referenceId`),
+    UNIQUE INDEX `Leads_infoLeadId_key`(`infoLeadId`),
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
@@ -232,7 +236,7 @@ ALTER TABLE `Phones` ADD CONSTRAINT `Phones_informationLeadId_fkey` FOREIGN KEY 
 ALTER TABLE `Emails` ADD CONSTRAINT `Emails_informationLeadId_fkey` FOREIGN KEY (`informationLeadId`) REFERENCES `InformationLead`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE `InformationLead` ADD CONSTRAINT `InformationLead_followUpId_fkey` FOREIGN KEY (`followUpId`) REFERENCES `FollowUp`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE `InformationLead` ADD CONSTRAINT `InformationLead_followUpId_fkey` FOREIGN KEY (`followUpId`) REFERENCES `FollowUp`(`id`) ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE `Campaigns` ADD CONSTRAINT `Campaigns_campaignTypeId_fkey` FOREIGN KEY (`campaignTypeId`) REFERENCES `CampaignsTypes`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
