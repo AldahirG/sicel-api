@@ -62,23 +62,23 @@ model UsersRoles {
 }
 
 model Phones {
-  id                String          @id @default(uuid())
-  telephone         String
-  available         Boolean         @default(true)
-  informationLeadId String
-  createAt          DateTime        @default(now())
-  updateAt          DateTime        @updatedAt
-  infoLead          InformationLead @relation(fields: [informationLeadId], references: [id])
+  id        String   @id @default(uuid())
+  telephone String
+  available Boolean  @default(true)
+  leadId    String
+  createAt  DateTime @default(now())
+  updateAt  DateTime @updatedAt
+  lead      Leads    @relation(fields: [leadId], references: [id])
 }
 
 model Emails {
-  id                String          @id @default(uuid())
-  email             String
-  informationLeadId String
-  available         Boolean         @default(true)
-  createAt          DateTime        @default(now())
-  updateAt          DateTime        @updatedAt
-  infoLead          InformationLead @relation(fields: [informationLeadId], references: [id])
+  id        String   @id @default(uuid())
+  email     String
+  leadId    String
+  available Boolean  @default(true)
+  createAt  DateTime @default(now())
+  updateAt  DateTime @updatedAt
+  lead      Leads    @relation(fields: [leadId], references: [id])
 }
 
 enum Genres {
@@ -110,8 +110,6 @@ model InformationLead {
   createAt         DateTime?         @default(now())
   updateAt         DateTime?         @updatedAt
   followUp         FollowUp?         @relation(fields: [followUpId], references: [id])
-  Emails           Emails[]
-  Phones           Phones[]
   Lead             Leads?
 }
 
@@ -233,6 +231,8 @@ model Leads {
   reference   References?      @relation(fields: [referenceId], references: [id])
   city        Cities?          @relation(fields: [cityId], references: [id])
   user        User?            @relation(fields: [userId], references: [id])
+  emails      Emails[]
+  phones      Phones[]
 }
 
 model Careers {

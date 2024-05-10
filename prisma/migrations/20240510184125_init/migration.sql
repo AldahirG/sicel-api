@@ -47,7 +47,7 @@ CREATE TABLE `Phones` (
     `id` VARCHAR(191) NOT NULL,
     `telephone` VARCHAR(191) NOT NULL,
     `available` BOOLEAN NOT NULL DEFAULT true,
-    `informationLeadId` VARCHAR(191) NOT NULL,
+    `leadId` VARCHAR(191) NOT NULL,
     `createAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
     `updateAt` DATETIME(3) NOT NULL,
 
@@ -58,7 +58,7 @@ CREATE TABLE `Phones` (
 CREATE TABLE `Emails` (
     `id` VARCHAR(191) NOT NULL,
     `email` VARCHAR(191) NOT NULL,
-    `informationLeadId` VARCHAR(191) NOT NULL,
+    `leadId` VARCHAR(191) NOT NULL,
     `available` BOOLEAN NOT NULL DEFAULT true,
     `createAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
     `updateAt` DATETIME(3) NOT NULL,
@@ -230,10 +230,10 @@ ALTER TABLE `UsersRoles` ADD CONSTRAINT `UsersRoles_userId_fkey` FOREIGN KEY (`u
 ALTER TABLE `UsersRoles` ADD CONSTRAINT `UsersRoles_roleId_fkey` FOREIGN KEY (`roleId`) REFERENCES `Roles`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE `Phones` ADD CONSTRAINT `Phones_informationLeadId_fkey` FOREIGN KEY (`informationLeadId`) REFERENCES `InformationLead`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE `Phones` ADD CONSTRAINT `Phones_leadId_fkey` FOREIGN KEY (`leadId`) REFERENCES `Leads`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE `Emails` ADD CONSTRAINT `Emails_informationLeadId_fkey` FOREIGN KEY (`informationLeadId`) REFERENCES `InformationLead`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE `Emails` ADD CONSTRAINT `Emails_leadId_fkey` FOREIGN KEY (`leadId`) REFERENCES `Leads`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE `InformationLead` ADD CONSTRAINT `InformationLead_followUpId_fkey` FOREIGN KEY (`followUpId`) REFERENCES `FollowUp`(`id`) ON DELETE SET NULL ON UPDATE CASCADE;
