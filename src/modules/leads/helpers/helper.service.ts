@@ -1,0 +1,43 @@
+import { Prisma, PrismaClient } from '@prisma/client';
+import { OnModuleInit } from '@nestjs/common';
+import { PaginationFilterDto } from 'src/common/dto/pagination-filter.dto';
+import { ILeadWhere } from '../interfaces/lead-where.interface';
+
+export class HelperService extends PrismaClient implements OnModuleInit {
+    onModuleInit() {
+        this.$connect();
+    }
+
+    select(): Prisma.LeadsSelect {
+        return {
+            id: true,
+            grade: true,
+            dateContact: true,
+            reference: true,
+            information: true,
+            campaign: true,
+            asetName: true,
+            city: true,
+            user: true
+        }
+    }
+
+    getParams(params: PaginationFilterDto): ILeadWhere {
+        const {
+            page,
+            'per-page': perPage,
+            paginated
+        } = params
+
+        const condition: ILeadWhere = {
+            where: { available: true },
+            orderBy: [{ id: 'desc' }],
+        };
+
+        if (paginated) {
+            condition.skip = (page - 1) * perPage;
+            condition.take = perPage;
+        }
+        return condition
+    }
+}
