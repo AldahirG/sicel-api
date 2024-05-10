@@ -1,8 +1,8 @@
-import { Grades } from "@prisma/client";
-import { Type } from "class-transformer";
-import { IsDate, IsEnum, IsOptional, IsUUID, ValidateNested } from 'class-validator';
+import { IsArray, IsDate, IsEnum, IsOptional, IsUUID, ValidateNested } from 'class-validator';
 import { CreateInformationLeadDto } from "./create-information-lead.dto";
 import { CreateReferenceDto } from "./create-reference.dto";
+import { Type } from "class-transformer";
+import { Grades } from "@prisma/client";
 
 export class CreateLeadDto {
     @IsOptional()
@@ -40,4 +40,13 @@ export class CreateLeadDto {
     @Type(() => CreateInformationLeadDto)
     @ValidateNested({ each: true })
     information?: CreateInformationLeadDto
+
+    @IsOptional()
+    @IsArray()
+    email: string[]
+
+    @IsOptional()
+    @IsArray()
+    phone: string[]
+
 }

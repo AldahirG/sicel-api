@@ -4,16 +4,20 @@ import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { CreateLeadDto } from './dto/create-lead.dto';
 import { UpdateLeadDto } from './dto/update-lead.dto';
 import { HelperService } from './helpers/helper.service';
+import { LeadResource } from './mapper/lead.mapper';
 
 @Injectable()
 export class LeadsService extends HelperService {
   async create(createLeadDto: CreateLeadDto) {
-    const { information, campaignId, asetNameId, cityId, userId, reference, ...leadData } = createLeadDto;
+    const select = this.select()
+    const { information, campaignId, asetNameId, cityId, userId, reference, email, phone, ...leadData } = createLeadDto;
 
     const campaignConnect = campaignId ? { connect: { id: campaignId } } : undefined;
     const assetNameConnect = asetNameId ? { connect: { id: asetNameId } } : undefined;
     const userConnect = userId ? { connect: { id: userId } } : undefined;
     const cityConnect = cityId ? { connect: { id: cityId } } : undefined;
+    const emails = email ? { createMany: { data: email.map((i) => ({ email: i })) } } : undefined
+    const phones = phone ? { createMany: { data: phone.map((i) => ({ telephone: i })) } } : undefined
 
     const lead = await this.leads.create({
       data: {
@@ -28,9 +32,12 @@ export class LeadsService extends HelperService {
         information: {
           create: information
         },
-      }
+        emails,
+        phones
+      },
+      select
     });
-    return TransformResponse.map(lead, 'Lead creado con éxito!!', 'POST', HttpStatus.CREATED)
+    return TransformResponse.map(LeadResource.map(lead), 'Lead creado con éxito!!', 'POST', HttpStatus.CREATED)
   }
 
   async findAll(params: PaginationFilterDto) {
@@ -71,17 +78,19 @@ export class LeadsService extends HelperService {
         HttpStatus.NOT_FOUND,
       );
     }
-    return TransformResponse.map(data);
+    return TransformResponse.map(LeadResource.map(data));
   }
 
   async update(id: string, updateLeadDto: UpdateLeadDto) {
     const select = this.select()
-    const { information, campaignId, asetNameId, cityId, userId, reference, ...leadData } = updateLeadDto;
+    const { information, campaignId, asetNameId, cityId, userId, reference, email, phone, ...leadData } = updateLeadDto;
 
     const campaignConnect = campaignId ? { connect: { id: campaignId } } : undefined;
     const asetNameConnect = asetNameId ? { connect: { id: asetNameId } } : undefined;
     const userConnect = userId ? { connect: { id: userId } } : undefined;
     const cityConnect = cityId ? { connect: { id: cityId } } : undefined;
+    const emails = email ? { createMany: { data: email.map((i) => ({ email: i })) } } : undefined
+    const phones = phone ? { createMany: { data: phone.map((i) => ({ telephone: i })) } } : undefined
 
     const lead = await this.leads.update({
       where: { id },
@@ -103,10 +112,18 @@ export class LeadsService extends HelperService {
             update: information
           }
         },
+        emails: {
+          deleteMany: {},
+          ...emails
+        },
+        phones: {
+          deleteMany: {},
+          ...phones
+        }
       },
       select
     });
-    return TransformResponse.map(lead, 'Lead actualizado con éxito!!', 'PUT', HttpStatus.OK)
+    return TransformResponse.map(LeadResource.map(lead), 'Lead actualizado con éxito!!', 'PUT', HttpStatus.OK)
   }
 
   async remove(id: string) {

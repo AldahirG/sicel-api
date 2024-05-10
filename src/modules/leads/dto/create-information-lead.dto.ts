@@ -24,7 +24,7 @@ export class CreateInformationLeadDto {
 
     @IsOptional()
     @IsEnum(EnrollmentStatus)
-    enrollmentType?: EnrollmentStatus
+    enrollmentStatus?: EnrollmentStatus
 
     @IsOptional()
     @IsUUID()
