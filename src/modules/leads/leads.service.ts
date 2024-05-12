@@ -140,7 +140,24 @@ export class LeadsService extends HelperService {
     return TransformResponse.map(data, 'Lead eliminado con éxito!!', 'DELETE')
   }
 
-  async assignment(id: string) {
-    const { data } = await this.findOne(id)
+  async assignment(id: string, userId: string) {
+    const select = this.select()
+    const { data: lead } = await this.findOne(id)
+    if (lead.promoter.id) {
+      throw new HttpException(
+        `El lead ya a sido asignado a un promotor`,
+        HttpStatus.CONFLICT,
+      );
+    }
+    const data = await this.leads.update({
+      where: { id },
+      data: {
+        user: {
+          connect: { id: userId }
+        }
+      },
+      select
+    })
+    return TransformResponse.map(LeadResource.map(data), 'El lead a sido asignado correctamente!!', 'PUT')
   }
 }

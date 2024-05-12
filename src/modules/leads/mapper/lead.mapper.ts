@@ -32,6 +32,12 @@ export class LeadResource {
                 city: lead.city?.name,
                 state: lead.city?.state.name,
                 country: lead.city?.state.country.name
+            },
+            promoter: {
+                id: lead.user?.id,
+                name: lead.user?.name,
+                paternalSurname: lead.user?.paternalSurname,
+                maternalSurname: lead.user?.maternalSurname
             }
         }
     }

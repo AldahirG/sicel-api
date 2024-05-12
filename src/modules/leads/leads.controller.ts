@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, Query, UseGuards, Request } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Query, UseGuards, Request, ParseUUIDPipe } from '@nestjs/common';
 import { LeadsService } from './leads.service';
 import { CreateLeadDto } from './dto/create-lead.dto';
 import { UpdateLeadDto } from './dto/update-lead.dto';
@@ -37,5 +37,11 @@ export class LeadsController {
   @Delete(':id')
   remove(@Param('id') id: string) {
     return this.leadsService.remove(id);
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Patch(':id/assignment/:userId')
+  assignment(@Param('id', ParseUUIDPipe) id: string, @Param('userId', ParseUUIDPipe) userId: string) {
+    return this.leadsService.assignment(id, userId);
   }
 }
