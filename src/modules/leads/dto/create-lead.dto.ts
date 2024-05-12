@@ -18,10 +18,8 @@ export class CreateLeadDto {
     @IsUUID()
     asetNameId?: string
 
-
-    @IsOptional()
     @IsUUID()
-    campaignId?: string
+    campaignId: string
 
     @IsOptional()
     @IsUUID()
@@ -36,16 +34,13 @@ export class CreateLeadDto {
     @ValidateNested({ each: true })
     reference?: CreateReferenceDto
 
-    @IsOptional()
     @Type(() => CreateInformationLeadDto)
     @ValidateNested({ each: true })
-    information?: CreateInformationLeadDto
+    information: CreateInformationLeadDto
 
-    @IsOptional()
     @IsArray()
     email: string[]
 
-    @IsOptional()
     @IsArray()
     phone: string[]
 

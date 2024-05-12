@@ -2,9 +2,8 @@ import { EnrollmentStatus, Genres, SchoolTypes } from "@prisma/client";
 import { IsEnum, IsOptional, IsString, IsUUID } from "class-validator";
 
 export class CreateInformationLeadDto {
-    @IsOptional()
     @IsString()
-    name?: string
+    name: string
 
     @IsOptional()
     @IsEnum(Genres)

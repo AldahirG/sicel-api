@@ -84,13 +84,16 @@ export class UsersService extends HelperService {
   }
 
   async update(id: string, updateUserDto: UpdateUserDto) {
-    await this.findOne(id);
+    const user = await this.findOne(id);
     const select = this.select()
     const { roles, password, additionalInfo, ...data } = updateUserDto
 
     let rolesUpdate = {};
+    let hashedPassword = user.data.password
 
-    const hashedPassword = await bcrypt.hash(password, 10);
+    if (password) {
+      hashedPassword = await bcrypt.hash(password, 10);
+    }
 
     if (roles) {
       rolesUpdate = {
