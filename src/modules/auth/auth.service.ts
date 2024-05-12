@@ -6,6 +6,7 @@ import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
 import { IJwt } from './interfaces/jwt.interface';
 import { TransformResponse } from 'src/common/mappers/transform-response';
+import { AuthUserResource } from './mappers/auth-user.mapper';
 
 @Injectable()
 export class AuthService extends PrismaClient implements OnModuleInit {
@@ -32,7 +33,7 @@ export class AuthService extends PrismaClient implements OnModuleInit {
         email: true,
         accessToken: true,
         password: true,
-        roles: true
+        roles: { select: { role: { select: { name: true } } } }
       }
     });
 
@@ -64,10 +65,11 @@ export class AuthService extends PrismaClient implements OnModuleInit {
 
     const { password: ___, accessToken: token, ...rest } = user;
 
-    return TransformResponse.map({
-      ...rest,
-      token
-    }, '', 'POST');
+    return TransformResponse.map(
+      AuthUserResource.map({
+        ...rest,
+        token
+      }), 'Inicio de sesión exitoso !!', 'POST');
   }
 
   async logout(token: string) {

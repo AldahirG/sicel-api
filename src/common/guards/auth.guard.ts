@@ -2,6 +2,7 @@ import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { ExecutionContext } from '@nestjs/common';
 import { PrismaClient } from '@prisma/client';
+import { AuthUserResource } from 'src/modules/auth/mappers/auth-user.mapper';
 
 const prisma = new PrismaClient();
 
@@ -33,7 +34,7 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
             throw new HttpException('Unauthenticated', HttpStatus.UNAUTHORIZED)
         }
 
-        const { password: ___, accessToken: token, ...rest } = user;
+        const { token, ...rest } = AuthUserResource.map(user);
 
         request.user = rest;
 
