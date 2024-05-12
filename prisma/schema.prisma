@@ -31,7 +31,7 @@ model User {
   createAt        DateTime @default(now())
   updateAt        DateTime @updatedAt
 
-  additionalInfo AdditionalInfo[]
+  additionalInfo AdditionalInfo?
   roles          UsersRoles[]
   Leads          Leads[]
 }
@@ -40,7 +40,7 @@ model AdditionalInfo {
   id        String @id @default(uuid())
   telephone String
   user      User   @relation(fields: [userId], references: [id])
-  userId    String
+  userId    String @unique
 }
 
 model Roles {

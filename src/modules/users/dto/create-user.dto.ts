@@ -25,5 +25,5 @@ export class CreateUserDto {
 
     @ValidateNested({ each: true })
     @Type(() => CreateAdditionalInfo)
-    additionalInfo: CreateAdditionalInfo[]
+    additionalInfo: CreateAdditionalInfo
 }

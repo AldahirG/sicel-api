@@ -2,6 +2,7 @@ import { Controller, Get, Post, Body, Request, UseGuards } from '@nestjs/common'
 import { AuthService } from './auth.service';
 import { LoginDTO } from './dto/login.dto';
 import { JwtAuthGuard } from 'src/common/guards/auth.guard';
+import { TransformResponse } from 'src/common/mappers/transform-response';
 
 @Controller('auth')
 export class AuthController {
@@ -22,6 +23,6 @@ export class AuthController {
   @UseGuards(JwtAuthGuard)
   @Get('user')
   getUser(@Request() req) {
-    return req.user;
+    return TransformResponse.map(req.user);
   }
 }
