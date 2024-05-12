@@ -5,6 +5,7 @@ import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import * as bcrypt from 'bcrypt';
+import { UserResource } from './mappers/user.mapper';
 
 @Injectable()
 export class UsersService extends HelperService {
@@ -36,7 +37,7 @@ export class UsersService extends HelperService {
       },
       select,
     });
-    return TransformResponse.map(user, 'Usuario creado con éxito!!', 'POST', HttpStatus.CREATED)
+    return TransformResponse.map(UserResource.map(user), 'Usuario creado con éxito!!', 'POST', HttpStatus.CREATED)
   }
 
   async findAll(params: PaginationFilterDto) {
@@ -51,7 +52,7 @@ export class UsersService extends HelperService {
     });
 
     return TransformResponse.map({
-      data: users,
+      data: UserResource.collection(users),
       meta: params.paginated
         ? {
           currentPage: params.page,
@@ -80,7 +81,7 @@ export class UsersService extends HelperService {
         HttpStatus.NOT_FOUND,
       );
     }
-    return TransformResponse.map(user);
+    return TransformResponse.map(UserResource.map(user));
   }
 
   async update(id: string, updateUserDto: UpdateUserDto) {
@@ -115,7 +116,7 @@ export class UsersService extends HelperService {
       },
       select
     })
-    return TransformResponse.map(newData, 'Usuario actualizado con éxito!!', 'PUT');
+    return TransformResponse.map(UserResource.map(newData), 'Usuario actualizado con éxito!!', 'PUT');
   }
 
   async remove(id: string) {
@@ -124,6 +125,6 @@ export class UsersService extends HelperService {
       where: { id },
       data: { available: false }
     });
-    return TransformResponse.map(user, 'Usuario eliminado con éxito!!', 'DELETE')
+    return TransformResponse.map(UserResource.map(user), 'Usuario eliminado con éxito!!', 'DELETE')
   }
 }

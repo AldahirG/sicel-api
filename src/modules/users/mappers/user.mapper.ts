@@ -1,0 +1,22 @@
+export class UserResource {
+    static map(user: any) {
+        return {
+            id: user?.id,
+            name: user?.name,
+            email: user?.email,
+            roles: user?.roles.map((i) => i.role.name),
+            additionalInfo: user.additionalInfo
+        }
+    }
+
+    static collection(users: any[]) {
+        const data = users.map((user) => ({
+            id: user?.id,
+            name: user?.name,
+            email: user?.email,
+            roles: user?.roles.map((i) => i.role.name),
+            additionalInfo: user.additionalInfo
+        }))
+        return data
+    }
+}
