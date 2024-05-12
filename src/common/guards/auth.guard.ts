@@ -15,7 +15,19 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
             throw new HttpException('Unauthenticated', HttpStatus.UNAUTHORIZED)
         }
 
-        const user = await prisma.user.findFirst({ where: { accessToken }, include: { roles: true } });
+        const user = await prisma.user.findFirst({
+            where: { accessToken }, include: {
+                roles: {
+                    include: {
+                        role: {
+                            select: {
+                                name: true
+                            }
+                        }
+                    }
+                }
+            }
+        });
 
         if (!user || !user.available) {
             throw new HttpException('Unauthenticated', HttpStatus.UNAUTHORIZED)

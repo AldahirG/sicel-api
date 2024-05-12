@@ -10,11 +10,6 @@ export class CreateLeadDto {
     grade?: Grades
 
     @IsOptional()
-    @IsDate()
-    @Type(() => Date)
-    dateContact?: Date
-
-    @IsOptional()
     @IsUUID()
     asetNameId?: string
 
@@ -25,8 +20,6 @@ export class CreateLeadDto {
     @IsUUID()
     cityId?: string
 
-    @IsOptional()
-    @IsUUID()
     userId?: string
 
     @IsOptional()

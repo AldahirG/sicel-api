@@ -8,23 +8,23 @@ import { LeadResource } from './mapper/lead.mapper';
 
 @Injectable()
 export class LeadsService extends HelperService {
-  async create(createLeadDto: CreateLeadDto) {
+  async create(createLeadDto: CreateLeadDto, user) {
     const select = this.select()
     const { information, campaignId, asetNameId, cityId, userId, reference, email, phone, ...leadData } = createLeadDto;
 
     const campaignConnect = campaignId ? { connect: { id: campaignId } } : undefined;
     const assetNameConnect = asetNameId ? { connect: { id: asetNameId } } : undefined;
-    const userConnect = userId ? { connect: { id: userId } } : undefined;
     const cityConnect = cityId ? { connect: { id: cityId } } : undefined;
     const emails = email ? { createMany: { data: email.map((i) => ({ email: i })) } } : undefined
     const phones = phone ? { createMany: { data: phone.map((i) => ({ telephone: i })) } } : undefined
+    const assignLead = user.roles.some(assignment => assignment.roleId === 2) ? { connect: { id: user.id } } : undefined
 
     const lead = await this.leads.create({
       data: {
         ...leadData,
         campaign: campaignConnect,
         asetName: assetNameConnect,
-        user: userConnect,
+        user: assignLead,
         city: cityConnect,
         reference: {
           create: reference
@@ -82,7 +82,8 @@ export class LeadsService extends HelperService {
   }
 
   async update(id: string, updateLeadDto: UpdateLeadDto) {
-    const select = this.select()
+    const { data: lead } = await this.findOne(id);
+    const select = this.select();
     const { information, campaignId, asetNameId, cityId, userId, reference, email, phone, ...leadData } = updateLeadDto;
 
     const campaignConnect = campaignId ? { connect: { id: campaignId } } : undefined;
@@ -92,7 +93,11 @@ export class LeadsService extends HelperService {
     const emails = email ? { createMany: { data: email.map((i) => ({ email: i })) } } : undefined
     const phones = phone ? { createMany: { data: phone.map((i) => ({ telephone: i })) } } : undefined
 
-    const lead = await this.leads.update({
+    if (!lead.dateContact) {
+      leadData.dateContact = new Date()
+    }
+
+    const updateLead = await this.leads.update({
       where: { id },
       data: {
         ...leadData,
@@ -123,7 +128,7 @@ export class LeadsService extends HelperService {
       },
       select
     });
-    return TransformResponse.map(LeadResource.map(lead), 'Lead actualizado con éxito!!', 'PUT', HttpStatus.OK)
+    return TransformResponse.map(LeadResource.map(updateLead), 'Lead actualizado con éxito!!', 'PUT', HttpStatus.OK)
   }
 
   async remove(id: string) {
@@ -133,5 +138,9 @@ export class LeadsService extends HelperService {
       data: { available: false }
     });
     return TransformResponse.map(data, 'Lead eliminado con éxito!!', 'DELETE')
+  }
+
+  async assignment(id: string) {
+    const { data } = await this.findOne(id)
   }
 }

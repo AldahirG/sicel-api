@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, Query, UseGuards } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Query, UseGuards, Request } from '@nestjs/common';
 import { LeadsService } from './leads.service';
 import { CreateLeadDto } from './dto/create-lead.dto';
 import { UpdateLeadDto } from './dto/update-lead.dto';
@@ -11,8 +11,8 @@ export class LeadsController {
 
   @UseGuards(JwtAuthGuard)
   @Post()
-  create(@Body() createLeadDto: CreateLeadDto) {
-    return this.leadsService.create(createLeadDto);
+  create(@Request() req, @Body() createLeadDto: CreateLeadDto) {
+    return this.leadsService.create(createLeadDto, req.user);
   }
 
   @UseGuards(JwtAuthGuard)
