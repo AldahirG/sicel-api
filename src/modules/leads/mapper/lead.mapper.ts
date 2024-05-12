@@ -1,6 +1,5 @@
 export class LeadResource {
     static map(lead: any) {
-        console.log(lead)
         return {
             id: lead.id,
             grade: lead.grade,
