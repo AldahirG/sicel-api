@@ -20,6 +20,7 @@ CREATE TABLE `AdditionalInfo` (
     `telephone` VARCHAR(191) NOT NULL,
     `userId` VARCHAR(191) NOT NULL,
 
+    UNIQUE INDEX `AdditionalInfo_userId_key`(`userId`),
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
@@ -190,6 +191,18 @@ CREATE TABLE `References` (
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 -- CreateTable
+CREATE TABLE `Cycles` (
+    `id` VARCHAR(191) NOT NULL,
+    `name` VARCHAR(191) NULL,
+    `cycle` VARCHAR(191) NOT NULL,
+    `available` BOOLEAN NOT NULL DEFAULT true,
+    `createAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+    `updateAt` DATETIME(3) NOT NULL,
+
+    PRIMARY KEY (`id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
 CREATE TABLE `Leads` (
     `id` VARCHAR(191) NOT NULL,
     `grade` ENUM('SECUNDARIA', 'BACHILLERATO', 'PREPARATORIA', 'LIC_ING', 'ESPECIALIDAD', 'DIPLOMADO', 'MAESTRIA', 'DOCTORADO', 'NO_ESPECIFICA') NULL,
@@ -200,6 +213,7 @@ CREATE TABLE `Leads` (
     `cityId` VARCHAR(191) NULL,
     `infoLeadId` VARCHAR(191) NULL,
     `userId` VARCHAR(191) NULL,
+    `cycleId` VARCHAR(191) NULL,
     `available` BOOLEAN NOT NULL DEFAULT true,
     `createAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
     `updateAt` DATETIME(3) NOT NULL,
@@ -212,6 +226,7 @@ CREATE TABLE `Leads` (
 -- CreateTable
 CREATE TABLE `Careers` (
     `id` VARCHAR(191) NOT NULL,
+    `name` VARCHAR(191) NOT NULL,
     `program` VARCHAR(191) NOT NULL,
     `available` BOOLEAN NOT NULL DEFAULT true,
     `createAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
@@ -249,6 +264,9 @@ ALTER TABLE `Cities` ADD CONSTRAINT `Cities_stateId_fkey` FOREIGN KEY (`stateId`
 
 -- AddForeignKey
 ALTER TABLE `States` ADD CONSTRAINT `States_countryId_fkey` FOREIGN KEY (`countryId`) REFERENCES `Countries`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE `Leads` ADD CONSTRAINT `Leads_cycleId_fkey` FOREIGN KEY (`cycleId`) REFERENCES `Cycles`(`id`) ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE `Leads` ADD CONSTRAINT `Leads_infoLeadId_fkey` FOREIGN KEY (`infoLeadId`) REFERENCES `InformationLead`(`id`) ON DELETE SET NULL ON UPDATE CASCADE;

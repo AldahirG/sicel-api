@@ -249,6 +249,7 @@ model Leads {
 
 model Careers {
   id        String   @id @default(uuid())
+  name      String
   program   String
   available Boolean  @default(true)
   createAt  DateTime @default(now())
