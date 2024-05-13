@@ -5,9 +5,13 @@ import { CreateLeadDto } from './dto/create-lead.dto';
 import { UpdateLeadDto } from './dto/update-lead.dto';
 import { HelperService } from './helpers/helper.service';
 import { LeadResource } from './mapper/lead.mapper';
+import { ProcessFileService } from '../process-file/process-file.service';
+import { Prisma } from '@prisma/client';
 
 @Injectable()
 export class LeadsService extends HelperService {
+  constructor(private readonly csvService: ProcessFileService) { super() }
+
   async create(createLeadDto: CreateLeadDto, user) {
     const select = this.select()
     const { information, campaignId, asetNameId, cityId, userId, reference, email, phone, ...leadData } = createLeadDto;
@@ -159,5 +163,16 @@ export class LeadsService extends HelperService {
       select
     })
     return TransformResponse.map(LeadResource.map(data), 'El lead a sido asignado correctamente!!', 'PUT')
+  }
+
+  async CreateFromFileShare(file: Express.Multer.File) {
+    const select = this.select()
+    const data: Prisma.LeadsCreateInput[] = await this.csvService.readCsv(file);
+    const newLeads = await Promise.all(data.map(async (data) => {
+      const lead = await this.leads.create({ data, select });
+      return LeadResource.map(lead);
+    }));
+
+    return TransformResponse.map(newLeads, 'Lead creado con éxito!!', 'POST', HttpStatus.CREATED)
   }
 }

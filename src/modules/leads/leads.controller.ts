@@ -1,9 +1,11 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, Query, UseGuards, Request, ParseUUIDPipe } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Query, UseGuards, Request, ParseUUIDPipe, UseInterceptors, UploadedFile } from '@nestjs/common';
 import { LeadsService } from './leads.service';
 import { CreateLeadDto } from './dto/create-lead.dto';
 import { UpdateLeadDto } from './dto/update-lead.dto';
 import { PaginationFilterDto } from 'src/common/dto/pagination-filter.dto';
 import { JwtAuthGuard } from 'src/common/guards/auth.guard';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { Express } from 'express'
 
 @Controller('leads')
 export class LeadsController {
@@ -43,5 +45,12 @@ export class LeadsController {
   @Patch(':id/assignment/:userId')
   assignment(@Param('id', ParseUUIDPipe) id: string, @Param('userId', ParseUUIDPipe) userId: string) {
     return this.leadsService.assignment(id, userId);
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Post('file-share')
+  @UseInterceptors(FileInterceptor('file'))
+  CreateFromFileShare(@UploadedFile() file: Express.Multer.File) {
+    return this.leadsService.CreateFromFileShare(file)
   }
 }
