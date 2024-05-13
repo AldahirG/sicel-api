@@ -14,7 +14,19 @@ import { StatesModule } from './modules/address/states/states.module';
 import { CitiesModule } from './modules/address/cities/cities.module';
 import { LeadsModule } from './modules/leads/leads.module';
 @Module({
-  imports: [AuthModule, UsersModule, RolesModule, ContactTypesModule, AsetnameModule, CampaignsModule, CampaignTypesModule, FollowUpModule, CountriesModule, StatesModule, CitiesModule, LeadsModule],
+  imports: [AuthModule,
+    UsersModule,
+    RolesModule,
+    ContactTypesModule,
+    AsetnameModule,
+    CampaignsModule,
+    CampaignTypesModule,
+    FollowUpModule,
+    CountriesModule,
+    StatesModule,
+    CitiesModule,
+    LeadsModule
+  ],
   controllers: [],
   providers: [
     {
