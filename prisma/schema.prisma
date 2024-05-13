@@ -211,6 +211,16 @@ model References {
   leadsId    String?
 }
 
+model Cycles {
+  id        String   @id @default(uuid())
+  name      String?
+  cycle     String
+  available Boolean  @default(true)
+  createAt  DateTime @default(now())
+  updateAt  DateTime @updatedAt
+  leads     Leads[]
+}
+
 model Leads {
   id          String    @id @default(uuid())
   grade       Grades?
@@ -221,10 +231,12 @@ model Leads {
   cityId      String?
   infoLeadId  String?   @unique
   userId      String?
+  cycleId     String?
   available   Boolean   @default(true)
   createAt    DateTime  @default(now())
   updateAt    DateTime  @updatedAt
 
+  Cycle       Cycles?          @relation(fields: [cycleId], references: [id])
   information InformationLead? @relation(fields: [infoLeadId], references: [id])
   campaign    Campaigns?       @relation(fields: [campaignId], references: [id])
   asetName    asetName?        @relation(fields: [asetNameId], references: [id])
