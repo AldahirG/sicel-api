@@ -7,7 +7,6 @@ import { RolesModule } from './modules/roles/roles.module';
 import { ContactTypesModule } from './modules/contact-types/contact-types.module';
 import { AsetnameModule } from './modules/asetname/asetname.module';
 import { CampaignsModule } from './modules/campaigns/campaigns.module';
-import { CampaignTypesModule } from './modules/campaign-types/campaign-types.module';
 import { FollowUpModule } from './modules/follow-up/follow-up.module';
 import { CountriesModule } from './modules/address/countries/countries.module';
 import { StatesModule } from './modules/address/states/states.module';
@@ -22,7 +21,6 @@ import { CareersModule } from './modules/careers/careers.module';
     ContactTypesModule,
     AsetnameModule,
     CampaignsModule,
-    CampaignTypesModule,
     FollowUpModule,
     CountriesModule,
     StatesModule,
