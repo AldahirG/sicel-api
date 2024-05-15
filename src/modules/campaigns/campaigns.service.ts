@@ -18,7 +18,7 @@ export class CampaignsService extends PrismaClient implements OnModuleInit {
       select: {
         id: true,
         name: true,
-        campaignTypeId: true
+        type: true
       }
     })
     return TransformResponse.map(data, 'Campaña creada con éxito!!', 'POST', HttpStatus.CREATED)
@@ -34,7 +34,7 @@ export class CampaignsService extends PrismaClient implements OnModuleInit {
       select: {
         id: true,
         name: true,
-        campaignTypeId: true
+        type: true
       }
     });
 
@@ -62,7 +62,7 @@ export class CampaignsService extends PrismaClient implements OnModuleInit {
       select: {
         id: true,
         name: true,
-        campaignTypeId: true
+        type: true
       }
     });
     if (!data) {
@@ -82,7 +82,7 @@ export class CampaignsService extends PrismaClient implements OnModuleInit {
       select: {
         id: true,
         name: true,
-        campaignTypeId: true
+        type: true
       }
     })
     return TransformResponse.map(data, 'Campaña actualizada con éxito!!', 'PUT');
@@ -96,7 +96,7 @@ export class CampaignsService extends PrismaClient implements OnModuleInit {
       select: {
         id: true,
         name: true,
-        campaignTypeId: true
+        type: true
       }
     });
     return TransformResponse.map(data, 'Campaña eliminada con éxito!!', 'DELETE')

@@ -1,9 +1,10 @@
-import { IsString } from "class-validator";
+import { CampaignsTypes } from '@prisma/client';
+import { IsString, IsEnum } from 'class-validator';
 
 export class CreateCampaignDto {
     @IsString()
     name: string
 
-    @IsString()
-    campaignTypeId: string
+    @IsEnum(CampaignsTypes)
+    type: CampaignsTypes
 }

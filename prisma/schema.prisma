@@ -82,8 +82,8 @@ model Emails {
 }
 
 enum Genres {
-  FEMALE
-  MALE
+  HOMBRE
+  MUJER
 }
 
 enum SchoolTypes {
@@ -122,23 +122,18 @@ model FollowUp {
   InformationLead InformationLead[]
 }
 
-model CampaignsTypes {
-  id        String      @id @default(uuid())
-  name      String
-  available Boolean     @default(true)
-  createAt  DateTime    @default(now())
-  updateAt  DateTime    @updatedAt
-  Campaigns Campaigns[]
+enum CampaignsTypes {
+  PAUTA
+  ORGANICA
 }
 
 model Campaigns {
   id             String         @id @default(uuid())
   name           String
-  campaignTypeId String
+  type           CampaignsTypes
   available      Boolean        @default(true)
   createAt       DateTime       @default(now())
   updateAt       DateTime       @updatedAt
-  campaignType   CampaignsTypes @relation(fields: [campaignTypeId], references: [id])
   Leads          Leads[]
 }
 

@@ -96,17 +96,6 @@ CREATE TABLE `FollowUp` (
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 -- CreateTable
-CREATE TABLE `CampaignsTypes` (
-    `id` VARCHAR(191) NOT NULL,
-    `name` VARCHAR(191) NOT NULL,
-    `available` BOOLEAN NOT NULL DEFAULT true,
-    `createAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
-    `updateAt` DATETIME(3) NOT NULL,
-
-    PRIMARY KEY (`id`)
-) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
-
--- CreateTable
 CREATE TABLE `Campaigns` (
     `id` VARCHAR(191) NOT NULL,
     `name` VARCHAR(191) NOT NULL,
@@ -114,6 +103,7 @@ CREATE TABLE `Campaigns` (
     `available` BOOLEAN NOT NULL DEFAULT true,
     `createAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
     `updateAt` DATETIME(3) NOT NULL,
+    `type` ENUM('PAUTA', 'ORGANICA') NOT NULL,
 
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
@@ -252,9 +242,6 @@ ALTER TABLE `Emails` ADD CONSTRAINT `Emails_leadId_fkey` FOREIGN KEY (`leadId`) 
 
 -- AddForeignKey
 ALTER TABLE `InformationLead` ADD CONSTRAINT `InformationLead_followUpId_fkey` FOREIGN KEY (`followUpId`) REFERENCES `FollowUp`(`id`) ON DELETE SET NULL ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE `Campaigns` ADD CONSTRAINT `Campaigns_campaignTypeId_fkey` FOREIGN KEY (`campaignTypeId`) REFERENCES `CampaignsTypes`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE `asetName` ADD CONSTRAINT `asetName_contactTypesId_fkey` FOREIGN KEY (`contactTypesId`) REFERENCES `ContactTypes`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
