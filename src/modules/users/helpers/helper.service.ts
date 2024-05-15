@@ -14,6 +14,8 @@ export class HelperService extends PrismaClient implements OnModuleInit {
         let select: ISelect = {
             id: true,
             name: true,
+            paternalSurname: true,
+            maternalSurname: true,
             email: true,
             password: true,
             roles: {
