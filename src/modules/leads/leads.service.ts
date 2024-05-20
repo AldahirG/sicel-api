@@ -45,15 +45,17 @@ export class LeadsService extends HelperService {
   }
 
   async findAll(params: PaginationFilterDto) {
+    const select = this.select()
     const filter = this.getParams(params)
     const totalRows = await this.leads.count({ where: filter.where });
 
     const data = await this.leads.findMany({
       ...filter,
+      select
     });
 
     return TransformResponse.map({
-      data: data,
+      data: LeadResource.collection(data),
       meta: params.paginated
         ? {
           currentPage: params.page,
