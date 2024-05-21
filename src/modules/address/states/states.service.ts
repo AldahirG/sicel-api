@@ -67,7 +67,7 @@ export class StatesService extends PrismaClient implements OnModuleInit {
         id: true,
         name: true,
         country: {
-          select: { name: true }
+          select: { id: true }
         }
       }
     });

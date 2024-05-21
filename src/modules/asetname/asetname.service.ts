@@ -34,6 +34,11 @@ export class AsetnameService extends PrismaClient implements OnModuleInit {
       select: {
         id: true,
         name: true,
+        contactType: {
+          select: {
+            name: true
+          }
+        }
       }
     })
 
@@ -61,6 +66,12 @@ export class AsetnameService extends PrismaClient implements OnModuleInit {
       select: {
         id: true,
         name: true,
+        contactType: {
+          select: {
+            id: true,
+            name: true
+          }
+        }
       }
     })
     if (!asetname) {

@@ -49,6 +49,9 @@ export class UsersService extends HelperService {
     const users = await this.user.findMany({
       ...filter,
       select,
+      orderBy: {
+        createAt: 'desc',
+      }
     });
 
     return TransformResponse.map({

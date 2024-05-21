@@ -37,6 +37,9 @@ export class CitiesService extends PrismaClient implements OnModuleInit {
       select: {
         id: true,
         name: true,
+        state: {
+          select: { name: true }
+        }
       }
     });
 
