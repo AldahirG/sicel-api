@@ -14,6 +14,7 @@ import { CitiesModule } from './modules/address/cities/cities.module';
 import { LeadsModule } from './modules/leads/leads.module';
 import { CyclesModule } from './modules/cycles/cycles.module';
 import { CareersModule } from './modules/careers/careers.module';
+import { GradesModule } from './modules/grades/grades.module';
 @Module({
   imports: [AuthModule,
     UsersModule,
@@ -27,7 +28,8 @@ import { CareersModule } from './modules/careers/careers.module';
     CitiesModule,
     LeadsModule,
     CyclesModule,
-    CareersModule
+    CareersModule,
+    GradesModule
   ],
   controllers: [],
   providers: [
