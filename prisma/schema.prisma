@@ -7,16 +7,13 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-enum Grades {
-  SECUNDARIA
-  BACHILLERATO
-  PREPARATORIA
-  LIC_ING
-  ESPECIALIDAD
-  DIPLOMADO
-  MAESTRIA
-  DOCTORADO
-  NO_ESPECIFICA
+model Grades {
+  id        String   @id @default(uuid())
+  name      String
+  available Boolean  @default(true)
+  createAt  DateTime @default(now())
+  updateAt  DateTime @updatedAt
+  leads     Leads[]
 }
 
 model User {
@@ -128,13 +125,13 @@ enum CampaignsTypes {
 }
 
 model Campaigns {
-  id             String         @id @default(uuid())
-  name           String
-  type           CampaignsTypes
-  available      Boolean        @default(true)
-  createAt       DateTime       @default(now())
-  updateAt       DateTime       @updatedAt
-  Leads          Leads[]
+  id        String         @id @default(uuid())
+  name      String
+  type      CampaignsTypes
+  available Boolean        @default(true)
+  createAt  DateTime       @default(now())
+  updateAt  DateTime       @updatedAt
+  Leads     Leads[]
 }
 
 model ContactTypes {
@@ -208,7 +205,7 @@ model References {
 
 model Cycles {
   id        String   @id @default(uuid())
-  name      String?
+  name      String
   cycle     String
   available Boolean  @default(true)
   createAt  DateTime @default(now())
@@ -218,7 +215,7 @@ model Cycles {
 
 model Leads {
   id          String    @id @default(uuid())
-  grade       Grades?
+  grade       Grades?   @relation(fields: [gradesId], references: [id])
   dateContact DateTime?
   asetNameId  String?
   referenceId String?   @unique
@@ -240,6 +237,7 @@ model Leads {
   user        User?            @relation(fields: [userId], references: [id])
   emails      Emails[]
   phones      Phones[]
+  gradesId    String?
 }
 
 model Careers {

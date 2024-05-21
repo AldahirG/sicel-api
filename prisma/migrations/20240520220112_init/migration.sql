@@ -1,4 +1,15 @@
 -- CreateTable
+CREATE TABLE `Grades` (
+    `id` VARCHAR(191) NOT NULL,
+    `name` VARCHAR(191) NOT NULL,
+    `available` BOOLEAN NOT NULL DEFAULT true,
+    `createAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+    `updateAt` DATETIME(3) NOT NULL,
+
+    PRIMARY KEY (`id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
 CREATE TABLE `User` (
     `id` VARCHAR(191) NOT NULL,
     `name` VARCHAR(191) NOT NULL,
@@ -71,7 +82,7 @@ CREATE TABLE `Emails` (
 CREATE TABLE `InformationLead` (
     `id` VARCHAR(191) NOT NULL,
     `name` VARCHAR(191) NULL,
-    `genre` ENUM('FEMALE', 'MALE') NULL,
+    `genre` ENUM('HOMBRE', 'MUJER') NULL,
     `careerInterest` VARCHAR(191) NULL,
     `formerSchool` VARCHAR(191) NULL,
     `typeSchool` ENUM('PRIVADA', 'PUBLICA') NULL,
@@ -99,11 +110,10 @@ CREATE TABLE `FollowUp` (
 CREATE TABLE `Campaigns` (
     `id` VARCHAR(191) NOT NULL,
     `name` VARCHAR(191) NOT NULL,
-    `campaignTypeId` VARCHAR(191) NOT NULL,
+    `type` ENUM('PAUTA', 'ORGANICA') NOT NULL,
     `available` BOOLEAN NOT NULL DEFAULT true,
     `createAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
     `updateAt` DATETIME(3) NOT NULL,
-    `type` ENUM('PAUTA', 'ORGANICA') NOT NULL,
 
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
@@ -195,7 +205,6 @@ CREATE TABLE `Cycles` (
 -- CreateTable
 CREATE TABLE `Leads` (
     `id` VARCHAR(191) NOT NULL,
-    `grade` ENUM('SECUNDARIA', 'BACHILLERATO', 'PREPARATORIA', 'LIC_ING', 'ESPECIALIDAD', 'DIPLOMADO', 'MAESTRIA', 'DOCTORADO', 'NO_ESPECIFICA') NULL,
     `dateContact` DATETIME(3) NULL,
     `asetNameId` VARCHAR(191) NULL,
     `referenceId` VARCHAR(191) NULL,
@@ -207,6 +216,7 @@ CREATE TABLE `Leads` (
     `available` BOOLEAN NOT NULL DEFAULT true,
     `createAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
     `updateAt` DATETIME(3) NOT NULL,
+    `gradesId` VARCHAR(191) NULL,
 
     UNIQUE INDEX `Leads_referenceId_key`(`referenceId`),
     UNIQUE INDEX `Leads_infoLeadId_key`(`infoLeadId`),
@@ -251,6 +261,9 @@ ALTER TABLE `Cities` ADD CONSTRAINT `Cities_stateId_fkey` FOREIGN KEY (`stateId`
 
 -- AddForeignKey
 ALTER TABLE `States` ADD CONSTRAINT `States_countryId_fkey` FOREIGN KEY (`countryId`) REFERENCES `Countries`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE `Leads` ADD CONSTRAINT `Leads_gradesId_fkey` FOREIGN KEY (`gradesId`) REFERENCES `Grades`(`id`) ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE `Leads` ADD CONSTRAINT `Leads_cycleId_fkey` FOREIGN KEY (`cycleId`) REFERENCES `Cycles`(`id`) ON DELETE SET NULL ON UPDATE CASCADE;
