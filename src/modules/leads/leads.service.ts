@@ -14,9 +14,10 @@ export class LeadsService extends HelperService {
 
   async create(createLeadDto: CreateLeadDto, user) {
     const select = this.select()
-    const { information, campaignId, asetNameId, cityId, userId, reference, email, phone, ...leadData } = createLeadDto;
+    const { information, campaignId, gradeId, asetNameId, cityId, userId, reference, email, phone, ...leadData } = createLeadDto;
 
     const campaignConnect = campaignId ? { connect: { id: campaignId } } : undefined;
+    const gradeConnect = gradeId ? { connect: { id: gradeId } } : undefined;
     const assetNameConnect = asetNameId ? { connect: { id: asetNameId } } : undefined;
     const cityConnect = cityId ? { connect: { id: cityId } } : undefined;
     const emails = email ? { createMany: { data: email.map((i) => ({ email: i })) } } : undefined
@@ -28,6 +29,7 @@ export class LeadsService extends HelperService {
         ...leadData,
         campaign: campaignConnect,
         asetName: assetNameConnect,
+        grade: gradeConnect,
         user: assignLead,
         city: cityConnect,
         reference: {
