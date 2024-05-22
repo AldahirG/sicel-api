@@ -1,9 +1,8 @@
 import { IsOptional, IsString } from "class-validator";
 
 export class CreateCycleDto {
-    @IsOptional()
     @IsString()
-    name?: string
+    name: string
 
     @IsString()
     cycle: string
