@@ -16,7 +16,7 @@ export class LeadResource {
                 formerSchool: lead.information?.formerSchool,
                 typeSchool: lead.information?.typeSchool,
                 enrollmentStatus: lead.information?.enrollmentStatus,
-                followUpId: lead.information?.followUpId
+                followUp: lead.information?.followUp
             },
             campaign: {
                 id: lead.campaign?.id,
