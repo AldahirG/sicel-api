@@ -19,8 +19,9 @@ export class CreateLeadDto {
 	@IsUUID()
 	asetNameId?: string
 
+	@IsOptional()
 	@IsUUID()
-	campaignId: string
+	campaignId?: string
 
 	@IsOptional()
 	@IsUUID()
