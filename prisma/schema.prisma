@@ -79,8 +79,8 @@ model Emails {
 }
 
 enum Genres {
-  HOMBRE
-  MUJER
+  MASCULINO
+  FEMENINO
 }
 
 enum SchoolTypes {
