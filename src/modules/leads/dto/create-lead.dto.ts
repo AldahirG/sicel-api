@@ -1,7 +1,7 @@
 import {
 	IsArray,
-	IsDate,
 	IsEnum,
+	IsNumber,
 	IsOptional,
 	IsUUID,
 	ValidateNested,
@@ -9,6 +9,7 @@ import {
 import { CreateInformationLeadDto } from './create-information-lead.dto'
 import { CreateReferenceDto } from './create-reference.dto'
 import { Type } from 'class-transformer'
+import { ScholarshipEnum } from '../enums/scholarship.enum'
 
 export class CreateLeadDto {
 	@IsOptional()
@@ -26,6 +27,14 @@ export class CreateLeadDto {
 	@IsOptional()
 	@IsUUID()
 	cityId?: string
+
+	@IsOptional()
+	@IsEnum(ScholarshipEnum)
+	scholarship? = ScholarshipEnum
+
+	@IsOptional()
+	@IsNumber()
+	semester?: number
 
 	userId?: string
 

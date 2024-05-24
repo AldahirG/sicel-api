@@ -224,9 +224,12 @@ model Leads {
   infoLeadId  String?   @unique
   userId      String?
   cycleId     String?
-  available   Boolean   @default(true)
-  createAt    DateTime  @default(now())
-  updateAt    DateTime  @updatedAt
+  semester    Int?
+  scholarship String?
+
+  available Boolean  @default(true)
+  createAt  DateTime @default(now())
+  updateAt  DateTime @updatedAt
 
   Cycle       Cycles?          @relation(fields: [cycleId], references: [id])
   information InformationLead? @relation(fields: [infoLeadId], references: [id])

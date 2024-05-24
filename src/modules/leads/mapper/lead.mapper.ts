@@ -4,6 +4,8 @@ export class LeadResource {
             id: lead.id,
             grade: lead.grade,
             dateContact: lead.dateContact,
+            scholarship: lead.scholarship,
+            semester: lead.semester,
             reference: {
                 type: lead.reference?.type,
                 name: lead.reference?.name,
@@ -48,6 +50,8 @@ export class LeadResource {
                 id: lead.id,
                 grade: lead.grade,
                 dateContact: lead.dateContact,
+                scholarship: lead.scholarship,
+                semester: lead.semester,
                 reference: {
                     type: lead.reference?.type,
                     name: lead.reference?.name,

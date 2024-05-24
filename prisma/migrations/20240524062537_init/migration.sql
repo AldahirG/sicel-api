@@ -82,7 +82,7 @@ CREATE TABLE `Emails` (
 CREATE TABLE `InformationLead` (
     `id` VARCHAR(191) NOT NULL,
     `name` VARCHAR(191) NULL,
-    `genre` ENUM('HOMBRE', 'MUJER') NULL,
+    `genre` ENUM('MASCULINO', 'FEMENINO') NULL,
     `careerInterest` VARCHAR(191) NULL,
     `formerSchool` VARCHAR(191) NULL,
     `typeSchool` ENUM('PRIVADA', 'PUBLICA') NULL,
@@ -193,7 +193,7 @@ CREATE TABLE `References` (
 -- CreateTable
 CREATE TABLE `Cycles` (
     `id` VARCHAR(191) NOT NULL,
-    `name` VARCHAR(191) NULL,
+    `name` VARCHAR(191) NOT NULL,
     `cycle` VARCHAR(191) NOT NULL,
     `available` BOOLEAN NOT NULL DEFAULT true,
     `createAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
@@ -213,6 +213,8 @@ CREATE TABLE `Leads` (
     `infoLeadId` VARCHAR(191) NULL,
     `userId` VARCHAR(191) NULL,
     `cycleId` VARCHAR(191) NULL,
+    `semester` INTEGER NULL,
+    `scholarship` VARCHAR(191) NULL,
     `available` BOOLEAN NOT NULL DEFAULT true,
     `createAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
     `updateAt` DATETIME(3) NOT NULL,
