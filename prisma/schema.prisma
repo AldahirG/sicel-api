@@ -224,7 +224,7 @@ model Leads {
   infoLeadId  String?   @unique
   userId      String?
   cycleId     String?
-  semester    Int?
+  semester    String?
   scholarship String?
 
   available Boolean  @default(true)
