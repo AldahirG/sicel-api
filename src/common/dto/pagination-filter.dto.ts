@@ -17,10 +17,12 @@ export class PaginationFilterDto {
   search?: string;
 
   @IsOptional()
+  @Type(() => Number)
   @IsPositive()
   'per-page' = 10;
 
   @IsOptional()
+  @Type(() => Number)
   @IsPositive()
   page: number = 1;
 }
