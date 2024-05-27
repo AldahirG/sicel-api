@@ -33,7 +33,7 @@ export class LeadResource {
             address: {
                 city: lead.city?.name,
                 state: lead.city?.state.name,
-                country: lead.city?.state.country.name
+                country: lead.city?.state.country
             },
             promoter: {
                 id: lead.user?.id,
