@@ -30,7 +30,7 @@ export class CreateLeadDto {
 
 	@IsOptional()
 	@IsEnum(ScholarshipEnum)
-	scholarship? = ScholarshipEnum
+	scholarship?: ScholarshipEnum
 
 	@IsOptional()
 	@IsEnum(SemesterEnum)
