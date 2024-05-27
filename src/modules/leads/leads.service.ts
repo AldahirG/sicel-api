@@ -14,7 +14,7 @@ export class LeadsService extends HelperService {
 
   async create(createLeadDto: CreateLeadDto, user) {
     const select = this.select()
-    const { information, campaignId, gradeId, asetNameId, cityId, userId, reference, email, phone, scholarship, ...leadData } = createLeadDto;
+    const { information, campaignId, gradeId, asetNameId, cityId, userId, reference, email, phone, scholarship, semester, ...leadData } = createLeadDto;
 
 
     const campaignConnect = campaignId ? { connect: { id: campaignId } } : undefined;
@@ -25,6 +25,7 @@ export class LeadsService extends HelperService {
     const phones = phone ? { createMany: { data: phone.map((i) => ({ telephone: i })) } } : undefined
     const assignLead = user.roles.some(assignment => assignment.roleId === 2) ? { connect: { id: user.id } } : undefined
     const scholar = `${scholarship}`
+    const sem = `${semester}`
 
     const lead = await this.leads.create({
       data: {
@@ -35,6 +36,7 @@ export class LeadsService extends HelperService {
         user: assignLead,
         city: cityConnect,
         scholarship: scholar,
+        semester: sem,
         reference: {
           create: reference
         },
@@ -95,7 +97,7 @@ export class LeadsService extends HelperService {
   async update(id: string, updateLeadDto: UpdateLeadDto) {
     const { data: lead } = await this.findOne(id);
     const select = this.select();
-    const { information, campaignId, asetNameId, cityId, userId, reference, email, phone, scholarship, ...leadData } = updateLeadDto;
+    const { information, campaignId, asetNameId, cityId, userId, reference, email, phone, scholarship, semester, ...leadData } = updateLeadDto;
 
     const campaignConnect = campaignId ? { connect: { id: campaignId } } : undefined;
     const asetNameConnect = asetNameId ? { connect: { id: asetNameId } } : undefined;
@@ -104,6 +106,7 @@ export class LeadsService extends HelperService {
     const emails = email ? { createMany: { data: email.map((i) => ({ email: i })) } } : undefined
     const phones = phone ? { createMany: { data: phone.map((i) => ({ telephone: i })) } } : undefined
     const scholar = `${scholarship}`
+    const sem = `${semester}`
 
     if (!lead.dateContact) {
       leadData.dateContact = new Date()
@@ -118,6 +121,7 @@ export class LeadsService extends HelperService {
         user: userConnect,
         city: cityConnect,
         scholarship: scholar,
+        semester: sem,
         reference: {
           upsert: {
             create: reference,
