@@ -95,7 +95,7 @@ export class LeadsService extends HelperService {
   async update(id: string, updateLeadDto: UpdateLeadDto) {
     const { data: lead } = await this.findOne(id);
     const select = this.select();
-    const { information, campaignId, asetNameId, cityId, userId, reference, email, phone, scholarship, ...leadData } = updateLeadDto;
+    const { information, campaignId, gradeId, asetNameId, cityId, userId, reference, email, phone, scholarship, ...leadData } = updateLeadDto;
 
     const campaignConnect = campaignId ? { connect: { id: campaignId } } : undefined;
     const asetNameConnect = asetNameId ? { connect: { id: asetNameId } } : undefined;
@@ -103,6 +103,7 @@ export class LeadsService extends HelperService {
     const cityConnect = cityId ? { connect: { id: cityId } } : undefined;
     const emails = email ? { createMany: { data: email.map((i) => ({ email: i })) } } : undefined
     const phones = phone ? { createMany: { data: phone.map((i) => ({ telephone: i })) } } : undefined
+    const gradeConnect = gradeId ? { connect: { id: gradeId } } : undefined;
     const scholar = `${scholarship}`
 
     if (!lead.dateContact) {
@@ -118,6 +119,7 @@ export class LeadsService extends HelperService {
         user: userConnect,
         city: cityConnect,
         scholarship: scholar,
+        grade: gradeConnect,
         reference: {
           upsert: {
             create: reference,
