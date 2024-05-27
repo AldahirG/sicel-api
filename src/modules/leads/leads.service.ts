@@ -25,7 +25,7 @@ export class LeadsService extends HelperService {
     const phones = phone ? { createMany: { data: phone.map((i) => ({ telephone: i })) } } : undefined
     const assignLead = user.roles.some(assignment => assignment.roleId === 2) ? { connect: { id: user.id } } : undefined
     const scholar = `${scholarship}`
-    const sem = `${semester}`
+    const sem = +semester
 
     const lead = await this.leads.create({
       data: {
@@ -121,7 +121,7 @@ export class LeadsService extends HelperService {
         user: userConnect,
         city: cityConnect,
         scholarship: scholar,
-        semester: sem,
+        semester: +sem,
         reference: {
           upsert: {
             create: reference,
