@@ -6,6 +6,7 @@ import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import * as bcrypt from 'bcrypt';
 import { UserResource } from './mappers/user.mapper';
+import { LeadResource } from '../leads/mapper/lead.mapper';
 
 @Injectable()
 export class UsersService extends HelperService {
@@ -129,5 +130,16 @@ export class UsersService extends HelperService {
       data: { available: false }
     });
     return TransformResponse.map(UserResource.map(user), 'Usuario eliminado con éxito!!', 'DELETE')
+  }
+
+  async myLeads(id: string) {
+    await this.findOne(id);
+    const leads = await this.user.findFirst({
+      where: { id },
+      select: {
+        Leads: true
+      }
+    })
+    return TransformResponse.map(LeadResource.collection(leads.Leads))
   }
 }

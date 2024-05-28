@@ -38,4 +38,10 @@ export class UsersController {
   remove(@Param('id') id: string) {
     return this.usersService.remove(id);
   }
+
+  @UseGuards(JwtAuthGuard)
+  @Get(':id/leads')
+  myLeads(@Param('id') id: string,) {
+    return this.usersService.myLeads(id)
+  }
 }
