@@ -6,7 +6,7 @@ import { UpdateLeadDto } from './dto/update-lead.dto';
 import { HelperService } from './helpers/helper.service';
 import { LeadResource } from './mapper/lead.mapper';
 import { ProcessFileService } from '../process-file/process-file.service';
-import { Prisma } from '@prisma/client';
+import { CsvInterface } from './interfaces/csv.interface';
 
 @Injectable()
 export class LeadsService extends HelperService {
@@ -174,11 +174,33 @@ export class LeadsService extends HelperService {
 
   async CreateFromFileShare(file: Express.Multer.File) {
     const select = this.select()
-    const data: Prisma.LeadsCreateInput[] = await this.csvService.readCsv(file);
+    const data: Array<CsvInterface> = await this.csvService.readCsv(file);
     const newLeads = await Promise.all(data.map(async (data) => {
-      const lead = await this.leads.create({ data, select });
-      return LeadResource.map(lead);
-    }));
+      const { asetName, grade, promotor, ...leadData } = data
+
+      const { id: asetId } = asetName ? await this.asetName.findFirst({
+        where: { name: { contains: asetName } }
+      }) : undefined
+
+      const { id: gradeId } = grade ? await this.grades.findFirst({
+        where: { name: { contains: grade } }
+      }) : undefined
+
+      const asetNameConnect = asetId ? { connect: { id: asetId } } : undefined;
+      const gradeConnect = gradeId ? { connect: { id: gradeId } } : undefined
+
+      const lead = await this.leads.create({
+        data: {
+          ...leadData,
+          asetName: asetNameConnect,
+          grade: gradeConnect
+        },
+        select
+      })
+      return lead;
+    }))
+
+    console.log(newLeads)
 
     return TransformResponse.map(newLeads, 'Lead creado con éxito!!', 'POST', HttpStatus.CREATED)
   }

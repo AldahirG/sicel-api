@@ -1,11 +1,11 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import * as csvParser from 'csv-parser';
 import { CsvLeadsResource } from './mappers/leads.mapper';
-import { Prisma } from '@prisma/client';
+import { CsvInterface } from '../leads/interfaces/csv.interface';
 
 @Injectable()
 export class ProcessFileService {
-    async readCsv(file: Express.Multer.File): Promise<Prisma.LeadsCreateInput[]> {
+    async readCsv(file: Express.Multer.File): Promise<Array<CsvInterface>> {
         if (!file) {
             throw new HttpException(
                 `No se a subido ningún archivo.`,
