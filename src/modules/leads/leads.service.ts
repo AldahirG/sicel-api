@@ -103,6 +103,7 @@ export class LeadsService extends HelperService {
     const cityConnect = cityId ? { connect: { id: cityId } } : undefined;
     const emails = email ? { createMany: { data: email.map((i) => ({ email: i })) } } : undefined
     const phones = phone ? { createMany: { data: phone.map((i) => ({ telephone: i })) } } : undefined
+    const referenceData = reference ? { upsert: { create: reference, update: reference } } : undefined
     const gradeConnect = gradeId ? { connect: { id: gradeId } } : undefined;
     const scholar = `${scholarship}`
 
@@ -120,12 +121,7 @@ export class LeadsService extends HelperService {
         city: cityConnect,
         scholarship: scholar,
         grade: gradeConnect,
-        reference: {
-          upsert: {
-            create: reference,
-            update: reference
-          }
-        },
+        reference: referenceData,
         information: {
           upsert: {
             create: information,
