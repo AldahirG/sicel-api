@@ -7,7 +7,6 @@ import { HelperService } from './helpers/helper.service'
 import { LeadResource } from './mapper/lead.mapper'
 import { ProcessFileService } from '../process-file/process-file.service'
 import { CsvInterface } from './interfaces/csv.interface'
-import { User } from '@prisma/client'
 
 @Injectable()
 export class LeadsService extends HelperService {
@@ -159,7 +158,13 @@ export class LeadsService extends HelperService {
 		const gradeConnect = gradeId ? { connect: { id: gradeId } } : undefined
 
 		if (!lead.dateContact) {
-			this.fillTimeLine({ title: 'Primer Contacto', description: '', timeableId: user.id, timeableModel: 'User', leadId: id })
+			this.fillTimeLine({
+				title: 'Primer Contacto',
+				description: '',
+				timeableId: user.id,
+				timeableModel: 'User',
+				leadId: id,
+			})
 			leadData.dateContact = new Date()
 		}
 
@@ -267,13 +272,51 @@ export class LeadsService extends HelperService {
 			}),
 		)
 
-		console.log(newLeads)
-
 		return TransformResponse.map(
 			newLeads,
 			'Lead creado con éxito!!',
 			'POST',
 			HttpStatus.CREATED,
+		)
+	}
+
+	async reassignment(leadId: string, userId: string, user: any) {
+		const select = this.select()
+		const { data: lead } = await this.findOne(leadId)
+		if (lead.promoter.id == userId) {
+			throw new HttpException(
+				`Este led no se puede asignar al mismo promotor`,
+				HttpStatus.BAD_REQUEST,
+			)
+		}
+
+		if (lead.dateContact && lead.information.followUp) {
+			throw new HttpException(
+				`Este lead no se puede reasignar`,
+				HttpStatus.BAD_REQUEST,
+			)
+		}
+
+		const data = await this.leads.update({
+			where: { id: leadId },
+			data: {
+				user: {
+					connect: { id: userId },
+				},
+			},
+			select,
+		})
+		this.fillTimeLine({
+			title: 'Resignación de lead',
+			description: '',
+			timeableId: user.id,
+			timeableModel: 'User',
+			leadId: leadId,
+		})
+		return TransformResponse.map(
+			LeadResource.map(data),
+			'El lead a sido reasignado correctamente!!',
+			'PUT',
 		)
 	}
 }

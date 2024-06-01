@@ -85,7 +85,7 @@ export class HelperService extends PrismaClient implements OnModuleInit {
 
 	async fillTimeLine(createTimeLine: CreateTimeLineDto) {
 		return await this.timeLineLeads.create({
-			data: createTimeLine
+			data: createTimeLine,
 		})
 	}
 }

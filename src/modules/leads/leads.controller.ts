@@ -45,7 +45,11 @@ export class LeadsController {
 
 	@UseGuards(JwtAuthGuard)
 	@Patch(':id')
-	update(@Param('id') id: string, @Body() updateLeadDto: UpdateLeadDto, @Request() req) {
+	update(
+		@Param('id') id: string,
+		@Body() updateLeadDto: UpdateLeadDto,
+		@Request() req,
+	) {
 		return this.leadsService.update(id, updateLeadDto, req.user)
 	}
 
@@ -69,5 +73,15 @@ export class LeadsController {
 	@UseInterceptors(FileInterceptor('file'))
 	CreateFromFileShare(@UploadedFile() file: Express.Multer.File) {
 		return this.leadsService.CreateFromFileShare(file)
+	}
+
+	@UseGuards(JwtAuthGuard)
+	@Patch(':leadId/reassignment/:userId')
+	reassignment(
+		@Param('leadId') leadId: string,
+		@Param('userId', ParseUUIDPipe) userId: string,
+		@Request() req: any,
+	) {
+		return this.leadsService.reassignment(leadId, userId, req.user)
 	}
 }

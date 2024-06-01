@@ -1,21 +1,21 @@
-import { IsOptional, IsString, IsUUID } from "class-validator";
+import { IsOptional, IsString, IsUUID } from 'class-validator'
 
 export class CreateTimeLineDto {
-    @IsOptional()
-    @IsString()
-    title?: string
+	@IsOptional()
+	@IsString()
+	title?: string
 
-    @IsString()
-    description: string
+	@IsString()
+	description: string
 
-    @IsString()
-    @IsUUID()
-    timeableId: string
+	@IsString()
+	@IsUUID()
+	timeableId: string
 
-    @IsString()
-    timeableModel: string
+	@IsString()
+	timeableModel: string
 
-    @IsUUID()
-    @IsString()
-    leadId: string
+	@IsUUID()
+	@IsString()
+	leadId: string
 }
