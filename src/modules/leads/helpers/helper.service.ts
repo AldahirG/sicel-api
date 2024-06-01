@@ -2,6 +2,7 @@ import { Prisma, PrismaClient } from '@prisma/client'
 import { OnModuleInit } from '@nestjs/common'
 import { PaginationFilterDto } from 'src/common/dto/pagination-filter.dto'
 import { ILeadWhere } from '../interfaces/lead-where.interface'
+import { CreateTimeLineDto } from 'src/common/dto/time-line.dto'
 
 export class HelperService extends PrismaClient implements OnModuleInit {
 	onModuleInit() {
@@ -80,5 +81,11 @@ export class HelperService extends PrismaClient implements OnModuleInit {
 			condition.take = perPage
 		}
 		return condition
+	}
+
+	async fillTimeLine(createTimeLine: CreateTimeLineDto) {
+		return await this.timeLineLeads.create({
+			data: createTimeLine
+		})
 	}
 }

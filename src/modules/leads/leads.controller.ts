@@ -23,7 +23,7 @@ import { Express } from 'express'
 
 @Controller('leads')
 export class LeadsController {
-	constructor(private readonly leadsService: LeadsService) {}
+	constructor(private readonly leadsService: LeadsService) { }
 
 	@UseGuards(JwtAuthGuard)
 	@Post()
@@ -45,8 +45,8 @@ export class LeadsController {
 
 	@UseGuards(JwtAuthGuard)
 	@Patch(':id')
-	update(@Param('id') id: string, @Body() updateLeadDto: UpdateLeadDto) {
-		return this.leadsService.update(id, updateLeadDto)
+	update(@Param('id') id: string, @Body() updateLeadDto: UpdateLeadDto, @Request() req) {
+		return this.leadsService.update(id, updateLeadDto, req.user)
 	}
 
 	@UseGuards(JwtAuthGuard)

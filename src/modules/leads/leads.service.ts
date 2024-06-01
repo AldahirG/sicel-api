@@ -7,6 +7,7 @@ import { HelperService } from './helpers/helper.service'
 import { LeadResource } from './mapper/lead.mapper'
 import { ProcessFileService } from '../process-file/process-file.service'
 import { CsvInterface } from './interfaces/csv.interface'
+import { User } from '@prisma/client'
 
 @Injectable()
 export class LeadsService extends HelperService {
@@ -91,16 +92,16 @@ export class LeadsService extends HelperService {
 			data: LeadResource.collection(data),
 			meta: params.paginated
 				? {
-						currentPage: params.page,
-						nextPage:
-							Math.ceil(totalRows / params['per-page']) == params.page
-								? null
-								: params.page + 1,
-						totalPages: Math.ceil(totalRows / params['per-page']),
-						perPage: params['per-page'],
-						totalRecords: totalRows,
-						prevPage: params.page == 1 ? null : params.page - 1,
-					}
+					currentPage: params.page,
+					nextPage:
+						Math.ceil(totalRows / params['per-page']) == params.page
+							? null
+							: params.page + 1,
+					totalPages: Math.ceil(totalRows / params['per-page']),
+					perPage: params['per-page'],
+					totalRecords: totalRows,
+					prevPage: params.page == 1 ? null : params.page - 1,
+				}
 				: undefined,
 		})
 	}
@@ -120,7 +121,7 @@ export class LeadsService extends HelperService {
 		return TransformResponse.map(LeadResource.map(data))
 	}
 
-	async update(id: string, updateLeadDto: UpdateLeadDto) {
+	async update(id: string, updateLeadDto: UpdateLeadDto, user: any) {
 		const { data: lead } = await this.findOne(id)
 		const select = this.select()
 		const {
@@ -158,6 +159,7 @@ export class LeadsService extends HelperService {
 		const gradeConnect = gradeId ? { connect: { id: gradeId } } : undefined
 
 		if (!lead.dateContact) {
+			this.fillTimeLine({ title: 'Primer Contacto', description: '', timeableId: user.id, timeableModel: 'User', leadId: id })
 			leadData.dateContact = new Date()
 		}
 
@@ -240,14 +242,14 @@ export class LeadsService extends HelperService {
 
 				const { id: asetId } = asetName
 					? await this.asetName.findFirst({
-							where: { name: { contains: asetName } },
-						})
+						where: { name: { contains: asetName } },
+					})
 					: undefined
 
 				const { id: gradeId } = grade
 					? await this.grades.findFirst({
-							where: { name: { contains: grade } },
-						})
+						where: { name: { contains: grade } },
+					})
 					: undefined
 
 				const asetNameConnect = asetId ? { connect: { id: asetId } } : undefined

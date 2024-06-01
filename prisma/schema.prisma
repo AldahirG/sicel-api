@@ -241,6 +241,8 @@ model Leads {
   emails      Emails[]
   phones      Phones[]
   gradesId    String?
+
+  timeline TimeLineLeads[]
 }
 
 model Careers {
@@ -250,4 +252,17 @@ model Careers {
   available Boolean  @default(true)
   createAt  DateTime @default(now())
   updateAt  DateTime @updatedAt
+}
+
+model TimeLineLeads {
+  id            String  @id @default(uuid())
+  title         String?
+  description   String  @db.Text
+  timeableId    String
+  timeableModel String
+  Leads         Leads   @relation(fields: [leadId], references: [id])
+  leadId        String
+
+  createAt DateTime @default(now())
+  updateAt DateTime @updatedAt
 }

@@ -213,7 +213,7 @@ CREATE TABLE `Leads` (
     `infoLeadId` VARCHAR(191) NULL,
     `userId` VARCHAR(191) NULL,
     `cycleId` VARCHAR(191) NULL,
-    `semester` INTEGER NULL,
+    `semester` VARCHAR(191) NULL,
     `scholarship` VARCHAR(191) NULL,
     `available` BOOLEAN NOT NULL DEFAULT true,
     `createAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
@@ -231,6 +231,20 @@ CREATE TABLE `Careers` (
     `name` VARCHAR(191) NOT NULL,
     `program` VARCHAR(191) NOT NULL,
     `available` BOOLEAN NOT NULL DEFAULT true,
+    `createAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+    `updateAt` DATETIME(3) NOT NULL,
+
+    PRIMARY KEY (`id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
+CREATE TABLE `TimeLineLeads` (
+    `id` VARCHAR(191) NOT NULL,
+    `title` VARCHAR(191) NULL,
+    `description` TEXT NOT NULL,
+    `timeableId` VARCHAR(191) NOT NULL,
+    `timeableModel` VARCHAR(191) NOT NULL,
+    `leadId` VARCHAR(191) NOT NULL,
     `createAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
     `updateAt` DATETIME(3) NOT NULL,
 
@@ -287,3 +301,6 @@ ALTER TABLE `Leads` ADD CONSTRAINT `Leads_cityId_fkey` FOREIGN KEY (`cityId`) RE
 
 -- AddForeignKey
 ALTER TABLE `Leads` ADD CONSTRAINT `Leads_userId_fkey` FOREIGN KEY (`userId`) REFERENCES `User`(`id`) ON DELETE SET NULL ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE `TimeLineLeads` ADD CONSTRAINT `TimeLineLeads_leadId_fkey` FOREIGN KEY (`leadId`) REFERENCES `Leads`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
