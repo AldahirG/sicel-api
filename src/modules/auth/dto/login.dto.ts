@@ -1,14 +1,13 @@
-import { IsEmail, IsOptional, IsString } from "class-validator";
+import { IsEmail, IsOptional, IsString } from 'class-validator'
 
 export class LoginDTO {
+	@IsEmail()
+	email: string
 
-    @IsEmail()
-    email: string
+	@IsString()
+	password: string
 
-    @IsString()
-    password: string
-
-    @IsOptional()
-    @IsString()
-    token?: string
+	@IsOptional()
+	@IsString()
+	token?: string
 }

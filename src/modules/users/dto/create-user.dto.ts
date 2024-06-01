@@ -1,29 +1,29 @@
-import { IsArray, IsOptional, IsString, ValidateNested } from "class-validator";
-import { CreateAdditionalInfo } from "./create-additional-info.dto";
-import { Type } from "class-transformer";
+import { IsArray, IsOptional, IsString, ValidateNested } from 'class-validator'
+import { CreateAdditionalInfo } from './create-additional-info.dto'
+import { Type } from 'class-transformer'
 
 export class CreateUserDto {
-    @IsString()
-    name: string;
+	@IsString()
+	name: string
 
-    @IsString()
-    email: string;
+	@IsString()
+	email: string
 
-    @IsString()
-    paternalSurname: string
+	@IsString()
+	paternalSurname: string
 
-    @IsOptional()
-    @IsString()
-    maternalSurname: string = ''
+	@IsOptional()
+	@IsString()
+	maternalSurname: string = ''
 
-    @IsString()
-    password: string;
+	@IsString()
+	password: string
 
-    @IsArray()
-    @IsOptional()
-    roles?: number[]
+	@IsArray()
+	@IsOptional()
+	roles?: number[]
 
-    @ValidateNested({ each: true })
-    @Type(() => CreateAdditionalInfo)
-    additionalInfo: CreateAdditionalInfo
+	@ValidateNested({ each: true })
+	@Type(() => CreateAdditionalInfo)
+	additionalInfo: CreateAdditionalInfo
 }

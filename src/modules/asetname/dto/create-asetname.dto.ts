@@ -1,9 +1,9 @@
-import { IsString, IsUUID } from "class-validator";
+import { IsString, IsUUID } from 'class-validator'
 
 export class CreateAsetnameDto {
-    @IsString()
-    name: string
+	@IsString()
+	name: string
 
-    @IsUUID()
-    contactTypesId: string
+	@IsUUID()
+	contactTypesId: string
 }

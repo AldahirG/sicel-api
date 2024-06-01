@@ -1,4 +1,3 @@
-import { Prisma } from "@prisma/client";
+import { Prisma } from '@prisma/client'
 
-export interface ISelect extends Prisma.UserSelect {
-}
+export interface ISelect extends Prisma.UserSelect {}

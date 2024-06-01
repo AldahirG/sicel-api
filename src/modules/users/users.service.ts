@@ -1,145 +1,155 @@
-import { PaginationFilterDto } from 'src/common/dto/pagination-filter.dto';
-import { TransformResponse } from 'src/common/mappers/transform-response';
-import { HelperService } from './helpers/helper.service';
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
-import { CreateUserDto } from './dto/create-user.dto';
-import { UpdateUserDto } from './dto/update-user.dto';
-import * as bcrypt from 'bcrypt';
-import { UserResource } from './mappers/user.mapper';
-import { LeadResource } from '../leads/mapper/lead.mapper';
+import { PaginationFilterDto } from 'src/common/dto/pagination-filter.dto'
+import { TransformResponse } from 'src/common/mappers/transform-response'
+import { HelperService } from './helpers/helper.service'
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common'
+import { CreateUserDto } from './dto/create-user.dto'
+import { UpdateUserDto } from './dto/update-user.dto'
+import * as bcrypt from 'bcrypt'
+import { UserResource } from './mappers/user.mapper'
+import { LeadResource } from '../leads/mapper/lead.mapper'
 
 @Injectable()
 export class UsersService extends HelperService {
+	async create(createUserDto: CreateUserDto) {
+		const select = this.select()
+		const { roles, additionalInfo: info, password, ...data } = createUserDto
 
-  async create(createUserDto: CreateUserDto) {
-    const select = this.select()
-    const { roles, additionalInfo: info, password, ...data } = createUserDto;
+		const hashedPassword = await bcrypt.hash(password, 10)
 
-    const hashedPassword = await bcrypt.hash(password, 10);
+		const construct = roles.map((roleId) => ({
+			role: {
+				connect: { id: roleId },
+			},
+		}))
 
-    const construct = roles.map(roleId => ({
-      role: {
-        connect: { id: roleId }
-      }
-    }))
+		const user = await this.user.create({
+			data: {
+				...data,
+				password: hashedPassword,
+				roles: {
+					create: construct,
+				},
+				additionalInfo: {
+					create: info,
+				},
+			},
+			select,
+		})
+		return TransformResponse.map(
+			UserResource.map(user),
+			'Usuario creado con éxito!!',
+			'POST',
+			HttpStatus.CREATED,
+		)
+	}
 
+	async findAll(params: PaginationFilterDto) {
+		const filter = this.getParams(params)
+		const select = this.select()
 
+		const totalRows = await this.user.count({ where: filter.where })
 
-    const user = await this.user.create({
-      data: {
-        ...data,
-        password: hashedPassword,
-        roles: {
-          create: construct
-        },
-        additionalInfo: {
-          create: info
-        }
-      },
-      select,
-    });
-    return TransformResponse.map(UserResource.map(user), 'Usuario creado con éxito!!', 'POST', HttpStatus.CREATED)
-  }
+		const users = await this.user.findMany({
+			...filter,
+			select,
+			orderBy: {
+				createAt: 'desc',
+			},
+		})
 
-  async findAll(params: PaginationFilterDto) {
-    const filter = this.getParams(params)
-    const select = this.select()
+		return TransformResponse.map({
+			data: UserResource.collection(users),
+			meta: params.paginated
+				? {
+						currentPage: params.page,
+						nextPage:
+							Math.ceil(totalRows / params['per-page']) == params.page
+								? null
+								: params.page + 1,
+						totalPages: Math.ceil(totalRows / params['per-page']),
+						perPage: params['per-page'],
+						totalRecords: totalRows,
+						prevPage: params.page == 1 ? null : params.page - 1,
+					}
+				: undefined,
+		})
+	}
 
-    const totalRows = await this.user.count({ where: filter.where });
+	async findOne(id: string) {
+		const select = this.select()
+		const user = await this.user.findFirst({
+			where: { id, available: true },
+			select,
+		})
+		if (!user) {
+			throw new HttpException(
+				`User not found with id ${id}`,
+				HttpStatus.NOT_FOUND,
+			)
+		}
+		return TransformResponse.map(UserResource.map(user))
+	}
 
-    const users = await this.user.findMany({
-      ...filter,
-      select,
-      orderBy: {
-        createAt: 'desc',
-      }
-    });
+	async update(id: string, updateUserDto: UpdateUserDto) {
+		const user = await this.findOne(id)
+		const select = this.select()
+		const { roles, password, additionalInfo, ...data } = updateUserDto
 
-    return TransformResponse.map({
-      data: UserResource.collection(users),
-      meta: params.paginated
-        ? {
-          currentPage: params.page,
-          nextPage:
-            Math.ceil(totalRows / params['per-page']) == params.page
-              ? null
-              : params.page + 1,
-          totalPages: Math.ceil(totalRows / params['per-page']),
-          perPage: params['per-page'],
-          totalRecords: totalRows,
-          prevPage: params.page == 1 ? null : params.page - 1,
-        }
-        : undefined,
-    });
-  }
+		let rolesUpdate = {}
+		let hashedPassword = user.data.password
 
-  async findOne(id: string) {
-    const select = this.select()
-    const user = await this.user.findFirst({
-      where: { id, available: true },
-      select
-    });
-    if (!user) {
-      throw new HttpException(
-        `User not found with id ${id}`,
-        HttpStatus.NOT_FOUND,
-      );
-    }
-    return TransformResponse.map(UserResource.map(user));
-  }
+		if (password) {
+			hashedPassword = await bcrypt.hash(password, 10)
+		}
 
-  async update(id: string, updateUserDto: UpdateUserDto) {
-    const user = await this.findOne(id);
-    const select = this.select()
-    const { roles, password, additionalInfo, ...data } = updateUserDto
+		if (roles) {
+			rolesUpdate = {
+				deleteMany: {},
+				create: roles.map((roleId) => ({
+					role: {
+						connect: { id: roleId },
+					},
+				})),
+			}
+		}
 
-    let rolesUpdate = {};
-    let hashedPassword = user.data.password
+		const newData = await this.user.update({
+			where: { id },
+			data: {
+				...data,
+				password: hashedPassword,
+				roles: rolesUpdate,
+			},
+			select,
+		})
+		return TransformResponse.map(
+			UserResource.map(newData),
+			'Usuario actualizado con éxito!!',
+			'PUT',
+		)
+	}
 
-    if (password) {
-      hashedPassword = await bcrypt.hash(password, 10);
-    }
+	async remove(id: string) {
+		await this.findOne(id)
+		const user = await this.user.update({
+			where: { id },
+			data: { available: false },
+		})
+		return TransformResponse.map(
+			UserResource.map(user),
+			'Usuario eliminado con éxito!!',
+			'DELETE',
+		)
+	}
 
-    if (roles) {
-      rolesUpdate = {
-        deleteMany: {},
-        create: roles.map(roleId => ({
-          role: {
-            connect: { id: roleId }
-          }
-        })),
-      };
-    }
-
-    const newData = await this.user.update({
-      where: { id },
-      data: {
-        ...data,
-        password: hashedPassword,
-        roles: rolesUpdate
-      },
-      select
-    })
-    return TransformResponse.map(UserResource.map(newData), 'Usuario actualizado con éxito!!', 'PUT');
-  }
-
-  async remove(id: string) {
-    await this.findOne(id);
-    const user = await this.user.update({
-      where: { id },
-      data: { available: false }
-    });
-    return TransformResponse.map(UserResource.map(user), 'Usuario eliminado con éxito!!', 'DELETE')
-  }
-
-  async myLeads(id: string) {
-    await this.findOne(id);
-    const leads = await this.user.findFirst({
-      where: { id },
-      select: {
-        Leads: true
-      }
-    })
-    return TransformResponse.map(LeadResource.collection(leads.Leads))
-  }
+	async myLeads(id: string) {
+		await this.findOne(id)
+		const leads = await this.user.findFirst({
+			where: { id },
+			select: {
+				Leads: true,
+			},
+		})
+		return TransformResponse.map(LeadResource.collection(leads.Leads))
+	}
 }
