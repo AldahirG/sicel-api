@@ -2,6 +2,7 @@ import {
 	IsArray,
 	IsEnum,
 	IsOptional,
+	IsString,
 	IsUUID,
 	ValidateNested,
 } from 'class-validator'
@@ -35,6 +36,11 @@ export class CreateLeadDto {
 	@IsOptional()
 	@IsEnum(SemesterEnum)
 	semester?: SemesterEnum
+
+	@IsOptional()
+	@IsString()
+	@IsUUID()
+	cycleId: string
 
 	userId?: string
 
