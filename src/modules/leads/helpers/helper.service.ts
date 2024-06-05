@@ -65,6 +65,8 @@ export class HelperService extends PrismaClient implements OnModuleInit {
 			},
 			phones: true,
 			emails: true,
+			createAt: true,
+			updateAt: true,
 		}
 	}
 

@@ -55,6 +55,8 @@ export class LeadResource {
 		const data = leads.map((lead) => ({
 			id: lead.id,
 			grade: lead.grade,
+			createAt: lead.createAt,
+			updateAt: lead.updateAt,
 			dateContact: lead.dateContact,
 			scholarship: lead.scholarship,
 			semester: lead.semester,
