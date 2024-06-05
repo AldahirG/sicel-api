@@ -22,6 +22,7 @@ export class HelperService extends PrismaClient implements OnModuleInit {
 				select: {
 					role: {
 						select: {
+							id: true,
 							name: true,
 						},
 					},
