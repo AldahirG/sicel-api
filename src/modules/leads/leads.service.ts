@@ -7,6 +7,7 @@ import { HelperService } from './helpers/helper.service'
 import { LeadResource } from './mapper/lead.mapper'
 import { ProcessFileService } from '../process-file/process-file.service'
 import { CsvInterface } from './interfaces/csv.interface'
+import { FilterLeadDto } from './dto/filter-lead.dto'
 
 @Injectable()
 export class LeadsService extends HelperService {
@@ -105,19 +106,25 @@ export class LeadsService extends HelperService {
 		})
 	}
 
-	async findOne(id: string) {
+	async findOne(id: string, params: FilterLeadDto = { 'with-timeline': false, comments: false }) {
+		const { "with-timeline": withTimeline, comments } = params
+		let timeline = null
 		const select = this.select()
 		const data = await this.leads.findFirst({
 			where: { id, available: true },
 			select,
 		})
+		if (withTimeline) {
+			timeline = await this.timeLineLeads.findMany({ where: { leadId: id, timeableModel: comments ? undefined : 'User' } })
+		}
+
 		if (!data) {
 			throw new HttpException(
 				`Lead not found with id ${id}`,
 				HttpStatus.NOT_FOUND,
 			)
 		}
-		return TransformResponse.map(LeadResource.map(data))
+		return TransformResponse.map({ ...LeadResource.map(data), meta: timeline ? { timeline: timeline } : undefined })
 	}
 
 	async update(id: string, updateLeadDto: UpdateLeadDto, user: any) {

@@ -39,8 +39,8 @@ export class LeadsController {
 
 	@UseGuards(JwtAuthGuard)
 	@Get(':id')
-	findOne(@Param('id') id: string) {
-		return this.leadsService.findOne(id)
+	findOne(@Param('id') id: string, @Query() params: any) {
+		return this.leadsService.findOne(id, params)
 	}
 
 	@UseGuards(JwtAuthGuard)
