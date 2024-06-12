@@ -23,7 +23,7 @@ import { Express } from 'express'
 
 @Controller('leads')
 export class LeadsController {
-	constructor(private readonly leadsService: LeadsService) { }
+	constructor(private readonly leadsService: LeadsService) {}
 
 	@UseGuards(JwtAuthGuard)
 	@Post()

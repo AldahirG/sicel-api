@@ -1,5 +1,3 @@
-import { Prisma } from '@prisma/client'
-
 export class UserResource {
 	static map(user: any) {
 		return {

@@ -1,5 +1,3 @@
-import { Leads } from '@prisma/client'
-
 export class LeadResource {
 	static map(lead: any) {
 		return {

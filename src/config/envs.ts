@@ -1,7 +1,7 @@
 import 'dotenv/config'
 import * as joi from 'joi'
 
-interface EnvsVars {
+interface IEnvsVars {
 	JWT_SECRET: string
 	DATABASE_URL: string
 }
@@ -21,7 +21,7 @@ if (error) {
 	throw new Error(`Config validation error: ${error.message}`)
 }
 
-const env: EnvsVars = value
+const env: IEnvsVars = value
 
 export const envs = {
 	jwtSecret: env.JWT_SECRET,

@@ -106,8 +106,11 @@ export class LeadsService extends HelperService {
 		})
 	}
 
-	async findOne(id: string, params: FilterLeadDto = { 'with-timeline': false, comments: false }) {
-		const { "with-timeline": withTimeline, comments } = params
+	async findOne(
+		id: string,
+		params: FilterLeadDto = { 'with-timeline': false, comments: false },
+	) {
+		const { 'with-timeline': withTimeline, comments } = params
 		let timeline = null
 		const select = this.select()
 		const data = await this.leads.findFirst({
@@ -115,7 +118,9 @@ export class LeadsService extends HelperService {
 			select,
 		})
 		if (withTimeline) {
-			timeline = await this.timeLineLeads.findMany({ where: { leadId: id, timeableModel: comments ? undefined : 'User' } })
+			timeline = await this.timeLineLeads.findMany({
+				where: { leadId: id, timeableModel: comments ? undefined : 'User' },
+			})
 		}
 
 		if (!data) {
@@ -124,7 +129,10 @@ export class LeadsService extends HelperService {
 				HttpStatus.NOT_FOUND,
 			)
 		}
-		return TransformResponse.map({ ...LeadResource.map(data), meta: timeline ? { timeline: timeline } : undefined })
+		return TransformResponse.map({
+			...LeadResource.map(data),
+			meta: timeline ? { timeline: timeline } : undefined,
+		})
 	}
 
 	async update(id: string, updateLeadDto: UpdateLeadDto, user: any) {

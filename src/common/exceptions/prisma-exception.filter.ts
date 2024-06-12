@@ -2,7 +2,6 @@ import {
 	Catch,
 	ExceptionFilter,
 	ArgumentsHost,
-	HttpException,
 	HttpStatus,
 } from '@nestjs/common'
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library'
