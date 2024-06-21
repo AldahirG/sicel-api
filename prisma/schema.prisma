@@ -186,6 +186,7 @@ model Countries {
 }
 
 enum ReferenceTypes {
+  NINGUNO
   ALUMNO
   PERSONAL_UNINTER
   FAMILIAR_ALUMNO
