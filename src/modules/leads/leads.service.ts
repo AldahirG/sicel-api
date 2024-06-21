@@ -246,6 +246,15 @@ export class LeadsService extends HelperService {
 			},
 			select,
 		})
+
+		this.fillTimeLine({
+			title: 'Asignación de lead',
+			description: '',
+			timeableId: userId,
+			timeableModel: 'User',
+			leadId: lead.id,
+		})
+		
 		return TransformResponse.map(
 			LeadResource.map(data),
 			'El lead a sido asignado correctamente!!',
@@ -321,13 +330,15 @@ export class LeadsService extends HelperService {
 			},
 			select,
 		})
+
 		this.fillTimeLine({
 			title: 'Resignación de lead',
 			description: '',
-			timeableId: user.id,
+			timeableId: userId,
 			timeableModel: 'User',
 			leadId: leadId,
 		})
+		
 		return TransformResponse.map(
 			LeadResource.map(data),
 			'El lead a sido reasignado correctamente!!',
