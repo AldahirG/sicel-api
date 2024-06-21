@@ -11,7 +11,7 @@ export async function UserSeeder() {
 		email: 'admin@example.com',
 		password: hashedPassword,
 		roles: {
-			create: [{ roleId: 1 }],
+			create: [{ roleId: 1 }, { roleId: 2 }],
 		},
 	}
 
