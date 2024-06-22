@@ -103,9 +103,9 @@ model InformationLead {
   typeSchool       SchoolTypes?
   enrollmentStatus EnrollmentStatus?
   followUpId       String?
-  available        Boolean?          @default(true)
-  createAt         DateTime?         @default(now())
-  updateAt         DateTime?         @updatedAt
+  available        Boolean           @default(true)
+  createAt         DateTime          @default(now())
+  updateAt         DateTime          @updatedAt
   followUp         FollowUp?         @relation(fields: [followUpId], references: [id])
   Lead             Leads?
 }
