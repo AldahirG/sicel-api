@@ -80,8 +80,7 @@ export class LeadsController {
 	reassignment(
 		@Param('leadId') leadId: string,
 		@Param('userId', ParseUUIDPipe) userId: string,
-		@Request() req: any,
 	) {
-		return this.leadsService.reassignment(leadId, userId, req.user)
+		return this.leadsService.reassignment(leadId, userId)
 	}
 }

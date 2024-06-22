@@ -254,7 +254,7 @@ export class LeadsService extends HelperService {
 			timeableModel: 'User',
 			leadId: lead.id,
 		})
-		
+
 		return TransformResponse.map(
 			LeadResource.map(data),
 			'El lead a sido asignado correctamente!!',
@@ -264,32 +264,12 @@ export class LeadsService extends HelperService {
 
 	async CreateFromFileShare(file: Express.Multer.File) {
 		const select = this.select()
-		const data: Array<CsvInterface> = await this.csvService.readCsv(file)
+		const data: CsvInterface[] = await this.csvService.readCsv(file)
 		const newLeads = await Promise.all(
 			data.map(async (data) => {
-				const { asetName, grade, promotor, ...leadData } = data
-
-				const { id: asetId } = asetName
-					? await this.asetName.findFirst({
-						where: { name: { contains: asetName } },
-					})
-					: undefined
-
-				const { id: gradeId } = grade
-					? await this.grades.findFirst({
-						where: { name: { contains: grade } },
-					})
-					: undefined
-
-				const asetNameConnect = asetId ? { connect: { id: asetId } } : undefined
-				const gradeConnect = gradeId ? { connect: { id: gradeId } } : undefined
 
 				const lead = await this.leads.create({
-					data: {
-						...leadData,
-						asetName: asetNameConnect,
-						grade: gradeConnect,
-					},
+					data,
 					select,
 				})
 				return lead
@@ -304,7 +284,7 @@ export class LeadsService extends HelperService {
 		)
 	}
 
-	async reassignment(leadId: string, userId: string, user: any) {
+	async reassignment(leadId: string, userId: string) {
 		const select = this.select()
 		const { data: lead } = await this.findOne(leadId)
 		if (lead.promoter.id == userId) {
@@ -338,7 +318,7 @@ export class LeadsService extends HelperService {
 			timeableModel: 'User',
 			leadId: leadId,
 		})
-		
+
 		return TransformResponse.map(
 			LeadResource.map(data),
 			'El lead a sido reasignado correctamente!!',
