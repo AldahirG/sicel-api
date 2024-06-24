@@ -15,7 +15,7 @@ const data = [
 ]
 
 export async function GradesSeeder() {
-	const roles = await prisma.grades.createMany({
+	const grades = await prisma.grades.createMany({
 		data,
 		skipDuplicates: true,
 	})
