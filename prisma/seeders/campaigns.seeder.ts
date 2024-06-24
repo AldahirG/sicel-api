@@ -4,7 +4,8 @@ const prisma = new PrismaClient()
 
 const data = [
     { name: "CONFERENCIA EGRESADOS 20 05 24", type: CampaignsTypes.PAUTA },
-    { name: "HALLOWEEN FEST", type: CampaignsTypes.PAUTA },
+    { name: "EXPO AUTOS WTC", type: CampaignsTypes.PAUTA },
+	{ name: "CARRERA WTC", type: CampaignsTypes.PAUTA },
 ]
 
 export async function CampaignsSeeder() {
