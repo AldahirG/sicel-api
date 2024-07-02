@@ -7,33 +7,33 @@ const prisma = new PrismaClient();
 
 export class CsvLeadsResource {
 	static async map(lead: ICsvDto): Promise<CsvInterface> {
-		const grade = await prisma.grades.findFirst({
+		const grade = lead.GRADO ? await prisma.grades.findFirst({
 			where: { name: { contains: lead.GRADO } }
-		})
+		}) : undefined;
 
-		const followUp = await prisma.followUp.findFirst({
+		const followUp = lead.SEGUIMIENTO ? await prisma.followUp.findFirst({
 			where: { name: { contains: lead.SEGUIMIENTO } }
-		})
+		}) : undefined;
 
-		const asetName = await prisma.asetName.findFirst({
+		const asetName = lead.AsetName ? await prisma.asetName.findFirst({
 			where: { name: { contains: lead.AsetName } }
-		})
+		}) : undefined;
 
-		const campaign = await prisma.campaigns.findFirst({
+		const campaign = lead.CAMPAIGN_NAME ? await prisma.campaigns.findFirst({
 			where: { name: { contains: lead.CAMPAIGN_NAME } }
-		})
+		}) : undefined;
 
-		const city = await prisma.cities.findFirst({
+		const city = lead.CIUDAD ? await prisma.cities.findFirst({
 			where: { name: { contains: lead.CIUDAD } }
-		})
+		}) : undefined;
 
-		const cycle = await prisma.cycles.findFirst({
+		const cycle = lead.CICLO ? await prisma.cycles.findFirst({
 			where: { cycle: { contains: lead.CICLO } }
-		})
+		}) : undefined;
 
-		const promoter = await prisma.user.findFirst({
+		const promoter = lead.PROMOTOR ? await prisma.user.findFirst({
 			where: { id: { contains: lead.PROMOTOR } }
-		})
+		}) : undefined;
 
 		const information = {
 			create: {
