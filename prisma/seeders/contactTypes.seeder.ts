@@ -23,6 +23,7 @@ export async function ContactTypes() {
 		{ name: 'MAILING' },
 		{ name: 'SICAP' },
 		{ name: 'UNINTER INFORMA' },
+		{ name: 'SEGUIMIENTO INSCRITOS' },
 	]
 
 	await prisma.contactTypes.createMany({
