@@ -45,6 +45,12 @@ export class ICsvDto {
 	@IsString()
 	CAMPAIGN_NAME: string
 
+	@IsString()
+	CIUDAD: string
+
+	@IsString()
+	CICLO: string
+
 	//! =========== References ==============
 
 	//? Tipo de referido

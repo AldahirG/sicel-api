@@ -23,17 +23,31 @@ export class CsvLeadsResource {
 			where: { name: { contains: lead.CAMPAIGN_NAME } }
 		})
 
+		const city = await prisma.cities.findFirst({
+			where: { name: { contains: lead.CIUDAD } }
+		})
+
+		const cycle = await prisma.cycles.findFirst({
+			where: { cycle: { contains: lead.CICLO } }
+		})
+
+		const promoter = await prisma.user.findFirst({
+			where: { id: { contains: lead.PROMOTOR } }
+		})
+
 		const information = {
 			create: {
 				name: lead.NOMBRE,
 				careerInterest: lead.CARRERA_INTERES,
 				genre: GenreCsv[lead.GENERO],
-				followUp: followUp ? { connect: { id: followUp.id } } : undefined,
+				followUp: followUp ? { 
+					connect: { id: followUp.id } 
+				} : undefined,
 				formerSchool: lead.ESCUELA_DE_PROCEDENCIA,
 				typeSchool: SchoolTypes[lead.TIPO_DE_ESCUELA],
 				enrollmentStatus: EnrollmentStatus[lead.STATUS]
 			}
-		}
+		}	
 
 		const reference = {
 			create: {
@@ -43,11 +57,37 @@ export class CsvLeadsResource {
 			}
 		}
 
-		console.log(lead.FECHA_PRIMER_CONTACTO);
-
 		return {
-			information,
 			dateContact: lead.FECHA_PRIMER_CONTACTO ? new Date(lead.FECHA_PRIMER_CONTACTO) : undefined,
+
+			asetName: asetName ? {
+				connect: { id: asetName.id }
+			} : undefined,
+
+			reference,
+
+			campaign: campaign ? {
+				connect: { id: campaign.id }
+			} : undefined,
+
+			city: city ? {
+				connect: { id: city.id }
+			} : undefined,
+
+			information,
+
+			Cycle: cycle ? {
+				connect: { id: cycle.id }
+			} : undefined,
+
+			semester: lead.SEMESTRE,
+
+			//TODO: Agregar beca ofrecida
+
+			grade: grade ? {
+				connect: { id: grade.id }
+			} : undefined,
+
 			phones: {
 				createMany: {
 					data: lead.TELEFONOS.split(',').map((i) => ({ telephone: i })),
@@ -58,19 +98,13 @@ export class CsvLeadsResource {
 					data: lead.CORREOS.split(',').map((i) => ({ email: i })),
 				}
 			},
-			grade: grade ? {
-				connect: { id: grade.id }
-			} : undefined,
-			semester: lead.SEMESTRE,
-			asetName: asetName ? {
-				connect: { id: asetName.id }
-			} : undefined,
-			campaign: campaign ? {
-				connect: { id: campaign.id }
-			} : undefined,
-			reference,
-			createAt: lead.CREATED_AT ? new Date(lead.CREATED_AT) : undefined
+			
+			createAt: lead.CREATED_AT ? new Date(lead.CREATED_AT) : undefined,
+
 			//TODO Revisar implementación de promotor
+			user: promoter ? {
+				connect: { id: promoter.id }
+			} : undefined
 		}
 	}
 }
