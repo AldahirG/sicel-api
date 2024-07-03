@@ -1,8 +1,9 @@
-import { Prisma, PrismaClient } from '@prisma/client'
-import { OnModuleInit } from '@nestjs/common'
+import { Leads, Prisma, PrismaClient } from '@prisma/client'
+import { HttpException, HttpStatus, OnModuleInit } from '@nestjs/common'
 import { PaginationFilterDto } from 'src/common/dto/pagination-filter.dto'
 import { ILeadWhere } from '../interfaces/lead-where.interface'
 import { CreateTimeLineDto } from 'src/common/dto/time-line.dto'
+import { LeadMapper } from '../interfaces/lead-mapper.interface'
 
 export class HelperService extends PrismaClient implements OnModuleInit {
 	onModuleInit() {
@@ -89,5 +90,41 @@ export class HelperService extends PrismaClient implements OnModuleInit {
 		return await this.timeLineLeads.create({
 			data: createTimeLine,
 		})
+	}
+
+	validateLead(lead: LeadMapper, userId: string) {
+		if (lead.promoter.id) {
+			throw new HttpException(
+				`El lead ya a sido asignado a un promotor`,
+				HttpStatus.CONFLICT,
+			)
+		}
+
+		if (lead.promoter.id == userId) {
+			throw new HttpException(
+				`Este led no se puede asignar al mismo promotor`,
+				HttpStatus.CONFLICT,
+			)
+		}
+
+		if (lead.dateContact && lead.information.followUp) {
+			throw new HttpException(
+				`Este lead no se puede reasignar`,
+				HttpStatus.CONFLICT,
+			)
+		}
+	}
+
+	getMessages(lead: LeadMapper) {
+		if (lead.promoter.id || lead.dateContact && lead.information.followUp) {
+			return {
+				timeLineMessage: 'Resignación de lead',
+				response: 'El lead a sido reasignado correctamente!!'
+			}
+		}
+		return {
+			timeLineMessage: 'Asignación de lead',
+			response: 'El lead a sido asignado correctamente!!'
+		}
 	}
 }
