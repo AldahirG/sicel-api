@@ -8,6 +8,7 @@ import { LeadResource } from './mapper/lead.mapper'
 import { ProcessFileService } from '../process-file/process-file.service'
 import { CsvInterface } from './interfaces/csv.interface'
 import { FilterLeadDto } from './dto/filter-lead.dto'
+import { UpdatePromotorDto } from './dto/update-promotor.dto'
 
 @Injectable()
 export class LeadsService extends HelperService {
@@ -231,12 +232,8 @@ export class LeadsService extends HelperService {
 	async assignment(id: string, userId: string) {
 		const select = this.select()
 		const { data: lead } = await this.findOne(id)
-		if (lead.promoter.id) {
-			throw new HttpException(
-				`El lead ya a sido asignado a un promotor`,
-				HttpStatus.CONFLICT,
-			)
-		}
+		this.validateLead(lead, userId)
+		const { timeLineMessage, response } = this.getMessages(lead)
 		const data = await this.leads.update({
 			where: { id },
 			data: {
@@ -248,7 +245,7 @@ export class LeadsService extends HelperService {
 		})
 
 		this.fillTimeLine({
-			title: 'Asignación de lead',
+			title: timeLineMessage,
 			description: '',
 			timeableId: userId,
 			timeableModel: 'User',
@@ -257,7 +254,7 @@ export class LeadsService extends HelperService {
 
 		return TransformResponse.map(
 			LeadResource.map(data),
-			'El lead a sido asignado correctamente!!',
+			response,
 			'PUT',
 		)
 	}
@@ -284,45 +281,20 @@ export class LeadsService extends HelperService {
 		)
 	}
 
-	async reassignment(leadId: string, userId: string) {
-		const select = this.select()
-		const { data: lead } = await this.findOne(leadId)
-		if (lead.promoter.id == userId) {
-			throw new HttpException(
-				`Este led no se puede asignar al mismo promotor`,
-				HttpStatus.BAD_REQUEST,
-			)
-		}
+	async updatePromotor(data: UpdatePromotorDto) {
+		const { leads, promotor } = data
+		const leadsData = await Promise.all(leads.map(async (e) => {
+			try {
+				const { data: lead } = await this.assignment(e, promotor)
+				return lead
+			} catch (error) {
+				throw new HttpException(
+					`Hubieron algunos leads que ya están asignados`,
+					HttpStatus.BAD_REQUEST,
+				)
+			}
+		}))
 
-		if (lead.dateContact && lead.information.followUp) {
-			throw new HttpException(
-				`Este lead no se puede reasignar`,
-				HttpStatus.BAD_REQUEST,
-			)
-		}
-
-		const data = await this.leads.update({
-			where: { id: leadId },
-			data: {
-				user: {
-					connect: { id: userId },
-				},
-			},
-			select,
-		})
-
-		this.fillTimeLine({
-			title: 'Resignación de lead',
-			description: '',
-			timeableId: userId,
-			timeableModel: 'User',
-			leadId: leadId,
-		})
-
-		return TransformResponse.map(
-			LeadResource.map(data),
-			'El lead a sido reasignado correctamente!!',
-			'PUT',
-		)
+		return TransformResponse.map(leadsData, 'Actualización de promotor correcta', 'PUT')
 	}
 }

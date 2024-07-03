@@ -20,10 +20,11 @@ import { PaginationFilterDto } from 'src/common/dto/pagination-filter.dto'
 import { JwtAuthGuard } from 'src/common/guards/auth.guard'
 import { FileInterceptor } from '@nestjs/platform-express'
 import { Express } from 'express'
+import { UpdatePromotorDto } from './dto/update-promotor.dto'
 
 @Controller('leads')
 export class LeadsController {
-	constructor(private readonly leadsService: LeadsService) {}
+	constructor(private readonly leadsService: LeadsService) { }
 
 	@UseGuards(JwtAuthGuard)
 	@Post()
@@ -76,11 +77,10 @@ export class LeadsController {
 	}
 
 	@UseGuards(JwtAuthGuard)
-	@Patch(':leadId/reassignment/:userId')
-	reassignment(
-		@Param('leadId') leadId: string,
-		@Param('userId', ParseUUIDPipe) userId: string,
+	@Patch('muti-select/update-promotor')
+	updatePromotor(
+		@Body() data: UpdatePromotorDto
 	) {
-		return this.leadsService.reassignment(leadId, userId)
+		return this.leadsService.updatePromotor(data)
 	}
 }
