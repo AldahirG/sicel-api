@@ -21,6 +21,7 @@ import { JwtAuthGuard } from 'src/common/guards/auth.guard'
 import { FileInterceptor } from '@nestjs/platform-express'
 import { Express } from 'express'
 import { UpdatePromotorDto } from './dto/update-promotor.dto'
+import { FilterLeadDto } from './dto/filter-lead.dto'
 
 @Controller('leads')
 export class LeadsController {
@@ -34,13 +35,13 @@ export class LeadsController {
 
 	@UseGuards(JwtAuthGuard)
 	@Get()
-	findAll(@Query() params: PaginationFilterDto) {
+	findAll(@Query() params: FilterLeadDto) {
 		return this.leadsService.findAll(params)
 	}
 
 	@UseGuards(JwtAuthGuard)
 	@Get(':id')
-	findOne(@Param('id') id: string, @Query() params: any) {
+	findOne(@Param('id') id: string, @Query() params: FilterLeadDto) {
 		return this.leadsService.findOne(id, params)
 	}
 
@@ -82,5 +83,12 @@ export class LeadsController {
 		@Body() data: UpdatePromotorDto
 	) {
 		return this.leadsService.updatePromotor(data)
+	}
+
+
+	@UseGuards(JwtAuthGuard)
+	@Get('get-by-user/:userId')
+	getByUser(@Param('userId', ParseUUIDPipe) id: string, @Query() params: FilterLeadDto) {
+		return this.leadsService.getByUser(id, params)
 	}
 }

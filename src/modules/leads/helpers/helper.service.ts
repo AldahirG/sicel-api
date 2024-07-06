@@ -1,9 +1,9 @@
 import { Leads, Prisma, PrismaClient } from '@prisma/client'
 import { HttpException, HttpStatus, OnModuleInit } from '@nestjs/common'
-import { PaginationFilterDto } from 'src/common/dto/pagination-filter.dto'
 import { ILeadWhere } from '../interfaces/lead-where.interface'
 import { CreateTimeLineDto } from 'src/common/dto/time-line.dto'
 import { LeadMapper } from '../interfaces/lead-mapper.interface'
+import { FilterLeadDto } from '../dto/filter-lead.dto'
 
 export class HelperService extends PrismaClient implements OnModuleInit {
 	onModuleInit() {
@@ -71,7 +71,7 @@ export class HelperService extends PrismaClient implements OnModuleInit {
 		}
 	}
 
-	getParams(params: PaginationFilterDto): ILeadWhere {
+	getParams(params: FilterLeadDto): ILeadWhere {
 		const { page, 'per-page': perPage, paginated } = params
 
 		const condition: ILeadWhere = {

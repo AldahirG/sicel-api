@@ -6,7 +6,7 @@ import { CreateUserDto } from './dto/create-user.dto'
 import { UpdateUserDto } from './dto/update-user.dto'
 import * as bcrypt from 'bcrypt'
 import { UserResource } from './mappers/user.mapper'
-import { LeadResource } from '../leads/mapper/lead.mapper'
+import { FilterUserDTO } from './dto/filter-user.dto'
 
 @Injectable()
 export class UsersService extends HelperService {
@@ -43,7 +43,7 @@ export class UsersService extends HelperService {
 		)
 	}
 
-	async findAll(params: PaginationFilterDto) {
+	async findAll(params: FilterUserDTO) {
 		const filter = this.getParams(params)
 		const select = this.select()
 
@@ -61,16 +61,16 @@ export class UsersService extends HelperService {
 			data: UserResource.collection(users),
 			meta: params.paginated
 				? {
-						currentPage: params.page,
-						nextPage:
-							Math.ceil(totalRows / params['per-page']) == params.page
-								? null
-								: params.page + 1,
-						totalPages: Math.ceil(totalRows / params['per-page']),
-						perPage: params['per-page'],
-						totalRecords: totalRows,
-						prevPage: params.page == 1 ? null : params.page - 1,
-					}
+					currentPage: params.page,
+					nextPage:
+						Math.ceil(totalRows / params['per-page']) == params.page
+							? null
+							: params.page + 1,
+					totalPages: Math.ceil(totalRows / params['per-page']),
+					perPage: params['per-page'],
+					totalRecords: totalRows,
+					prevPage: params.page == 1 ? null : params.page - 1,
+				}
 				: undefined,
 		})
 	}
@@ -140,16 +140,5 @@ export class UsersService extends HelperService {
 			'Usuario eliminado con éxito!!',
 			'DELETE',
 		)
-	}
-
-	async myLeads(id: string) {
-		await this.findOne(id)
-		const leads = await this.user.findFirst({
-			where: { id },
-			select: {
-				Leads: true,
-			},
-		})
-		return TransformResponse.map(LeadResource.collection(leads.Leads))
 	}
 }

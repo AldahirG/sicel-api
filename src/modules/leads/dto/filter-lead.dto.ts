@@ -1,6 +1,7 @@
+import { PaginationFilterDto } from 'src/common/dto/pagination-filter.dto'
 import { IsBoolean, IsOptional } from 'class-validator'
 
-export class FilterLeadDto {
+export class FilterLeadDto extends PaginationFilterDto {
 	@IsOptional()
 	@IsBoolean()
 	'with-timeline': boolean

@@ -1,4 +1,3 @@
-import { PaginationFilterDto } from 'src/common/dto/pagination-filter.dto'
 import { TransformResponse } from 'src/common/mappers/transform-response'
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common'
 import { CreateLeadDto } from './dto/create-lead.dto'
@@ -79,9 +78,10 @@ export class LeadsService extends HelperService {
 		)
 	}
 
-	async findAll(params: PaginationFilterDto) {
+	async findAll(params: FilterLeadDto) {
 		const select = this.select()
 		const filter = this.getParams(params)
+		console.log(filter);
 		const totalRows = await this.leads.count({ where: filter.where })
 
 		const data = await this.leads.findMany({
@@ -109,7 +109,7 @@ export class LeadsService extends HelperService {
 
 	async findOne(
 		id: string,
-		params: FilterLeadDto = { 'with-timeline': false, comments: false },
+		params = { 'with-timeline': false, comments: false },
 	) {
 		const { 'with-timeline': withTimeline, comments } = params
 		let timeline = null
@@ -296,5 +296,34 @@ export class LeadsService extends HelperService {
 		}))
 
 		return TransformResponse.map(leadsData, 'Actualización de promotor correcta', 'PUT')
+	}
+
+	async getByUser(id: string, params: FilterLeadDto) {
+		const select = this.select()
+		const filter = this.getParams(params)
+		filter.where.userId = id
+		const totalRows = await this.leads.count({ where: filter.where })
+
+		const data = await this.leads.findMany({
+			...filter,
+			select,
+		})
+
+		return TransformResponse.map({
+			data: LeadResource.collection(data),
+			meta: params.paginated
+				? {
+					currentPage: params.page,
+					nextPage:
+						Math.ceil(totalRows / params['per-page']) == params.page
+							? null
+							: params.page + 1,
+					totalPages: Math.ceil(totalRows / params['per-page']),
+					perPage: params['per-page'],
+					totalRecords: totalRows,
+					prevPage: params.page == 1 ? null : params.page - 1,
+				}
+				: undefined,
+		})
 	}
 }
