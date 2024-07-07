@@ -81,7 +81,6 @@ export class LeadsService extends HelperService {
 	async findAll(params: FilterLeadDto) {
 		const select = this.select()
 		const filter = this.getParams(params)
-		console.log(filter);
 		const totalRows = await this.leads.count({ where: filter.where })
 
 		const data = await this.leads.findMany({

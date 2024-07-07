@@ -15,6 +15,7 @@ import { LeadsModule } from './modules/leads/leads.module'
 import { CyclesModule } from './modules/cycles/cycles.module'
 import { CareersModule } from './modules/careers/careers.module'
 import { GradesModule } from './modules/grades/grades.module'
+import { CommentsModule } from './modules/comments/comments.module';
 @Module({
 	imports: [
 		AuthModule,
@@ -31,6 +32,7 @@ import { GradesModule } from './modules/grades/grades.module'
 		CyclesModule,
 		CareersModule,
 		GradesModule,
+		CommentsModule,
 	],
 	controllers: [],
 	providers: [
