@@ -88,9 +88,9 @@ CREATE TABLE `InformationLead` (
     `typeSchool` ENUM('PRIVADA', 'PUBLICA') NULL,
     `enrollmentStatus` ENUM('INS', 'INSO', 'REZA') NULL,
     `followUpId` VARCHAR(191) NULL,
-    `available` BOOLEAN NULL DEFAULT true,
-    `createAt` DATETIME(3) NULL DEFAULT CURRENT_TIMESTAMP(3),
-    `updateAt` DATETIME(3) NULL,
+    `available` BOOLEAN NOT NULL DEFAULT true,
+    `createAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+    `updateAt` DATETIME(3) NOT NULL,
 
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
@@ -179,7 +179,7 @@ CREATE TABLE `Countries` (
 -- CreateTable
 CREATE TABLE `References` (
     `id` VARCHAR(191) NOT NULL,
-    `type` ENUM('ALUMNO', 'PERSONAL_UNINTER', 'FAMILIAR_ALUMNO') NULL,
+    `type` ENUM('NINGUNO', 'ALUMNO', 'PERSONAL_UNINTER', 'FAMILIAR_ALUMNO') NULL,
     `name` VARCHAR(191) NULL,
     `dataSource` VARCHAR(191) NULL,
     `available` BOOLEAN NOT NULL DEFAULT true,
@@ -222,6 +222,19 @@ CREATE TABLE `Leads` (
 
     UNIQUE INDEX `Leads_referenceId_key`(`referenceId`),
     UNIQUE INDEX `Leads_infoLeadId_key`(`infoLeadId`),
+    PRIMARY KEY (`id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
+CREATE TABLE `Comments` (
+    `id` VARCHAR(191) NOT NULL,
+    `title` VARCHAR(191) NULL,
+    `description` TEXT NOT NULL,
+    `leadId` VARCHAR(191) NOT NULL,
+    `available` BOOLEAN NOT NULL DEFAULT true,
+    `createAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+    `updateAt` DATETIME(3) NOT NULL,
+
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
@@ -301,6 +314,9 @@ ALTER TABLE `Leads` ADD CONSTRAINT `Leads_cityId_fkey` FOREIGN KEY (`cityId`) RE
 
 -- AddForeignKey
 ALTER TABLE `Leads` ADD CONSTRAINT `Leads_userId_fkey` FOREIGN KEY (`userId`) REFERENCES `User`(`id`) ON DELETE SET NULL ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE `Comments` ADD CONSTRAINT `Comments_leadId_fkey` FOREIGN KEY (`leadId`) REFERENCES `Leads`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE `TimeLineLeads` ADD CONSTRAINT `TimeLineLeads_leadId_fkey` FOREIGN KEY (`leadId`) REFERENCES `Leads`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;

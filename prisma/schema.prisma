@@ -244,6 +244,18 @@ model Leads {
   gradesId    String?
 
   timeline TimeLineLeads[]
+  Comments Comments[]
+}
+
+model Comments {
+  id          String   @id @default(uuid())
+  title       String?
+  description String   @db.Text
+  leadId      String
+  Lead        Leads    @relation(fields: [leadId], references: [id])
+  available   Boolean  @default(true)
+  createAt    DateTime @default(now())
+  updateAt    DateTime @updatedAt
 }
 
 model Careers {
