@@ -1,0 +1,11 @@
+FECHA_PRIMER_CONTACTO,NOMBRE,GENERO,SEGUIMIENTO,TELEFONOS,CORREOS,CARRERA_INTERES,GRADO,ESCUELA_DE_PROCEDENCIA,TIPO_DE_ESCUELA,STATUS,SEMESTRE,MEDIO_DE_CONTACTO,AsetName,CAMPAÑA,CIUDAD,CICLO,ES_REFERIDO,NOMBRE_QUIEN_REFIERE,DONDE_OBT_DATO,PROMOTOR,CREATED_AT
+,Mariana Lopez Sanchez,F,,"7773345678, 7778765432",mariana@example.com,,LIC/ING,,,,,,LANDING,Hallowen 2024,,,,,,,2024-07-16
+,Carlos Hernandez Ruiz,M,,"7771122334, 7772233445",carlos@example.com,,BACHILLERATO,,,,,,RUTAS,Hallowen 2024,,,,,,,2024-07-16
+,Luisa Fernandez Gomez,F,,"7774455667, 7775566778",luisa@example.com,,MAESTRÍA,,,,,,SOLICITUD DE ADMISION,Hallowen 2024,,,,,,,2024-07-16
+,Juan Perez Martinez,M,,"7776677889, 7777788990",juan@example.com,,DOCTORADO,,,,,,LEADSALES,Hallowen 2024,,,,,,,2024-07-16
+,Ana Rodriguez Garcia,F,,"7779988776, 7778877665",ana@example.com,,SECUNDARIA,,,,,,BASE PERSONAL PROMOTOR,Hallowen 2024,,,,,,,2024-07-16
+,Fernando Torres Alvarez,M,,"7777766554, 7776655443",fernando@example.com,,PREPARATORIA,,,,,,PAGINAS UNIVERSIDAD,Hallowen 2024,,,,,,,2024-07-16
+,Patricia Sanchez Dominguez,M,,"7775566442, 7774433221",patricia@example.com,,DIPLOMADO,,,,,,PERSONAL UNINTER,Hallowen 2024,,,,,,,2024-07-16
+,Alberto Ruiz Ortega,M,,"7773322110, 7771100223",alberto@example.com,,NO_ESPECIFICA,,,,,,FB,Hallowen 2024,,,,,,,2024-07-16
+,Gabriela Martinez Morales,M,,"7772211009, 7771099887",gabriela@example.com,,ESPECIALIDAD,,,,,,ON DEMAND,Hallowen 2024,,,,,,,2024-07-16
+,Ricardo Flores Nunez,M,,"7779988776, 7778877665",ricardo@example.com,,LIC/ING,,,,,,TIK TOK,Hallowen 2024,,,,,,,2024-07-16
