@@ -16,6 +16,13 @@ import { CyclesModule } from './modules/cycles/cycles.module'
 import { CareersModule } from './modules/careers/careers.module'
 import { GradesModule } from './modules/grades/grades.module'
 import { CommentsModule } from './modules/comments/comments.module';
+import { PromotionsModule } from './modules/promotions/promotions.module';
+import { ChannelsModule } from './modules/channels/channels.module';
+
+import { PaymentsModule } from './modules/payments/payments.module';
+import { DashboardModule } from './modules/dashboard/dashboard.module';
+import { ListsModule } from './modules/lists/lists.module';
+import { EnrollmentsModule } from './modules/enrollments/enrollments.module';
 @Module({
 	imports: [
 		AuthModule,
@@ -33,6 +40,16 @@ import { CommentsModule } from './modules/comments/comments.module';
 		CareersModule,
 		GradesModule,
 		CommentsModule,
+		PromotionsModule,
+		ChannelsModule,
+		
+		PaymentsModule,
+		
+		DashboardModule,
+		
+		ListsModule,
+		
+		EnrollmentsModule,
 	],
 	controllers: [],
 	providers: [

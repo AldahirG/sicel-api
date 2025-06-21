@@ -34,6 +34,8 @@ export class LeadResource {
 			asetName: {
 				id: lead.asetName?.id,
 				name: lead.asetName?.name,
+				contactType: lead.asetName?.contactType?.name || null,
+
 			},
 			phones: lead.phones?.map((i) => i.telephone),
 			emails: lead.emails?.map((i) => i.email),
@@ -48,6 +50,7 @@ export class LeadResource {
 				paternalSurname: lead.user?.paternalSurname,
 				maternalSurname: lead.user?.maternalSurname,
 			},
+			updateAt: lead.updateAt,
 		}
 	}
 

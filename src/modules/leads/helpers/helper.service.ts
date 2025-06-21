@@ -10,66 +10,79 @@ export class HelperService extends PrismaClient implements OnModuleInit {
 		this.$connect()
 	}
 
-	select(): Prisma.LeadsSelect {
-		return {
-			id: true,
-			grade: true,
-			dateContact: true,
-			reference: true,
-			scholarship: true,
-			Cycle: {
-				select: { id: true, name: true, cycle: true },
-			},
-			semester: true,
-			information: {
-				select: {
-					name: true,
-					genre: true,
-					careerInterest: true,
-					formerSchool: true,
-					typeSchool: true,
-					enrollmentStatus: true,
-					followUp: {
-						select: {
-							id: true,
-							name: true,
-						},
-					},
-				},
-			},
-			campaign: true,
-			asetName: true,
-			user: {
-				select: {
-					id: true,
-					name: true,
-					paternalSurname: true,
-					maternalSurname: true,
-					email: true,
-				},
-			},
-			city: {
-				select: {
-					name: true,
-					state: {
-						select: {
-							name: true,
-							country: {
-								select: {
-									id: true,
-									name: true,
-								},
-							},
-						},
-					},
-				},
-			},
-			phones: true,
-			emails: true,
-			createAt: true,
-			updateAt: true,
-		}
-	}
+select(): Prisma.LeadsSelect {
+  return {
+    id: true,
+    grade: true,
+    dateContact: true,
+    reference: true,
+    scholarship: true,
+    Cycle: {
+      select: { id: true, name: true, cycle: true },
+    },
+    semester: true,
+    information: {
+      select: {
+        name: true,
+        genre: true,
+        careerInterest: true,
+        formerSchool: true,
+        typeSchool: true,
+        enrollmentStatus: true,
+        followUp: {
+          select: {
+            id: true,
+            name: true,
+          },
+        },
+      },
+    },
+    campaign: true,
+asetName: {
+  select: {
+    id: true,
+    name: true,
+    contactType: {
+      select: {
+        name: true, // ✅ Medio de contacto
+      },
+    },
+  },
+},
+
+
+    user: {
+      select: {
+        id: true,
+        name: true,
+        paternalSurname: true,
+        maternalSurname: true,
+        email: true,
+      },
+    },
+    city: {
+      select: {
+        name: true,
+        state: {
+          select: {
+            name: true,
+            country: {
+              select: {
+                id: true,
+                name: true,
+              },
+            },
+          },
+        },
+      },
+    },
+    phones: true,
+    emails: true,
+    createAt: true,
+    updateAt: true,
+  };
+}
+
 
 	getParams(params: FilterLeadDto): ILeadWhere {
 		const { page, 'per-page': perPage, paginated } = params
@@ -93,23 +106,22 @@ export class HelperService extends PrismaClient implements OnModuleInit {
 	}
 
 	validateLead(lead: LeadMapper, userId: string) {
-		if (lead.promoter.id) {
-			throw new HttpException(
-				`El lead ya a sido asignado a un promotor`,
-				HttpStatus.CONFLICT,
-			)
-		}
-
 		if (lead.promoter.id == userId) {
 			throw new HttpException(
 				`Este led no se puede asignar al mismo promotor`,
 				HttpStatus.CONFLICT,
 			)
 		}
-
 		if (lead.dateContact && lead.information.followUp) {
 			throw new HttpException(
 				`Este lead no se puede reasignar`,
+				HttpStatus.CONFLICT,
+			)
+		}
+
+		if (lead.promoter.id) {
+			throw new HttpException(
+				`El lead ya a sido asignado a un promotor`,
 				HttpStatus.CONFLICT,
 			)
 		}

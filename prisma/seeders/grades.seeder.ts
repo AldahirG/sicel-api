@@ -8,10 +8,11 @@ const data = [
 	{ name: 'PREPARATORIA' },
 	{ name: 'LIC/ING' },
 	{ name: 'ESPECIALIDAD' },
+	{ name: 'EJECUTIVA' },
 	{ name: 'DIPLOMADO' },
 	{ name: 'MAESTRÍA' },
 	{ name: 'DOCTORADO' },
-	{ name: 'NO_ESPECIFICA' },
+	{ name: 'NO ESPECIFICA' },
 ]
 
 export async function GradesSeeder() {

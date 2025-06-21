@@ -1,3 +1,7 @@
-import { Prisma } from '@prisma/client'
+import { Prisma } from '@prisma/client';
 
-export interface CsvInterface extends Prisma.LeadsCreateInput { }
+
+export interface CsvInterface extends Prisma.LeadsCreateInput {
+  telephone?: string;
+  email?: string;
+}

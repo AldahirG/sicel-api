@@ -5,12 +5,16 @@ export interface LeadMapper {
     grade: Grades
     dateContact: Date
     scholarship: string
-    semester: string
+    semester?: string
     cycle: Pick<Cycles, 'id' | 'name' | 'cycle'>
     reference: Pick<References, 'type' | 'name' | 'dataSource'>
     information: Information
     campaign: Pick<Campaigns, 'id' | 'name'>
-    asetName: Pick<asetName, 'id' | 'name'>
+    asetName: {
+    id: string;
+    name: string;
+    contactType?: string | null;
+};
     phones: string[]
     emails: string[]
     address: {
@@ -19,6 +23,7 @@ export interface LeadMapper {
         country: string
     }
     promoter: Pick<User, 'id' | 'name' | 'paternalSurname' | 'maternalSurname'>
+    updateAt: Date
 }
 
 interface Information {

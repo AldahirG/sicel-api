@@ -42,7 +42,10 @@ export class CreateLeadDto {
 	@IsUUID()
 	cycleId: string
 
-	userId?: string
+	@IsOptional()
+	@IsUUID()
+	userId?: string;
+
 
 	@IsOptional()
 	@Type(() => CreateReferenceDto)
@@ -53,9 +56,15 @@ export class CreateLeadDto {
 	@ValidateNested({ each: true })
 	information: CreateInformationLeadDto
 
+	@IsOptional()
 	@IsArray()
-	email: string[]
+	@IsString({ each: true })
+	email?: string[];
+	
+	@IsOptional()
+	@IsArray()
+	@IsString({ each: true })
+	phone?: string[];
 
-	@IsArray()
-	phone: string[]
+
 }

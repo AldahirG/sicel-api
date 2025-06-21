@@ -12,6 +12,10 @@ import { CyclesSeeder } from './cycle.seeders'
 import { CountriesSeeder } from './countries.seeder'
 import { StatesSeeder } from './states.seeder'
 import { CitiesSeeder } from './cities.seeder'
+import { ChannelsSeeder } from './channels.seeder';
+import { PromotionsSeeder } from './promotions.seeder';
+
+
 
 const prisma = new PrismaClient()
 
@@ -40,6 +44,10 @@ async function main() {
 	console.log('Estados creados');
 	await CitiesSeeder()
 	console.log('Ciudades creadas');
+	await ChannelsSeeder()
+	console.log('Canales creados');
+	await PromotionsSeeder()
+	console.log('Promociones creadas');
 }
 
 main()
