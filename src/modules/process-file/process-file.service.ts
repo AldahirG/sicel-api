@@ -10,37 +10,37 @@ export class ProcessFileService {
 			throw new HttpException(
 				`No se ha subido ningún archivo.`,
 				HttpStatus.BAD_REQUEST,
-			);
+			)
 		}
 		if (file.mimetype !== 'text/csv') {
 			throw new HttpException(
 				`El archivo no es CSV.`,
 				HttpStatus.UNPROCESSABLE_ENTITY,
-			);
+			)
 		}
 
 		return new Promise((resolve, reject) => {
-			const results: Promise<CsvInterface>[] = [];
-			const parser = csvParser();
+			const results: Promise<CsvInterface>[] = []
+			const parser = csvParser()
 
 			parser.on('data', (data) => {
-				const resourcePromise = CsvLeadsResource.map(data);
-				results.push(resourcePromise);
-			});
+				const resourcePromise = CsvLeadsResource.map(data)
+				results.push(resourcePromise)
+			})
 
 			parser.on('end', async () => {
 				try {
-					const resolvedResults = await Promise.all(results);
-					resolve(resolvedResults);
+					const resolvedResults = await Promise.all(results)
+					resolve(resolvedResults)
 				} catch (error) {
-					reject(error);
+					reject(error)
 				}
-			});
+			})
 
-			parser.on('error', (error) => reject(error));
+			parser.on('error', (error) => reject(error))
 
-			parser.write(file.buffer);
-			parser.end();
-		});
+			parser.write(file.buffer)
+			parser.end()
+		})
 	}
 }

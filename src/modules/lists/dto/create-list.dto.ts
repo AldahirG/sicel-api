@@ -1,12 +1,12 @@
-import { IsString, IsDateString } from 'class-validator';
+import { IsString, IsDateString } from 'class-validator'
 
 export class CreateListDto {
-  @IsString()
-  noLista: string;
+	@IsString()
+	noLista: string
 
-  @IsDateString()
-  dateStart: string;
+	@IsDateString()
+	dateStart: string
 
-  @IsDateString()
-  dateEnd: string;
+	@IsDateString()
+	dateEnd: string
 }

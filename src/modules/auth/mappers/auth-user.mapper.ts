@@ -6,9 +6,9 @@ export class AuthUserResource {
 			paternalSurname: user?.paternalSurname,
 			maternalSurname: user?.maternalSurname ?? '',
 			email: user?.email,
-roles: user?.roles
-  .map((i) => i?.role?.name)
-  .filter((r) => typeof r === 'string'),
+			roles: user?.roles
+				.map((i) => i?.role?.name)
+				.filter((r) => typeof r === 'string'),
 			token: user?.token,
 		}
 	}

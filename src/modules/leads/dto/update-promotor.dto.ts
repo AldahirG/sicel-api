@@ -1,9 +1,9 @@
-import { IsArray, IsUUID } from "class-validator";
+import { IsArray, IsUUID } from 'class-validator'
 
 export class UpdatePromotorDto {
-    @IsArray()
-    leads: string[]
+	@IsArray()
+	leads: string[]
 
-    @IsUUID()
-    promotor: string
+	@IsUUID()
+	promotor: string
 }

@@ -75,7 +75,11 @@ export class ChannelsService extends PrismaClient implements OnModuleInit {
 			where: { id },
 			data: updateChannelDto,
 		})
-		return TransformResponse.map(data, 'Canal de venta actualizado con éxito!!', 'PUT')
+		return TransformResponse.map(
+			data,
+			'Canal de venta actualizado con éxito!!',
+			'PUT',
+		)
 	}
 
 	async remove(id: string) {

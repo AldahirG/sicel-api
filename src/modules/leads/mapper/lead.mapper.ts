@@ -1,4 +1,4 @@
-import { LeadMapper } from "../interfaces/lead-mapper.interface"
+import { LeadMapper } from '../interfaces/lead-mapper.interface'
 
 export class LeadResource {
 	static map(lead: any): LeadMapper {
@@ -35,7 +35,6 @@ export class LeadResource {
 				id: lead.asetName?.id,
 				name: lead.asetName?.name,
 				contactType: lead.asetName?.contactType?.name || null,
-
 			},
 			phones: lead.phones?.map((i) => i.telephone),
 			emails: lead.emails?.map((i) => i.email),

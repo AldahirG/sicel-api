@@ -1,109 +1,113 @@
-import { Injectable, OnModuleInit, HttpException, HttpStatus } from '@nestjs/common';
-import { PrismaClient } from '@prisma/client';
-import { CreateListDto } from './dto/create-list.dto';
-import { UpdateListDto } from './dto/update-list.dto';
-import { PaginationFilterDto } from 'src/common/dto/pagination-filter.dto';
-import { TransformResponse } from 'src/common/mappers/transform-response';
+import {
+	Injectable,
+	OnModuleInit,
+	HttpException,
+	HttpStatus,
+} from '@nestjs/common'
+import { PrismaClient } from '@prisma/client'
+import { CreateListDto } from './dto/create-list.dto'
+import { UpdateListDto } from './dto/update-list.dto'
+import { PaginationFilterDto } from 'src/common/dto/pagination-filter.dto'
+import { TransformResponse } from 'src/common/mappers/transform-response'
 
 @Injectable()
 export class ListsService extends PrismaClient implements OnModuleInit {
-  onModuleInit() {
-    this.$connect();
-  }
+	onModuleInit() {
+		this.$connect()
+	}
 
-  async create(createListDto: CreateListDto) {
-    console.log('DTO recibido:', createListDto); // 👀
-  
-    const data = await this.lists.create({
-      data: createListDto,
-    });
-  
-    return TransformResponse.map(
-      data,
-      'Lista creada con éxito!!',
-      'POST',
-      HttpStatus.CREATED,
-    );
-  }
-  
+	async create(createListDto: CreateListDto) {
+		console.log('DTO recibido:', createListDto) // 👀
 
-  async findAll(params: PaginationFilterDto) {
-    const filter = this.getParams(params);
-    const totalRows = await this.lists.count({ where: filter.where });
+		const data = await this.lists.create({
+			data: createListDto,
+		})
 
-    const data = await this.lists.findMany(filter);
+		return TransformResponse.map(
+			data,
+			'Lista creada con éxito!!',
+			'POST',
+			HttpStatus.CREATED,
+		)
+	}
 
-    return TransformResponse.map({
-      data,
-      meta: params.paginated
-        ? {
-            currentPage: params.page,
-            nextPage:
-              Math.ceil(totalRows / params['per-page']) === params.page
-                ? null
-                : params.page + 1,
-            totalPages: Math.ceil(totalRows / params['per-page']),
-            perPage: params['per-page'],
-            totalRecords: totalRows,
-            prevPage: params.page === 1 ? null : params.page - 1,
-          }
-        : undefined,
-    });
-  }
+	async findAll(params: PaginationFilterDto) {
+		const filter = this.getParams(params)
+		const totalRows = await this.lists.count({ where: filter.where })
 
-  async findOne(id: string) {
-    const data = await this.lists.findFirst({
-      where: {
-        id,
-        available: true,
-      },
-    });
+		const data = await this.lists.findMany(filter)
 
-    if (!data) {
-      throw new HttpException(
-        `Lista no encontrada con ID ${id}`,
-        HttpStatus.NOT_FOUND,
-      );
-    }
+		return TransformResponse.map({
+			data,
+			meta: params.paginated
+				? {
+						currentPage: params.page,
+						nextPage:
+							Math.ceil(totalRows / params['per-page']) === params.page
+								? null
+								: params.page + 1,
+						totalPages: Math.ceil(totalRows / params['per-page']),
+						perPage: params['per-page'],
+						totalRecords: totalRows,
+						prevPage: params.page === 1 ? null : params.page - 1,
+					}
+				: undefined,
+		})
+	}
 
-    return TransformResponse.map(data);
-  }
+	async findOne(id: string) {
+		const data = await this.lists.findFirst({
+			where: {
+				id,
+				available: true,
+			},
+		})
 
-  async update(id: string, updateListDto: UpdateListDto) {
-    await this.findOne(id); // validación previa
+		if (!data) {
+			throw new HttpException(
+				`Lista no encontrada con ID ${id}`,
+				HttpStatus.NOT_FOUND,
+			)
+		}
 
-    const data = await this.lists.update({
-      where: { id },
-      data: updateListDto,
-    });
+		return TransformResponse.map(data)
+	}
 
-    return TransformResponse.map(data, 'Lista actualizada con éxito!!', 'PUT');
-  }
+	async update(id: string, updateListDto: UpdateListDto) {
+		await this.findOne(id) // validación previa
 
-  async remove(id: string) {
-    await this.findOne(id); // validación previa
+		const data = await this.lists.update({
+			where: { id },
+			data: updateListDto,
+		})
 
-    const data = await this.lists.update({
-      where: { id },
-      data: { available: false },
-    });
+		return TransformResponse.map(data, 'Lista actualizada con éxito!!', 'PUT')
+	}
 
-    return TransformResponse.map(data, 'Lista eliminada con éxito!!', 'DELETE');
-  }
+	async remove(id: string) {
+		await this.findOne(id) // validación previa
 
-  private getParams(params: PaginationFilterDto) {
-    const { page, 'per-page': perPage, paginated } = params;
+		const data = await this.lists.update({
+			where: { id },
+			data: { available: false },
+		})
 
-    const condition: any = {
-      where: { available: true },
-      orderBy: [{ createAt: 'desc' }],
-    };
+		return TransformResponse.map(data, 'Lista eliminada con éxito!!', 'DELETE')
+	}
 
-    if (paginated) {
-      condition.skip = (page - 1) * perPage;
-      condition.take = perPage;
-    }
+	private getParams(params: PaginationFilterDto) {
+		const { page, 'per-page': perPage, paginated } = params
 
-    return condition;
-  }
+		const condition: any = {
+			where: { available: true },
+			orderBy: [{ createAt: 'desc' }],
+		}
+
+		if (paginated) {
+			condition.skip = (page - 1) * perPage
+			condition.take = perPage
+		}
+
+		return condition
+	}
 }

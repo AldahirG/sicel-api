@@ -44,8 +44,7 @@ export class CreateLeadDto {
 
 	@IsOptional()
 	@IsUUID()
-	userId?: string;
-
+	userId?: string
 
 	@IsOptional()
 	@Type(() => CreateReferenceDto)
@@ -59,12 +58,10 @@ export class CreateLeadDto {
 	@IsOptional()
 	@IsArray()
 	@IsString({ each: true })
-	email?: string[];
-	
+	email?: string[]
+
 	@IsOptional()
 	@IsArray()
 	@IsString({ each: true })
-	phone?: string[];
-
-
+	phone?: string[]
 }

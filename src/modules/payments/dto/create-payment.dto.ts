@@ -1,12 +1,12 @@
-import { IsNumber, IsString, IsUUID } from "class-validator"
+import { IsNumber, IsString, IsUUID } from 'class-validator'
 
 export class CreatePaymentDto {
-    @IsUUID()
+	@IsUUID()
 	enrollmentId: string
 
-    @IsString()
+	@IsString()
 	documentNumber: string
 
-    @IsNumber()
-    amount: number
+	@IsNumber()
+	amount: number
 }

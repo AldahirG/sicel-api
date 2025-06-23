@@ -10,79 +10,77 @@ export class HelperService extends PrismaClient implements OnModuleInit {
 		this.$connect()
 	}
 
-select(): Prisma.LeadsSelect {
-  return {
-    id: true,
-    grade: true,
-    dateContact: true,
-    reference: true,
-    scholarship: true,
-    Cycle: {
-      select: { id: true, name: true, cycle: true },
-    },
-    semester: true,
-    information: {
-      select: {
-        name: true,
-        genre: true,
-        careerInterest: true,
-        formerSchool: true,
-        typeSchool: true,
-        enrollmentStatus: true,
-        followUp: {
-          select: {
-            id: true,
-            name: true,
-          },
-        },
-      },
-    },
-    campaign: true,
-asetName: {
-  select: {
-    id: true,
-    name: true,
-    contactType: {
-      select: {
-        name: true, // ✅ Medio de contacto
-      },
-    },
-  },
-},
+	select(): Prisma.LeadsSelect {
+		return {
+			id: true,
+			grade: true,
+			dateContact: true,
+			reference: true,
+			scholarship: true,
+			Cycle: {
+				select: { id: true, name: true, cycle: true },
+			},
+			semester: true,
+			information: {
+				select: {
+					name: true,
+					genre: true,
+					careerInterest: true,
+					formerSchool: true,
+					typeSchool: true,
+					enrollmentStatus: true,
+					followUp: {
+						select: {
+							id: true,
+							name: true,
+						},
+					},
+				},
+			},
+			campaign: true,
+			asetName: {
+				select: {
+					id: true,
+					name: true,
+					contactType: {
+						select: {
+							name: true, // ✅ Medio de contacto
+						},
+					},
+				},
+			},
 
-
-    user: {
-      select: {
-        id: true,
-        name: true,
-        paternalSurname: true,
-        maternalSurname: true,
-        email: true,
-      },
-    },
-    city: {
-      select: {
-        name: true,
-        state: {
-          select: {
-            name: true,
-            country: {
-              select: {
-                id: true,
-                name: true,
-              },
-            },
-          },
-        },
-      },
-    },
-    phones: true,
-    emails: true,
-    createAt: true,
-    updateAt: true,
-  };
-}
-
+			user: {
+				select: {
+					id: true,
+					name: true,
+					paternalSurname: true,
+					maternalSurname: true,
+					email: true,
+				},
+			},
+			city: {
+				select: {
+					name: true,
+					state: {
+						select: {
+							name: true,
+							country: {
+								select: {
+									id: true,
+									name: true,
+								},
+							},
+						},
+					},
+				},
+			},
+			phones: true,
+			emails: true,
+			createAt: true,
+			updateAt: true,
+		}
+	}
 
 	getParams(params: FilterLeadDto): ILeadWhere {
 		const { page, 'per-page': perPage, paginated } = params
@@ -128,15 +126,15 @@ asetName: {
 	}
 
 	getMessages(lead: LeadMapper) {
-		if (lead.promoter.id || lead.dateContact && lead.information.followUp) {
+		if (lead.promoter.id || (lead.dateContact && lead.information.followUp)) {
 			return {
 				timeLineMessage: 'Resignación de lead',
-				response: 'El lead a sido reasignado correctamente!!'
+				response: 'El lead a sido reasignado correctamente!!',
 			}
 		}
 		return {
 			timeLineMessage: 'Asignación de lead',
-			response: 'El lead a sido asignado correctamente!!'
+			response: 'El lead a sido asignado correctamente!!',
 		}
 	}
 }

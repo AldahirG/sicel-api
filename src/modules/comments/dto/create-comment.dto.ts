@@ -1,13 +1,13 @@
-import { IsOptional, IsString, IsUUID } from "class-validator";
+import { IsOptional, IsString, IsUUID } from 'class-validator'
 
 export class CreateCommentDto {
-    @IsOptional()
-    @IsString()
-    title?: string = 'Comentario'
+	@IsOptional()
+	@IsString()
+	title?: string = 'Comentario'
 
-    @IsString()
-    description: string
+	@IsString()
+	description: string
 
-    @IsUUID()
-    leadId: string
+	@IsUUID()
+	leadId: string
 }

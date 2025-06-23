@@ -1,7 +1,7 @@
-import { IsString, MinLength } from 'class-validator';
+import { IsString, MinLength } from 'class-validator'
 
 export class SearchLeadsDto {
-  @IsString()
-  @MinLength(2)
-  query: string;
+	@IsString()
+	@MinLength(2)
+	query: string
 }

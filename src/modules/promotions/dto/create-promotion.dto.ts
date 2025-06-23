@@ -1,8 +1,8 @@
-import { IsString } from "class-validator";
+import { IsString } from 'class-validator'
 
 export class CreatePromotionDto {
-    @IsString()
-    name: string
+	@IsString()
+	name: string
 
-    slug: string
+	slug: string
 }
