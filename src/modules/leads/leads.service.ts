@@ -85,6 +85,7 @@ export class LeadsService extends HelperService {
 		try {
 			const select = this.select()
 			const {
+				
 				information,
 				campaignId,
 				gradeId,
@@ -126,12 +127,14 @@ export class LeadsService extends HelperService {
 			const cycleConnect = cycleId ? { connect: { id: cycleId } } : undefined
 
 			// 👤 Asignación de usuario según rol
-			const isPromotor = user.roles?.some((r) => r.roleId === 2)
+			const isPromotor = user.roles?.some((r) => r.name?.toUpperCase?.() === 'PROMOTOR' || r.role?.name?.toUpperCase?.() === 'PROMOTOR'
+			);
+			
 			const assignedUser = isPromotor
-				? { connect: { id: user.id } }
-				: userId
-					? { connect: { id: userId } }
-					: undefined
+  			? { connect: { id: user.id } }
+  			: userId
+  			  ? { connect: { id: userId } }
+  			  : undefined;
 
 			// 📞📧 Relaciones múltiples
 			const emails = email?.length
@@ -146,6 +149,7 @@ export class LeadsService extends HelperService {
 			const lead = await this.leads.create({
 				data: {
 					...leadData,
+					dateContact: createLeadDto.dateContact,
 					campaign: campaignConnect,
 					asetName: assetNameConnect,
 					grade: gradeConnect,

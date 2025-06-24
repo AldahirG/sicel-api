@@ -13,6 +13,11 @@ import { ScholarshipEnum } from '../enums/scholarship.enum'
 import { SemesterEnum } from '../enums/semester.enum'
 
 export class CreateLeadDto {
+
+	@IsOptional()
+	@Type(() => Date)
+	dateContact?: Date;
+
 	@IsOptional()
 	@IsUUID()
 	gradeId?: string

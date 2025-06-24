@@ -341,127 +341,171 @@ export class EnrollmentsService extends PrismaClient implements OnModuleInit {
 	}
 
 	async exportToExcelByList(res: Response, listId: string) {
-		const allPayments = await this.payments.findMany({
-			where: { available: true },
-		})
-		const paidEnrollmentIds = new Set(allPayments.map((p) => p.enrollmentId))
+  const allPayments = await this.payments.findMany({ where: { available: true } });
+  const paidEnrollmentIds = new Set(allPayments.map((p) => p.enrollmentId));
 
-		const list = await this.lists.findUnique({ where: { id: listId } })
-		const noLista = list?.noLista || 'SIN NOMBRE'
+  const list = await this.lists.findUnique({ where: { id: listId } });
+  const noLista = list?.noLista || 'SIN NOMBRE';
 
-		const enrollments = await this.enrollments.findMany({
-			where: { available: true, listId },
-			include: {
-				Career: true,
-				Lead: {
-					include: {
-						user: true,
-						information: true,
-						Cycle: true,
-					},
-				},
-			},
-		})
+  const enrollments = await this.enrollments.findMany({
+    where: { available: true, listId },
+    include: {
+      Career: true,
+      Promotion: true,
+      Channel: true,
+      List: true,
+      Payments: true,
+      Lead: {
+        include: {
+          user: true,
+          information: { include: { followUp: true } },
+          emails: true,
+          phones: true,
+          city: { include: { state: { include: { country: true } } } },
+          campaign: true,
+          asetName: { include: { contactType: true } },
+          reference: true,
+          grade: true,
+          Cycle: true,
+        },
+      },
+    },
+  });
 
-		const workbook = new ExcelJS.Workbook()
-		const sheetPagados = workbook.addWorksheet('REGISTROS PAGADOS')
-		const sheetNoPagados = workbook.addWorksheet('REGISTROS NO PAGADOS')
+  const workbook = new ExcelJS.Workbook();
+  const sheetPagados = workbook.addWorksheet('REGISTROS PAGADOS');
+  const sheetNoPagados = workbook.addWorksheet('REGISTROS NO PAGADOS');
 
-		const columns = [
-			{ header: 'PROMOTOR', key: 'promoter', width: 25 },
-			{ header: 'FECHA INSCRIPCION', key: 'fecha', width: 20 },
-			{ header: 'NOMBRE PROSPECTO', key: 'nombre', width: 30 },
-			{ header: 'STATUS', key: 'status', width: 15 },
-			{ header: 'CICLO ESCOLAR', key: 'ciclo', width: 20 },
-			{ header: 'PROGRAMA A INGRESAR', key: 'programa', width: 25 },
-			{ header: 'OBSERVACIONES', key: 'observaciones', width: 35 },
-			{ header: 'ESTATUS DE PAGO', key: 'estatus', width: 15 },
-		]
+  const columns = [
+    { header: 'Nombre', key: 'name', width: 25 },
+    { header: 'Correo', key: 'email', width: 30 },
+    { header: 'Teléfono', key: 'phone', width: 20 },
+    { header: 'Folio', key: 'folio', width: 20 },
+    { header: 'Matrícula', key: 'matricula', width: 15 },
+    { header: 'CURP', key: 'curp', width: 20 },
+    { header: 'Carrera', key: 'career', width: 30 },
+    { header: 'Promoción', key: 'promotion', width: 30 },
+    { header: 'Canal', key: 'channel', width: 20 },
+    { header: 'Lista', key: 'list', width: 15 },
+    { header: 'Beca', key: 'scholarship', width: 10 },
+    { header: 'Seguimiento', key: 'followUp', width: 25 },
+    { header: 'País', key: 'country', width: 20 },
+    { header: 'Estado', key: 'state', width: 20 },
+    { header: 'Ciudad', key: 'city', width: 20 },
+    { header: 'Ciclo', key: 'cycle', width: 15 },
+    { header: 'Asset Name', key: 'assetName', width: 30 },
+    { header: 'Campaña', key: 'campaign', width: 30 },
+    { header: 'Medio de contacto', key: 'contactType', width: 25 },
+    { header: 'Tipo referido', key: 'referenceType', width: 25 },
+    { header: 'Nombre referido', key: 'referenceName', width: 30 },
+    { header: 'Pago concepto', key: 'paymentConcept', width: 30 },
+    { header: 'Pago monto', key: 'paymentAmount', width: 15 },
+    { header: 'Estatus de pago', key: 'estatus', width: 15 },
+  ];
 
-		const pastelGreen = 'FFE6F4EA' // verde pastel
-		const pastelRed = 'FFFDEAEA' // rojo pastel
-		const pastelBlue = 'FFEAF1FB' // encabezado suave
+  const pastelGreen = 'FFE6F4EA';
+  const pastelRed = 'FFFDEAEA';
+  const pastelBlue = 'FFEAF1FB';
 
-		const setupSheet = (sheet, isPagado) => {
-			sheet.columns = columns
-			sheet.mergeCells('A1:H1')
-			sheet.getCell('A1').value = `LISTA ${noLista} - ${sheet.name}`
-			sheet.getCell('A1').font = { bold: true, size: 14 }
-			sheet.getCell('A1').alignment = { horizontal: 'center' }
-			sheet.getCell('A1').fill = {
-				type: 'pattern',
-				pattern: 'solid',
-				fgColor: { argb: isPagado ? pastelGreen : pastelRed },
-			}
+  const setupSheet = (sheet, isPagado) => {
+    sheet.columns = columns;
+    sheet.mergeCells('A1:X1');
+    sheet.getCell('A1').value = `LISTA ${noLista} - ${sheet.name}`;
+    sheet.getCell('A1').font = { bold: true, size: 14 };
+    sheet.getCell('A1').alignment = { horizontal: 'center' };
+    sheet.getCell('A1').fill = {
+      type: 'pattern',
+      pattern: 'solid',
+      fgColor: { argb: isPagado ? pastelGreen : pastelRed },
+    };
 
-			const headerRow = sheet.getRow(2)
-			headerRow.values = columns.map((col) => col.header)
-			headerRow.font = { bold: true }
-			headerRow.fill = {
-				type: 'pattern',
-				pattern: 'solid',
-				fgColor: { argb: pastelBlue },
-			}
-			headerRow.alignment = { horizontal: 'center' }
-		}
+    const headerRow = sheet.getRow(2);
+    headerRow.values = columns.map((col) => col.header);
+    headerRow.font = { bold: true };
+    headerRow.fill = {
+      type: 'pattern',
+      pattern: 'solid',
+      fgColor: { argb: pastelBlue },
+    };
+    headerRow.alignment = { horizontal: 'center' };
+  };
 
-		setupSheet(sheetPagados, true)
-		setupSheet(sheetNoPagados, false)
+  setupSheet(sheetPagados, true);
+  setupSheet(sheetNoPagados, false);
 
-		const pagadoRows = []
-		const noPagadoRows = []
+  const pagadoRows = [];
+  const noPagadoRows = [];
 
-		for (const e of enrollments) {
-			const user = e.Lead?.user
-			const info = e.Lead?.information
+  for (const e of enrollments) {
+    const lead = e.Lead;
+    const info = lead?.information;
+    const user = lead?.user;
 
-			const row = {
-				promoter: user ? `${user.name} ${user.paternalSurname ?? ''}` : '',
-				fecha: e.createAt.toISOString().split('T')[0],
-				nombre: info?.name || '',
-				status: info?.enrollmentStatus || '',
-				ciclo: e.Lead?.Cycle?.cycle || '',
-				programa: e.Career?.program || '',
-				observaciones: e.comments || '',
-				estatus: paidEnrollmentIds.has(e.id) ? 'PAGADO' : 'SIN PAGO',
-			}
+    const row = {
+      name: info?.name || '',
+      email: lead?.emails?.[0]?.email || '',
+      phone: lead?.phones?.[0]?.telephone || '',
+      folio: e.enrollment_folio || '',
+      matricula: e.matricula || '',
+      curp: e.curp || '',
+      career: e.Career?.name || '',
+      promotion: e.Promotion?.name || '',
+      channel: e.Channel?.name || '',
+      list: e.List?.noLista || '',
+      scholarship: e.scholarship || '',
+      followUp: info?.followUp?.name || '',
+      country: lead?.city?.state?.country?.name || '',
+      state: lead?.city?.state?.name || '',
+      city: lead?.city?.name || '',
+      cycle: lead?.Cycle?.cycle || '',
+      assetName: lead?.asetName?.name || '',
+      campaign: lead?.campaign?.name || '',
+      contactType: lead?.asetName?.contactType?.name || '',
+      referenceType: lead?.reference?.type || '',
+      referenceName: lead?.reference?.name || '',
+      paymentConcept: e.Payments?.documentNumber || '',
+      paymentAmount: e.Payments?.amount || '',
+      estatus: paidEnrollmentIds.has(e.id) ? 'PAGADO' : 'SIN PAGO',
+    };
 
-			if (paidEnrollmentIds.has(e.id)) {
-				pagadoRows.push(row)
-			} else {
-				noPagadoRows.push(row)
-			}
-		}
+    if (paidEnrollmentIds.has(e.id)) {
+      pagadoRows.push(row);
+    } else {
+      noPagadoRows.push(row);
+    }
+  }
 
-		sheetPagados.addRows(pagadoRows, 'i+2')
-		sheetNoPagados.addRows(noPagadoRows, 'i+2')
+  sheetPagados.addRows(pagadoRows, 'i+2');
+  sheetNoPagados.addRows(noPagadoRows, 'i+2');
 
-		const applyBorders = (sheet) => {
-			sheet.eachRow({ includeEmpty: false }, (row) => {
-				row.eachCell({ includeEmpty: false }, (cell) => {
-					cell.border = {
-						top: { style: 'thin' },
-						left: { style: 'thin' },
-						bottom: { style: 'thin' },
-						right: { style: 'thin' },
-					}
-					cell.alignment = { vertical: 'middle', wrapText: true }
-				})
-			})
-		}
-		applyBorders(sheetPagados)
-		applyBorders(sheetNoPagados)
+  const applyBorders = (sheet) => {
+    sheet.eachRow({ includeEmpty: false }, (row) => {
+      row.eachCell({ includeEmpty: false }, (cell) => {
+        cell.border = {
+          top: { style: 'thin' },
+          left: { style: 'thin' },
+          bottom: { style: 'thin' },
+          right: { style: 'thin' },
+        };
+        cell.alignment = { vertical: 'middle', wrapText: true };
+      });
+    });
+  };
 
-		res.setHeader(
-			'Content-Type',
-			'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-		)
-		res.setHeader(
-			'Content-Disposition',
-			'attachment; filename=lista-inscripciones.xlsx',
-		)
+  applyBorders(sheetPagados);
+  applyBorders(sheetNoPagados);
 
-		await workbook.xlsx.write(res)
-		res.end()
-	}
+  res.setHeader(
+    'Content-Type',
+    'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+  );
+  res.setHeader(
+    'Content-Disposition',
+    'attachment; filename=lista-inscripciones.xlsx',
+  );
+
+  await workbook.xlsx.write(res);
+  res.end();
+}
+
 }
