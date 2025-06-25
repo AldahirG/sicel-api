@@ -14,6 +14,8 @@ export interface LeadMapper {
 	dateContact: Date
 	scholarship: string
 	semester?: string
+	program?: string
+	intern?: string
 	cycle: Pick<Cycles, 'id' | 'name' | 'cycle'>
 	reference: Pick<References, 'type' | 'name' | 'dataSource'>
 	information: Information

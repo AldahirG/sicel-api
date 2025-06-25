@@ -96,6 +96,8 @@ export class LeadsService extends HelperService {
 				reference,
 				email,
 				phone,
+				program,
+  				intern,
 				...leadData
 			} = createLeadDto
 
@@ -160,6 +162,8 @@ export class LeadsService extends HelperService {
 					information: { create: information },
 					emails,
 					phones,
+					program,
+  					intern,
 				},
 				select,
 			})
@@ -353,6 +357,9 @@ export class LeadsService extends HelperService {
 			reference,
 			email,
 			phone,
+			program,
+  			intern,
+
 			...leadData
 		} = updateLeadDto
 
@@ -422,6 +429,8 @@ export class LeadsService extends HelperService {
 			where: { id },
 			data: {
 				...leadData,
+				program: program,
+				intern: intern, 
 				campaign: campaignConnect,
 				asetName: asetNameConnect,
 				user: userConnect,

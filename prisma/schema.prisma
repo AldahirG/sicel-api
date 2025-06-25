@@ -227,6 +227,8 @@ model Leads {
   cycleId     String?
   semester    String?
   scholarship String?
+  program  String? // Similar al de Enrollments, puede venir del front o importación
+  intern   String? // Se usará para "Interno" o "Externo"
 
   available Boolean  @default(true)
   createAt  DateTime @default(now())

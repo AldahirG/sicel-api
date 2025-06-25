@@ -10,7 +10,7 @@ const data = [
 	{ name: 'ESPECIALIDAD' },
 	{ name: 'EJECUTIVA' },
 	{ name: 'DIPLOMADO' },
-	{ name: 'MAESTRÍA' },
+	{ name: 'MAESTRIA' },
 	{ name: 'DOCTORADO' },
 	{ name: 'NO ESPECIFICA' },
 ]

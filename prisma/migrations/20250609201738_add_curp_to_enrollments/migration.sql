@@ -1,2 +1,0 @@
--- AlterTable
-ALTER TABLE `enrollments` ADD COLUMN `CURP` VARCHAR(191) NULL;

@@ -8,6 +8,8 @@ export class LeadResource {
 			dateContact: lead.dateContact,
 			scholarship: lead.scholarship,
 			semester: lead.semester,
+			program: lead.program,
+			intern: lead.intern,
 			cycle: {
 				id: lead.Cycle?.id,
 				name: lead.Cycle?.name,

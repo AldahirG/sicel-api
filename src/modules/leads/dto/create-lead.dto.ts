@@ -1,6 +1,7 @@
 import {
 	IsArray,
 	IsEnum,
+	IsIn,
 	IsOptional,
 	IsString,
 	IsUUID,
@@ -43,7 +44,6 @@ export class CreateLeadDto {
 	semester?: SemesterEnum
 
 	@IsOptional()
-	@IsString()
 	@IsUUID()
 	cycleId: string
 
@@ -69,4 +69,15 @@ export class CreateLeadDto {
 	@IsArray()
 	@IsString({ each: true })
 	phone?: string[]
+
+	// ✅ NUEVOS CAMPOS
+
+@IsOptional()
+@IsString()
+program?: string;
+
+@IsOptional()
+@IsIn(['INTERNO', 'EXTERNO'])
+intern?: string;
+
 }

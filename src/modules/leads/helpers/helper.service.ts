@@ -17,6 +17,8 @@ export class HelperService extends PrismaClient implements OnModuleInit {
 			dateContact: true,
 			reference: true,
 			scholarship: true,
+			program: true, // ✅ AÑADIR
+			intern: true,  // ✅ AÑADIR
 			Cycle: {
 				select: { id: true, name: true, cycle: true },
 			},

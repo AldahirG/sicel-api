@@ -63,6 +63,7 @@ CREATE TABLE `Phones` (
     `createAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
     `updateAt` DATETIME(3) NOT NULL,
 
+    UNIQUE INDEX `Phones_telephone_key`(`telephone`),
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
@@ -215,6 +216,8 @@ CREATE TABLE `Leads` (
     `cycleId` VARCHAR(191) NULL,
     `semester` VARCHAR(191) NULL,
     `scholarship` VARCHAR(191) NULL,
+    `program` VARCHAR(191) NULL,
+    `intern` VARCHAR(191) NULL,
     `available` BOOLEAN NOT NULL DEFAULT true,
     `createAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
     `updateAt` DATETIME(3) NOT NULL,
@@ -267,6 +270,7 @@ CREATE TABLE `Payments` (
 -- CreateTable
 CREATE TABLE `Lists` (
     `id` VARCHAR(191) NOT NULL,
+    `noLista` VARCHAR(191) NULL,
     `dateStart` DATETIME(3) NOT NULL,
     `dateEnd` DATETIME(3) NOT NULL,
     `available` BOOLEAN NOT NULL DEFAULT true,
@@ -291,7 +295,7 @@ CREATE TABLE `Promotions` (
 -- CreateTable
 CREATE TABLE `Channels` (
     `id` VARCHAR(191) NOT NULL,
-    `name` DATETIME(3) NOT NULL,
+    `name` VARCHAR(191) NOT NULL,
     `available` BOOLEAN NOT NULL DEFAULT true,
     `createAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
     `updateAt` DATETIME(3) NOT NULL,
@@ -306,6 +310,12 @@ CREATE TABLE `Enrollments` (
     `careersId` VARCHAR(191) NOT NULL,
     `promotionId` VARCHAR(191) NOT NULL,
     `channelId` VARCHAR(191) NOT NULL,
+    `leadId` VARCHAR(191) NOT NULL,
+    `enrollment_folio` VARCHAR(191) NULL,
+    `matricula` VARCHAR(191) NULL,
+    `curp` VARCHAR(191) NULL,
+    `scholarship` VARCHAR(191) NULL,
+    `comments` VARCHAR(191) NULL,
     `available` BOOLEAN NOT NULL DEFAULT true,
     `createAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
     `updateAt` DATETIME(3) NOT NULL,
@@ -395,6 +405,9 @@ ALTER TABLE `Enrollments` ADD CONSTRAINT `Enrollments_careersId_fkey` FOREIGN KE
 
 -- AddForeignKey
 ALTER TABLE `Enrollments` ADD CONSTRAINT `Enrollments_listId_fkey` FOREIGN KEY (`listId`) REFERENCES `Lists`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE `Enrollments` ADD CONSTRAINT `Enrollments_leadId_fkey` FOREIGN KEY (`leadId`) REFERENCES `Leads`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE `TimeLineLeads` ADD CONSTRAINT `TimeLineLeads_leadId_fkey` FOREIGN KEY (`leadId`) REFERENCES `Leads`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
