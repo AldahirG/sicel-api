@@ -23,6 +23,12 @@ export class StatesController {
 	create(@Body() createStateDto: CreateStateDto) {
 		return this.statesService.create(createStateDto)
 	}
+	// states.controller.ts
+@Get('by-country/:countryId')
+findByCountry(@Param('countryId') countryId: string) {
+  return this.statesService.findByCountryId(countryId);
+}
+
 
 	@UseGuards(JwtAuthGuard)
 	@Get()

@@ -69,6 +69,23 @@ export class StatesService extends PrismaClient implements OnModuleInit {
 		})
 	}
 
+	// states.service.ts
+async findByCountryId(countryId: string) {
+  const data = await this.states.findMany({
+    where: {
+      available: true,
+      countryId,
+    },
+    select: {
+      id: true,
+      name: true,
+    },
+  });
+
+  return TransformResponse.map(data);
+}
+
+
 	async findOne(id: string) {
 		const data = await this.states.findFirst({
 			where: { id, available: true },

@@ -12,6 +12,8 @@ import { CyclesSeeder } from './cycle.seeders'
 import { CountriesSeeder } from './countries.seeder'
 import { StatesSeeder } from './states.seeder'
 import { CitiesSeeder } from './cities.seeder'
+import { ChannelsSeeder } from './channels.seeder'
+import { PromotionsSeeder } from './promotions.seeder'
 
 const prisma = new PrismaClient()
 
@@ -27,19 +29,23 @@ async function main() {
 	await GradesSeeder()
 	console.log('Grados creados')
 	await CareersSeeder()
-	console.log('Carreras creadas');
+	console.log('Carreras creadas')
 	await CampaignsSeeder()
-	console.log('Campañas creadas');
+	console.log('Campañas creadas')
 	await FollowUpsSeeder()
-	console.log('Seguimientos creados');
+	console.log('Seguimientos creados')
 	await CyclesSeeder()
-	console.log('Ciclos escolares creados');
+	console.log('Ciclos escolares creados')
 	await CountriesSeeder()
-	console.log('Países creados');
+	console.log('Países creados')
 	await StatesSeeder()
-	console.log('Estados creados');
+	console.log('Estados creados')
 	await CitiesSeeder()
-	console.log('Ciudades creadas');
+	console.log('Ciudades creadas')
+	await ChannelsSeeder()
+	console.log('Canales creados')
+	await PromotionsSeeder()
+	console.log('Promociones creadas')
 }
 
 main()

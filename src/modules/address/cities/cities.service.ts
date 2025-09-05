@@ -120,4 +120,23 @@ export class CitiesService extends PrismaClient implements OnModuleInit {
 		}
 		return condition
 	}
+
+	async findByStateId(stateId: string) {
+  const data = await this.cities.findMany({
+    where: {
+      available: true,
+      stateId,
+    },
+    select: {
+      id: true,
+      name: true,
+    },
+    orderBy: {
+      name: 'asc',
+    },
+  });
+
+  return TransformResponse.map(data);
+}
+
 }

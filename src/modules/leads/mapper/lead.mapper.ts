@@ -1,4 +1,4 @@
-import { LeadMapper } from "../interfaces/lead-mapper.interface"
+import { LeadMapper } from '../interfaces/lead-mapper.interface'
 
 export class LeadResource {
 	static map(lead: any): LeadMapper {
@@ -8,6 +8,8 @@ export class LeadResource {
 			dateContact: lead.dateContact,
 			scholarship: lead.scholarship,
 			semester: lead.semester,
+			program: lead.program,
+			intern: lead.intern,
 			cycle: {
 				id: lead.Cycle?.id,
 				name: lead.Cycle?.name,
@@ -34,6 +36,7 @@ export class LeadResource {
 			asetName: {
 				id: lead.asetName?.id,
 				name: lead.asetName?.name,
+				contactType: lead.asetName?.contactType?.name || null,
 			},
 			phones: lead.phones?.map((i) => i.telephone),
 			emails: lead.emails?.map((i) => i.email),
@@ -48,6 +51,8 @@ export class LeadResource {
 				paternalSurname: lead.user?.paternalSurname,
 				maternalSurname: lead.user?.maternalSurname,
 			},
+			updateAt: lead.updateAt,
+			createAt: lead.createAt,
 		}
 	}
 

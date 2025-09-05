@@ -1,6 +1,7 @@
 import {
 	IsArray,
 	IsEnum,
+	IsIn,
 	IsOptional,
 	IsString,
 	IsUUID,
@@ -13,6 +14,11 @@ import { ScholarshipEnum } from '../enums/scholarship.enum'
 import { SemesterEnum } from '../enums/semester.enum'
 
 export class CreateLeadDto {
+
+	@IsOptional()
+	@Type(() => Date)
+	dateContact?: Date;
+
 	@IsOptional()
 	@IsUUID()
 	gradeId?: string
@@ -38,10 +44,11 @@ export class CreateLeadDto {
 	semester?: SemesterEnum
 
 	@IsOptional()
-	@IsString()
 	@IsUUID()
 	cycleId: string
 
+	@IsOptional()
+	@IsUUID()
 	userId?: string
 
 	@IsOptional()
@@ -53,9 +60,24 @@ export class CreateLeadDto {
 	@ValidateNested({ each: true })
 	information: CreateInformationLeadDto
 
+	@IsOptional()
 	@IsArray()
-	email: string[]
+	@IsString({ each: true })
+	email?: string[]
 
+	@IsOptional()
 	@IsArray()
-	phone: string[]
+	@IsString({ each: true })
+	phone?: string[]
+
+	// ✅ NUEVOS CAMPOS
+
+@IsOptional()
+@IsString()
+program?: string;
+
+@IsOptional()
+@IsIn(['INTERNO', 'EXTERNO'])
+intern?: string;
+
 }

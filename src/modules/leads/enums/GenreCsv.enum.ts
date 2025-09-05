@@ -1,4 +1,4 @@
 export enum GenreCsv {
-    M = 'MASCULINO',
-    F = 'FEMENINO'
+	M = 'MASCULINO',
+	F = 'FEMENINO',
 }

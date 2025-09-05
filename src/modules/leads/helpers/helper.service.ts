@@ -17,6 +17,8 @@ export class HelperService extends PrismaClient implements OnModuleInit {
 			dateContact: true,
 			reference: true,
 			scholarship: true,
+			program: true, // ✅ AÑADIR
+			intern: true,  // ✅ AÑADIR
 			Cycle: {
 				select: { id: true, name: true, cycle: true },
 			},
@@ -38,7 +40,18 @@ export class HelperService extends PrismaClient implements OnModuleInit {
 				},
 			},
 			campaign: true,
-			asetName: true,
+			asetName: {
+				select: {
+					id: true,
+					name: true,
+					contactType: {
+						select: {
+							name: true, // ✅ Medio de contacto
+						},
+					},
+				},
+			},
+
 			user: {
 				select: {
 					id: true,
@@ -93,38 +106,37 @@ export class HelperService extends PrismaClient implements OnModuleInit {
 	}
 
 	validateLead(lead: LeadMapper, userId: string) {
-		if (lead.promoter.id) {
-			throw new HttpException(
-				`El lead ya a sido asignado a un promotor`,
-				HttpStatus.CONFLICT,
-			)
-		}
-
 		if (lead.promoter.id == userId) {
 			throw new HttpException(
 				`Este led no se puede asignar al mismo promotor`,
 				HttpStatus.CONFLICT,
 			)
 		}
-
 		if (lead.dateContact && lead.information.followUp) {
 			throw new HttpException(
 				`Este lead no se puede reasignar`,
 				HttpStatus.CONFLICT,
 			)
 		}
+
+		if (lead.promoter.id) {
+			throw new HttpException(
+				`El lead ya a sido asignado a un promotor`,
+				HttpStatus.CONFLICT,
+			)
+		}
 	}
 
 	getMessages(lead: LeadMapper) {
-		if (lead.promoter.id || lead.dateContact && lead.information.followUp) {
+		if (lead.promoter.id || (lead.dateContact && lead.information.followUp)) {
 			return {
 				timeLineMessage: 'Resignación de lead',
-				response: 'El lead a sido reasignado correctamente!!'
+				response: 'El lead a sido reasignado correctamente!!',
 			}
 		}
 		return {
 			timeLineMessage: 'Asignación de lead',
-			response: 'El lead a sido asignado correctamente!!'
+			response: 'El lead a sido asignado correctamente!!',
 		}
 	}
 }

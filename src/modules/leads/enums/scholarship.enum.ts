@@ -1,5 +1,6 @@
 export enum ScholarshipEnum {
 	zero = '0',
+	five = '5',
 	ten = '10',
 	fifteen = '15',
 	twenty = '20',
@@ -11,10 +12,8 @@ export enum ScholarshipEnum {
 	fifty = '50',
 	fiftyFive = '55',
 	sixty = '60',
-	seventy = '70',
-	eighty = '80',
-	ninety = '90',
-	hundred = '100',
 	apoyoTrabajador = 'APOYO TRABAJADOR',
 	orfandad = 'ORFANDAD',
+	patronato = 'PATRONATO',
+	practicanteRH = 'PRACTICANTE RH',
 }

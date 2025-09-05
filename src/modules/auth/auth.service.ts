@@ -23,63 +23,72 @@ export class AuthService extends PrismaClient implements OnModuleInit {
 		super()
 	}
 
-	async signJWT(payload: IJwt) {
+	async signJWT(payload: any) {
 		return this.jwtService.sign(payload)
 	}
 
-	async login(payload: LoginDTO) {
-		const { email, password } = payload
-		const user = await this.user.findFirst({
-			where: { email },
-			select: {
-				id: true,
-				name: true,
-				paternalSurname: true,
-				maternalSurname: true,
-				email: true,
-				accessToken: true,
-				password: true,
-				roles: { select: { role: { select: { name: true } } } },
-			},
-		})
+async login(payload: LoginDTO) {
+  console.log('Payload recibido:', payload);
+  const { email, password } = payload;
 
-		if (!user) {
-			throw new HttpException('User not found', HttpStatus.BAD_REQUEST)
-		}
-		const isValid = bcrypt.compareSync(password, user.password)
+  const user = await this.user.findFirst({
+    where: { email },
+    select: {
+      id: true,
+      name: true,
+      paternalSurname: true,
+      maternalSurname: true,
+      email: true,
+      accessToken: true,
+      password: true,
+      roles: { select: { role: { select: { name: true } } } },
+    },
+  });
 
-		if (!isValid) {
-			throw new HttpException(`Invalid credentials`, HttpStatus.BAD_REQUEST)
-		}
+  console.log('Roles completos:', JSON.stringify(user.roles, null, 2));
+  console.log('Usuario encontrado:', user);
 
-		//! En caso de no tener le genera un token
-		if (!user.accessToken) {
-			user.accessToken = await this.signJWT({
-				email: user.email,
-				id: user.id,
-			})
+  if (!user) {
+    throw new HttpException('User not found', HttpStatus.BAD_REQUEST);
+  }
 
-			await this.user.update({
-				where: {
-					id: user.id,
-				},
-				data: {
-					accessToken: user.accessToken,
-				},
-			})
-		}
+  const isValid = bcrypt.compareSync(password, user.password);
 
-		const { password: ___, accessToken: token, ...rest } = user
+  if (!isValid) {
+    throw new HttpException('Invalid credentials', HttpStatus.BAD_REQUEST);
+  }
 
-		return TransformResponse.map(
-			AuthUserResource.map({
-				...rest,
-				token,
-			}),
-			'Inicio de sesión exitoso !!',
-			'POST',
-		)
-	}
+  // ✅ Aplanar roles
+  const plainRoles = user.roles.map(r => r.role.name);
+
+  // ⚠️ Generar accessToken si no existe aún
+  if (!user.accessToken) {
+    user.accessToken = await this.signJWT({
+      email: user.email,
+      id: user.id,
+      name: user.name,
+      roles: plainRoles, // ✅ En el token también
+    });
+
+    await this.user.update({
+      where: { id: user.id },
+      data: { accessToken: user.accessToken },
+    });
+  }
+
+  const { password: ___, accessToken: token, ...rest } = user;
+
+  return TransformResponse.map(
+    AuthUserResource.map({
+      ...rest,
+      roles: plainRoles, // ✅ ¡en formato compatible con frontend!
+      token,
+    }),
+    'Inicio de sesión exitoso !!',
+    'POST',
+  );
+}
+
 
 	async logout(token: string) {
 		const user = await this.user.findFirst({

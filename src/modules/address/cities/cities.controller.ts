@@ -29,6 +29,12 @@ export class CitiesController {
 		return this.citiesService.findAll(params)
 	}
 
+	@Get('by-state/:stateId')
+async findByState(@Param('stateId') stateId: string) {
+  return this.citiesService.findByStateId(stateId);
+}
+
+
 	@UseGuards(JwtAuthGuard)
 	@Get(':id')
 	findOne(@Param('id') id: string) {

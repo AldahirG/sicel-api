@@ -9,4 +9,6 @@ export enum SemesterEnum {
 	eighth = '8',
 	ninth = '9',
 	tenth = '10',
+	unspecified = 'NO ESPECIFICADO',
+	other = 'OTRO',
 }

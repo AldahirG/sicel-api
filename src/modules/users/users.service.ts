@@ -61,16 +61,16 @@ export class UsersService extends HelperService {
 			data: UserResource.collection(users),
 			meta: params.paginated
 				? {
-					currentPage: params.page,
-					nextPage:
-						Math.ceil(totalRows / params['per-page']) == params.page
-							? null
-							: params.page + 1,
-					totalPages: Math.ceil(totalRows / params['per-page']),
-					perPage: params['per-page'],
-					totalRecords: totalRows,
-					prevPage: params.page == 1 ? null : params.page - 1,
-				}
+						currentPage: params.page,
+						nextPage:
+							Math.ceil(totalRows / params['per-page']) == params.page
+								? null
+								: params.page + 1,
+						totalPages: Math.ceil(totalRows / params['per-page']),
+						perPage: params['per-page'],
+						totalRecords: totalRows,
+						prevPage: params.page == 1 ? null : params.page - 1,
+					}
 				: undefined,
 		})
 	}

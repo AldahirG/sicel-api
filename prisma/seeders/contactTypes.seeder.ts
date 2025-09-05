@@ -17,16 +17,20 @@ export async function ContactTypes() {
 		{ name: 'VISITA EMPRESA' },
 		{ name: 'EVENTO INTERNO' },
 		{ name: 'EVENTO EXTERNO' },
-		{ name: 'PUBLICIDAD EMPRESA' },
+		{ name: 'PUBLICIDAD IMPRESA' },
 		{ name: 'ALIANZA FRANCESA' },
 		{ name: 'REFERIDO' },
 		{ name: 'MAILING' },
 		{ name: 'SICAP' },
 		{ name: 'UNINTER INFORMA' },
 		{ name: 'SEGUIMIENTO INSCRITOS' },
+		{ name: 'CAMBACEO' },
+		{ name: 'UNINTERKIDS' },
+		{ name: 'EMAGISTER' },
 	]
 
 	await prisma.contactTypes.createMany({
 		data,
+		skipDuplicates: true,
 	})
 }

@@ -60,7 +60,7 @@ model UsersRoles {
 
 model Phones {
   id        String   @id @default(uuid())
-  telephone String
+  telephone String   @unique
   available Boolean  @default(true)
   leadId    String
   createAt  DateTime @default(now())
@@ -227,6 +227,8 @@ model Leads {
   cycleId     String?
   semester    String?
   scholarship String?
+  program  String? // Similar al de Enrollments, puede venir del front o importación
+  intern   String? // Se usará para "Interno" o "Externo"
 
   available Boolean  @default(true)
   createAt  DateTime @default(now())
@@ -242,6 +244,8 @@ model Leads {
   emails      Emails[]
   phones      Phones[]
   gradesId    String?
+
+  enrollments Enrollments[] // ✅ Relación con Enrollments
 
   timeline TimeLineLeads[]
   Comments Comments[]
@@ -259,13 +263,87 @@ model Comments {
 }
 
 model Careers {
+  id          String        @id @default(uuid())
+  name        String
+  program     String
+  available   Boolean       @default(true)
+  createAt    DateTime      @default(now())
+  updateAt    DateTime      @updatedAt
+  Enrollments Enrollments[]
+}
+
+model Payments {
+  id             String   @id @default(uuid())
+  enrollmentId   String   @unique
+  documentNumber String
+  amount         Float
+  available      Boolean  @default(true)
+  createAt       DateTime @default(now())
+  updateAt       DateTime @updatedAt
+
+  Enrollment Enrollments @relation("EnrollmentPayment", fields: [enrollmentId], references: [id])
+}
+
+model Lists {
   id        String   @id @default(uuid())
-  name      String
-  program   String
+  noLista   String?  // <- campo opcional por ahora
+  dateStart DateTime
+  dateEnd   DateTime
   available Boolean  @default(true)
   createAt  DateTime @default(now())
   updateAt  DateTime @updatedAt
+
+  Enrollments Enrollments[]
 }
+
+
+
+model Promotions {
+  id   String @id @default(uuid())
+  name String
+  slug String
+
+  available   Boolean       @default(true)
+  createAt    DateTime      @default(now())
+  updateAt    DateTime      @updatedAt
+  Enrollments Enrollments[]
+}
+
+model Channels {
+  id          String        @id @default(uuid())
+  name        String
+  available   Boolean       @default(true)
+  createAt    DateTime      @default(now())
+  updateAt    DateTime      @updatedAt
+  Enrollments Enrollments[]
+}
+
+model Enrollments {
+  id               String    @id @default(uuid())
+  listId           String
+  careersId        String
+  promotionId      String
+  channelId        String
+  leadId           String
+  enrollment_folio String?   // ← Folio de inscripción
+  matricula        String?   // ← Matrícula asignada
+  curp             String?   // ← CURP del alumno
+  scholarship      String?   // ← ✅ Nueva columna para porcentaje o tipo de beca
+  comments         String?   // ← Comentarios adicionales sobre la inscripción
+
+  Channel     Channels     @relation(fields: [channelId], references: [id])
+  Promotion   Promotions   @relation(fields: [promotionId], references: [id])
+  Career      Careers      @relation(fields: [careersId], references: [id])
+  List        Lists        @relation(fields: [listId], references: [id])
+  Lead        Leads        @relation(fields: [leadId], references: [id])
+  Payments    Payments?    @relation("EnrollmentPayment")
+
+  available     Boolean     @default(true)
+  createAt      DateTime    @default(now())
+  updateAt      DateTime    @updatedAt
+}
+
+
 
 model TimeLineLeads {
   id            String  @id @default(uuid())
